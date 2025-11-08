@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Pengelola MSU</title>
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+			rel="stylesheet"
+		/>
+		<style>
+			body {
+				background-color: #ffffff;
+				font-family: "Poppins", sans-serif;
+			}
+
+			.shadow-soft {
+				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08),
+					0 2px 4px rgba(0, 0, 0, 0.04);
+			}
+
+			.shadow-strong {
+				box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12),
+					0 4px 6px rgba(0, 0, 0, 0.08);
+			}
+
+			.card:hover {
+				transform: translateY(-4px);
+				transition: all 0.25s ease;
+				box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+			}
+			.navbar-nav .nav-link {
+				color: #2fa16c;
+				font-weight: 600;
+				margin: 0 10px;
+				transition: color 0.2s ease;
+			}
+
+			/* hover effect */
+			.navbar-nav .nav-link:hover {
+				color: #0b492c;
+			}
+
+			/* halaman aktif */
+			.navbar-nav .nav-link.active {
+				color: #0b492c !important;
+			}
+		</style>
+	</head>
+
+	<body>
+		<!-- NAVBAR -->
+		<nav class="navbar navbar-expand-lg fixed-top shadow-soft bg-white">
+			<div class="container">
+				<a class="navbar-brand" href="#">
+					<img
+						src="/pengelola/aset/logo.png"
+						alt="Logo MSU"
+						style="height: 45px"
+					/>
+				</a>
+
+				<button
+					class="navbar-toggler"
+					type="button"
+					data-bs-toggle="collapse"
+					data-bs-target="#navmenu"
+				>
+					<span class="navbar-toggler-icon"></span>
+				</button>
+
+				<div
+					class="collapse navbar-collapse justify-content-end"
+					id="navmenu"
+				>
+					<ul class="navbar-nav mb-2 mb-lg-0">
+						<li class="nav-item">
+							<a class="nav-link active" href="#">Beranda</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="laporan.html">Laporan</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="#">Tambah Barang</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="#">Approval</a>
+						</li>
+					</ul>
+
+					<div class="ms-3 d-flex align-items-center">
+						<img
+							id="user"
+							src="/pengelola/aset/MSU.png"
+							alt="User"
+							class="rounded-circle me-2"
+							width="35"
+							height="35"
+						/>
+						<span id="userName" class="fw-semibold text-dark"
+							>Arina</span
+						>
+					</div>
+				</div>
+			</div>
+		</nav>
+
+		<!-- HERO SECTION -->
+		<section
+			class="d-flex justify-content-center align-items-start position-relative w-100"
+			style="
+				padding-top: 55px;
+				height: 70vh;
+				background-image: url('/pengelola/aset/ramadhan.png');
+				background-size: contain;
+				background-position: center;
+				background-repeat: no-repeat;
+			"
+		>
+			<img
+				src="/pengelola/aset/MSU.png"
+				alt="Syamsul Ulum"
+				class="img-fluid shadow-strong rounded-3 mt-5"
+				style="height: 230px; width: 1100px; z-index: 2"
+			/>
+		</section>
+
+		<!-- MAIN CONTENT -->
+		<div class="container">
+			<!-- SEARCH BOX -->
+			<div
+				class="bg-white rounded-pill px-4 py-4 position-relative shadow-strong"
+			>
+				<form class="row gx-3 gy-3 align-items-end">
+					<!-- Nama Barang -->
+					<div class="col-12 col-md-3">
+						<div class="d-flex flex-column">
+							<label
+								id="labelNama"
+								class="form-label fw-semibold small mb-2 text-secondary"
+								>Nama Barang</label
+							>
+							<select
+								id="selectNama"
+								class="form-select rounded-pill py-2"
+							>
+								<option selected>Pilih Barang</option>
+								<option>Proyektor</option>
+								<option>Karpet</option>
+								<option>Speaker</option>
+								<option>Meja</option>
+							</select>
+						</div>
+					</div>
+
+					<!-- Tanggal Peminjaman -->
+					<div class="col-12 col-md-3">
+						<div class="d-flex flex-column">
+							<label
+								class="form-label fw-semibold small mb-2 text-secondary"
+								>Tanggal Peminjaman</label
+							>
+							<input
+								type="date"
+								class="form-control rounded-pill py-2"
+							/>
+						</div>
+					</div>
+
+					<!-- Tanggal Pengembalian -->
+					<div class="col-12 col-md-3">
+						<div class="d-flex flex-column">
+							<label
+								class="form-label fw-semibold small mb-2 text-secondary"
+								>Tanggal Pengembalian</label
+							>
+							<input
+								type="date"
+								class="form-control rounded-pill py-2"
+							/>
+						</div>
+					</div>
+
+					<!-- SEARCH BAR + BUTTON -->
+					<div class="col-12 col-md-3">
+						<div class="d-flex flex-column">
+							<label
+								class="form-label fw-semibold small mb-2 text-secondary"
+								>Cari cepat</label
+							>
+							<div class="input-group">
+								<input
+									id="quickSearch"
+									type="text"
+									class="form-control rounded-start-pill py-2"
+									placeholder="Ketik kata kunci..."
+								/>
+								<button
+									class="btn btn-success rounded-end-pill px-4"
+									type="submit"
+								>
+									Cari
+								</button>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+
+			<!-- INFO SECTION -->
+			<section class="text-center mt-5">
+				<h4 class="fw-light mb-2">
+					Satu langkah menuju
+					<b class="text-success">kemudahan beraktivitas</b> di MSU
+				</h4>
+				<p class="text-muted mb-3">
+					Semua urusan peminjaman dan perizinan kini bisa dilakukan
+					secara online.
+				</p>
+
+				<!-- Dropdown Barang -->
+				<div class="text-start">
+					<div class="dropdown d-inline-block">
+						<button
+							id="kategoriBtn"
+							class="btn btn-success dropdown-toggle rounded-pill px-4 py-2"
+							type="button"
+							data-bs-toggle="dropdown"
+							aria-expanded="false"
+							style="
+								background-color: #0b492c;
+								border-color: #0b492c;
+							"
+						>
+							Barang
+						</button>
+						<ul class="dropdown-menu">
+							<li>
+								<a
+									class="dropdown-item"
+									href="#"
+									data-switch="barang"
+									>Barang</a
+								>
+							</li>
+							<li>
+								<a
+									class="dropdown-item"
+									href="#"
+									data-switch="fasilitas"
+									>Fasilitas</a
+								>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</section>
+
+			<!-- GRID CARD BARANG -->
+			<section id="gridBarang" class="mt-4 pb-5">
+				<div class="row g-4 justify-content-center">
+					<!-- Card 1 -->
+					<div class="col-12 col-sm-6 col-md-4 col-lg-3">
+						<div
+							class="card h-100 border-0 rounded-4 shadow-strong mx-auto"
+							style="max-width: 16rem"
+						>
+							<img
+								src="/pengelola/aset/proyektor.png"
+								class="card-img-top"
+								alt="Proyektor"
+								style="height: 160px; object-fit: cover"
+							/>
+							<div class="card-body py-3 px-3">
+								<h6 class="card-title fw-semibold mb-1">
+									Proyektor
+								</h6>
+								<p class="card-text text-muted small mb-2">
+									Unit proyektor untuk kegiatan presentasi.
+								</p>
+								<p class="text-secondary small mb-3">
+									Stok: <b>5 unit</b>
+								</p>
+								<a
+									href="#"
+									class="btn btn-success btn-sm rounded-pill px-3 py-1"
+									style="background-color: #0b492c"
+									>Edit</a
+								>
+							</div>
+						</div>
+					</div>
+
+					<!-- Card 2 -->
+					<div class="col-12 col-sm-6 col-md-4 col-lg-3">
+						<div
+							class="card h-100 border-0 rounded-4 shadow-strong mx-auto"
+							style="max-width: 16rem"
+						>
+							<img
+								src="/pengelola/aset/speaker.png"
+								class="card-img-top"
+								alt="Speaker"
+								style="height: 160px; object-fit: cover"
+							/>
+							<div class="card-body py-3 px-3">
+								<h6 class="card-title fw-semibold mb-1">
+									Speaker
+								</h6>
+								<p class="card-text text-muted small mb-2">
+									Speaker untuk kegiatan indoor dan outdoor.
+								</p>
+								<p class="text-secondary small mb-3">
+									Stok: <b>8 unit</b>
+								</p>
+								<a
+									href="#"
+									class="btn btn-success btn-sm rounded-pill px-3 py-1"
+									style="background-color: #0b492c"
+									>Edit</a
+								>
+							</div>
+						</div>
+					</div>
+
+					<!-- Card 3 -->
+					<div class="col-12 col-sm-6 col-md-4 col-lg-3">
+						<div
+							class="card h-100 border-0 rounded-4 shadow-strong mx-auto"
+							style="max-width: 16rem"
+						>
+							<img
+								src="/pengelola/aset/terpal.png"
+								class="card-img-top"
+								alt="Terpal"
+								style="height: 160px; object-fit: cover"
+							/>
+							<div class="card-body py-3 px-3">
+								<h6 class="card-title fw-semibold mb-1">
+									Terpal
+								</h6>
+								<p class="card-text text-muted small mb-2">
+									Terpal untuk kegiatan luar ruangan.
+								</p>
+								<p class="text-secondary small mb-3">
+									Stok: <b>10 unit</b>
+								</p>
+								<a
+									href="#"
+									class="btn btn-success btn-sm rounded-pill px-3 py-1"
+									style="background-color: #0b492c"
+									>Edit</a
+								>
+							</div>
+						</div>
+					</div>
+
+					<!-- Card 4 -->
+					<div class="col-12 col-sm-6 col-md-4 col-lg-3">
+						<div
+							class="card h-100 border-0 rounded-4 shadow-strong mx-auto"
+							style="max-width: 16rem"
+						>
+							<img
+								src="/pengelola/aset/meja.png"
+								class="card-img-top"
+								alt="Meja Kayu"
+								style="height: 160px; object-fit: cover"
+							/>
+							<div class="card-body py-3 px-3">
+								<h6 class="card-title fw-semibold mb-1">
+									Meja Kayu
+								</h6>
+								<p class="card-text text-muted small mb-2">
+									Meja serbaguna untuk kegiatan belajar.
+								</p>
+								<p class="text-secondary small mb-3">
+									Stok: <b>4 unit</b>
+								</p>
+								<a
+									href="#"
+									class="btn btn-success btn-sm rounded-pill px-3 py-1"
+									style="background-color: #0b492c"
+									>Edit</a
+								>
+							</div>
+						</div>
+					</div>
+
+					<!-- Card 5 -->
+					<div class="col-12 col-sm-6 col-md-4 col-lg-3">
+						<div
+							class="card h-100 border-0 rounded-4 shadow-strong mx-auto"
+							style="max-width: 16rem"
+						>
+							<img
+								src="/pengelola/aset/karpet.jpeg"
+								class="card-img-top"
+								alt="Karpet"
+								style="height: 160px; object-fit: cover"
+							/>
+							<div class="card-body py-3 px-3">
+								<h6 class="card-title fw-semibold mb-1">
+									Karpet
+								</h6>
+								<p class="card-text text-muted small mb-2">
+									Karpet untuk aula dan ruangan besar.
+								</p>
+								<p class="text-secondary small mb-3">
+									Stok: <b>12 unit</b>
+								</p>
+								<a
+									href="#"
+									class="btn btn-success btn-sm rounded-pill px-3 py-1"
+									style="background-color: #0b492c"
+									>Edit</a
+								>
+							</div>
+						</div>
+					</div>
+
+					<!-- Card 6 -->
+					<div class="col-12 col-sm-6 col-md-4 col-lg-3">
+						<div
+							class="card h-100 border-0 rounded-4 shadow-strong mx-auto"
+							style="max-width: 16rem"
+						>
+							<img
+								src="/pengelola/aset/buker.jpg"
+								class="card-img-top"
+								alt="Peralatan Bukber"
+								style="height: 160px; object-fit: cover"
+							/>
+							<div class="card-body py-3 px-3">
+								<h6 class="card-title fw-semibold mb-1">
+									Peralatan Bukber
+								</h6>
+								<p class="card-text text-muted small mb-2">
+									Peralatan tambahan untuk kegiatan MSU.
+								</p>
+								<p class="text-secondary small mb-3">
+									Stok: <b>6 unit</b>
+								</p>
+								<a
+									href="#"
+									class="btn btn-success btn-sm rounded-pill px-3 py-1"
+									style="background-color: #0b492c"
+									>Edit</a
+								>
+							</div>
+						</div>
+					</div>
+
+					<!-- Card 7 (Hijab) -->
+					<div class="col-12 col-sm-6 col-md-4 col-lg-3">
+						<div
+							class="card h-100 border-0 rounded-4 shadow-strong mx-auto"
+							style="max-width: 16rem"
+						>
+							<img
+								src="/pengelola/aset/hijab.png"
+								class="card-img-top"
+								alt="Hijab"
+								style="height: 160px; object-fit: cover"
+							/>
+							<div class="card-body py-3 px-3">
+								<h6 class="card-title fw-semibold mb-1">
+									Hijab
+								</h6>
+								<p class="card-text text-muted small mb-2">
+									Hijab seragam untuk kegiatan MSU.
+								</p>
+								<p class="text-secondary small mb-3">
+									Stok: <b>6 unit</b>
+								</p>
+								<a
+									href="#"
+									class="btn btn-success btn-sm rounded-pill px-3 py-1"
+									style="background-color: #0b492c"
+									>Edit</a
+								>
+							</div>
+						</div>
+					</div>
+
+					<!-- Card 8 (Sofa) -->
+					<div class="col-12 col-sm-6 col-md-4 col-lg-3">
+						<div
+							class="card h-100 border-0 rounded-4 shadow-strong mx-auto"
+							style="max-width: 16rem"
+						>
+							<img
+								src="/pengelola/aset/sofa.webp"
+								class="card-img-top"
+								alt="Sofa"
+								style="height: 160px; object-fit: cover"
+							/>
+							<div class="card-body py-3 px-3">
+								<h6 class="card-title fw-semibold mb-1">
+									Sofa
+								</h6>
+								<p class="card-text text-muted small mb-2">
+									Sofa nyaman untuk ruang tamu dan santai.
+								</p>
+								<p class="text-secondary small mb-3">
+									Stok: <b>3 unit</b>
+								</p>
+								<a
+									href="#"
+									class="btn btn-success btn-sm rounded-pill px-3 py-1"
+									style="background-color: #0b492c"
+									>Edit</a
+								>
+							</div>
+						</div>
+					</div>
+
+					<!-- Card 9 (Zoom) -->
+					<div class="col-12 col-sm-6 col-md-4 col-lg-3">
+						<div
+							class="card h-100 border-0 rounded-4 shadow-strong mx-auto"
+							style="max-width: 16rem"
+						>
+							<img
+								src="/pengelola/aset/zoom.jpg"
+								class="card-img-top"
+								alt="Akun Zoom MSU"
+								style="height: 160px; object-fit: cover"
+							/>
+							<div class="card-body py-3 px-3">
+								<h6 class="card-title fw-semibold mb-1">
+									Akun Zoom MSU
+								</h6>
+								<p class="card-text text-muted small mb-2">
+									Akun Zoom resmi untuk kegiatan online MSU.
+								</p>
+								<p class="text-secondary small mb-3">
+									Stok: <b>6 akun</b>
+								</p>
+								<a
+									href="#"
+									class="btn btn-success btn-sm rounded-pill px-3 py-1"
+									style="background-color: #0b492c"
+									>Edit</a
+								>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section id="gridFasilitas" class="mt-4 pb-5 d-none">
+				<div class="row g-4 justify-content-center">
+					<div class="col-12 col-sm-6 col-md-4 col-lg-3">
+						<div
+							class="card h-100 border-0 rounded-4 shadow-strong mx-auto"
+							style="max-width: 16rem"
+						>
+							<img
+								src="/pengelola/aset/ruang utama.jpg"
+								class="card-img-top"
+								alt="Ruang Utama"
+								style="height: 160px; object-fit: cover"
+							/>
+							<div class="card-body py-3 px-3">
+								<h6 class="card-title fw-semibold mb-1">
+									Ruang Utama
+								</h6>
+								<p class="card-text text-muted small mb-2">
+									Kapasitas besar untuk acara utama.
+								</p>
+								<p class="text-secondary small mb-3">
+									Ketersediaan: <b>Tersedia</b>
+								</p>
+								<a
+									href="#"
+									class="btn btn-success btn-sm rounded-pill px-3 py-1"
+									style="background: #0b492c"
+									>Edit</a
+								>
+							</div>
+						</div>
+					</div>
+					<div class="col-12 col-sm-6 col-md-4 col-lg-3">
+						<div
+							class="card h-100 border-0 rounded-4 shadow-strong mx-auto"
+							style="max-width: 16rem"
+						>
+							<img
+								src="/pengelola/aset/syamsul ulum vip.jpg"
+								class="card-img-top"
+								alt="Ruang Utama"
+								style="height: 160px; object-fit: cover"
+							/>
+							<div class="card-body py-3 px-3">
+								<h6 class="card-title fw-semibold mb-1">
+									Ruang Tamu VIP
+								</h6>
+								<p class="card-text text-muted small mb-2">
+									Kapasitas besar untuk acara utama.
+								</p>
+								<p class="text-secondary small mb-3">
+									Ketersediaan: <b>Tersedia</b>
+								</p>
+								<a
+									href="#"
+									class="btn btn-success btn-sm rounded-pill px-3 py-1"
+									style="background: #0b492c"
+									>Edit</a
+								>
+							</div>
+						</div>
+					</div>
+					<div class="col-12 col-sm-6 col-md-4 col-lg-3">
+						<div
+							class="card h-100 border-0 rounded-4 shadow-strong mx-auto"
+							style="max-width: 16rem"
+						>
+							<img
+								src="/pengelola/aset/"
+								class="card-img-top"
+								alt="Ruang Utama"
+								style="height: 160px; object-fit: cover"
+							/>
+							<div class="card-body py-3 px-3">
+								<h6 class="card-title fw-semibold mb-1">
+									Pelataran Masjid
+								</h6>
+								<p class="card-text text-muted small mb-2">
+									Kapasitas besar untuk acara utama.
+								</p>
+								<p class="text-secondary small mb-3">
+									Ketersediaan: <b>Tersedia</b>
+								</p>
+								<a
+									href="#"
+									class="btn btn-success btn-sm rounded-pill px-3 py-1"
+									style="background: #0b492c"
+									>Edit</a
+								>
+							</div>
+						</div>
+					</div>
+					<div class="col-12 col-sm-6 col-md-4 col-lg-3">
+						<div
+							class="card h-100 border-0 rounded-4 shadow-strong mx-auto"
+							style="max-width: 16rem"
+						>
+							<img
+								src="/pengelola/aset/aula.jpg"
+								class="card-img-top"
+								alt="Ruang Utama"
+								style="height: 160px; object-fit: cover"
+							/>
+							<div class="card-body py-3 px-3">
+								<h6 class="card-title fw-semibold mb-1">
+									Selasar/Teras Selatan Masjid
+								</h6>
+								<p class="card-text text-muted small mb-2">
+									Kapasitas besar untuk acara utama.
+								</p>
+								<p class="text-secondary small mb-3">
+									Ketersediaan: <b>Tersedia</b>
+								</p>
+								<a
+									href="#"
+									class="btn btn-success btn-sm rounded-pill px-3 py-1"
+									style="background: #0b492c"
+									>Edit</a
+								>
+							</div>
+						</div>
+					</div>
+					<div class="col-12 col-sm-6 col-md-4 col-lg-3">
+						<div
+							class="card h-100 border-0 rounded-4 shadow-strong mx-auto"
+							style="max-width: 16rem"
+						>
+							<img
+								src="/pengelola/aset/aula.jpg"
+								class="card-img-top"
+								alt="Ruang Utama"
+								style="height: 160px; object-fit: cover"
+							/>
+							<div class="card-body py-3 px-3">
+								<h6 class="card-title fw-semibold mb-1">
+									Selasar/Teras Utara Masjid
+								</h6>
+								<p class="card-text text-muted small mb-2">
+									Kapasitas besar untuk acara utama.
+								</p>
+								<p class="text-secondary small mb-3">
+									Ketersediaan: <b>Tersedia</b>
+								</p>
+								<a
+									href="#"
+									class="btn btn-success btn-sm rounded-pill px-3 py-1"
+									style="background: #0b492c"
+									>Edit</a
+								>
+							</div>
+						</div>
+					</div>
+					<div class="col-12 col-sm-6 col-md-4 col-lg-3">
+						<div
+							class="card h-100 border-0 rounded-4 shadow-strong mx-auto"
+							style="max-width: 16rem"
+						>
+							<img
+								src="/pengelola/aset/aula.jpg"
+								class="card-img-top"
+								alt="Ruang Utama"
+								style="height: 160px; object-fit: cover"
+							/>
+							<div class="card-body py-3 px-3">
+								<h6 class="card-title fw-semibold mb-1">
+									Selasar/Teras Timur Masjid
+								</h6>
+								<p class="card-text text-muted small mb-2">
+									Kapasitas besar untuk acara utama.
+								</p>
+								<p class="text-secondary small mb-3">
+									Ketersediaan: <b>Tersedia</b>
+								</p>
+								<a
+									href="#"
+									class="btn btn-success btn-sm rounded-pill px-3 py-1"
+									style="background: #0b492c"
+									>Edit</a
+								>
+							</div>
+						</div>
+					</div>
+					<div class="col-12 col-sm-6 col-md-4 col-lg-3">
+						<div
+							class="card h-100 border-0 rounded-4 shadow-strong mx-auto"
+							style="max-width: 16rem"
+						>
+							<img
+								src="/pengelola/aset/plaza dalem.jpg"
+								class="card-img-top"
+								alt="Ruang Utama"
+								style="height: 160px; object-fit: cover"
+							/>
+							<div class="card-body py-3 px-3">
+								<h6 class="card-title fw-semibold mb-1">
+									Plaza Masjid
+								</h6>
+								<p class="card-text text-muted small mb-2">
+									Kapasitas besar untuk acara utama.
+								</p>
+								<p class="text-secondary small mb-3">
+									Ketersediaan: <b>Tersedia</b>
+								</p>
+								<a
+									href="#"
+									class="btn btn-success btn-sm rounded-pill px-3 py-1"
+									style="background: #0b492c"
+									>Edit</a
+								>
+							</div>
+						</div>
+					</div>
+					<div class="col-12 col-sm-6 col-md-4 col-lg-3">
+						<div
+							class="card h-100 border-0 rounded-4 shadow-strong mx-auto"
+							style="max-width: 16rem"
+						>
+							<img
+								src="/pengelola/aset/aula.jpg"
+								class="card-img-top"
+								alt="Ruang Utama"
+								style="height: 160px; object-fit: cover"
+							/>
+							<div class="card-body py-3 px-3">
+								<h6 class="card-title fw-semibold mb-1">
+									Lantai 2 Timur Masjid
+								</h6>
+								<p class="card-text text-muted small mb-2">
+									Kapasitas besar untuk acara utama.
+								</p>
+								<p class="text-secondary small mb-3">
+									Ketersediaan: <b>Tersedia</b>
+								</p>
+								<a
+									href="#"
+									class="btn btn-success btn-sm rounded-pill px-3 py-1"
+									style="background: #0b492c"
+									>Edit</a
+								>
+							</div>
+						</div>
+					</div>
+					<div class="col-12 col-sm-6 col-md-4 col-lg-3">
+						<div
+							class="card h-100 border-0 rounded-4 shadow-strong mx-auto"
+							style="max-width: 16rem"
+						>
+							<img
+								src="/pengelola/aset/aula.jpg"
+								class="card-img-top"
+								alt="Ruang Utama"
+								style="height: 160px; object-fit: cover"
+							/>
+							<div class="card-body py-3 px-3">
+								<h6 class="card-title fw-semibold mb-1">
+									Lantai 2 Selatan Masjid
+								</h6>
+								<p class="card-text text-muted small mb-2">
+									Kapasitas besar untuk acara utama.
+								</p>
+								<p class="text-secondary small mb-3">
+									Ketersediaan: <b>Tersedia</b>
+								</p>
+								<a
+									href="#"
+									class="btn btn-success btn-sm rounded-pill px-3 py-1"
+									style="background: #0b492c"
+									>Edit</a
+								>
+							</div>
+						</div>
+					</div>
+					<div class="col-12 col-sm-6 col-md-4 col-lg-3">
+						<div
+							class="card h-100 border-0 rounded-4 shadow-strong mx-auto"
+							style="max-width: 16rem"
+						>
+							<img
+								src="/pengelola/aset/aula.jpg"
+								class="card-img-top"
+								alt="Ruang Utama"
+								style="height: 160px; object-fit: cover"
+							/>
+							<div class="card-body py-3 px-3">
+								<h6 class="card-title fw-semibold mb-1">
+									Lantai 2 Utara Masjid
+								</h6>
+								<p class="card-text text-muted small mb-2">
+									Kapasitas besar untuk acara utama.
+								</p>
+								<p class="text-secondary small mb-3">
+									Ketersediaan: <b>Tersedia</b>
+								</p>
+								<a
+									href="#"
+									class="btn btn-success btn-sm rounded-pill px-3 py-1"
+									style="background: #0b492c"
+									>Edit</a
+								>
+							</div>
+						</div>
+					</div>
+					<div class="col-12 col-sm-6 col-md-4 col-lg-3">
+						<div
+							class="card h-100 border-0 rounded-4 shadow-strong mx-auto"
+							style="max-width: 16rem"
+						>
+							<img
+								src="/pengelola/aset/depan samping.jpg"
+								class="card-img-top"
+								alt="Ruang Utama"
+								style="height: 160px; object-fit: cover"
+							/>
+							<div class="card-body py-3 px-3">
+								<h6 class="card-title fw-semibold mb-1">
+									Halaman Masjid
+								</h6>
+								<p class="card-text text-muted small mb-2">
+									Kapasitas besar untuk acara utama.
+								</p>
+								<p class="text-secondary small mb-3">
+									Ketersediaan: <b>Tersedia</b>
+								</p>
+								<a
+									href="#"
+									class="btn btn-success btn-sm rounded-pill px-3 py-1"
+									style="background: #0b492c"
+									>Edit</a
+								>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+		<script src="/pengelola/beranda.js"></script>
+	</body>
+</html>
