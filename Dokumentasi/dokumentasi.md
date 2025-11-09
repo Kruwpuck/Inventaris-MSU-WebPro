@@ -9,7 +9,6 @@ baik menggunakan **Docker Desktop** maupun **XAMPP (tanpa Docker)** di Windows.
   <img src="https://img.shields.io/badge/Laravel-12.x-ff2d20?style=for-the-badge&logo=laravel&logoColor=white" alt="Laravel 12.x Badge"/>
   <img src="https://img.shields.io/badge/PHP-8.4-777BB4?style=for-the-badge&logo=php&logoColor=white" alt="PHP 8.4 Badge"/>
   <img src="https://img.shields.io/badge/Docker-Desktop-blue?style=for-the-badge&logo=docker&logoColor=white" alt="Docker Desktop Badge"/>
-  <img src="https://img-shields.io/badge/Database-MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white" alt="MySQL Badge"/>
 </p>
 
 ---
