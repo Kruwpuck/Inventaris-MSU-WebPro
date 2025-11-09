@@ -1,0 +1,31 @@
+:root{
+  --green-1:#eaf6ee; --green-2:#9bd0a5; --green-3:#2e8b57; --green-4:#236e47;
+}
+
+/* NAVBAR */
+.navbar-masjid{background:var(--green-1)!important;border-bottom:1px solid rgba(0,0,0,.06);padding:.6rem 0}
+.navbar-masjid .logo{width:36px;height:36px;object-fit:contain}
+.navbar-masjid .brand-text{font-weight:700;color:var(--green-3)}
+.navbar-masjid .nav-link{font-weight:700;color:var(--green-3);white-space:nowrap}
+.navbar-masjid .nav-link:hover{color:var(--green-4)}
+.navbar-masjid .nav-link.active{color:var(--green-4);position:relative}
+.navbar-masjid .nav-link.active::after{content:"";position:absolute;left:0;right:0;bottom:-6px;margin:auto;width:44px;height:4px;border-radius:999px;background:var(--green-2)}
+.nav-cta-row{display:flex;gap:.6rem;align-items:center}
+.notif-circle{width:38px;height:38px;border-radius:50%;background:var(--green-3);display:flex;justify-content:center;align-items:center}
+.notif-circle i{color:#fff}
+.btn-masuk{background:#e8fff0;border:1px solid #b8e6c5;color:var(--green-4);padding:.44rem 1rem;border-radius:999px;font-weight:700;text-decoration:none}
+
+/* Content */
+body{background:#f6f8f7;font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#121816}
+.place-items-center{place-items:center}
+.fw-extrabold{font-weight:800}
+.btn-primary-soft{background:#e7fff4;border:1px solid #b9ecd0;color:#0f6f6b;font-weight:700}
+.btn-outline-success{border-color:#2e8b57;color:#2e8b57;font-weight:700}
+.btn-outline-success:hover{background:#2e8b57;color:#fff}
+
+/* Animations */
+.drop-in{opacity:0;transform:translateY(-36px);transition:.9s}
+.drop-in.show{opacity:1;transform:none}
+.reveal-up{opacity:0;transform:translateY(22px);transition:opacity .7s ease, transform .7s ease}
+.reveal-up.show{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.drop-in,.reveal-up{opacity:1;transform:none;transition:none}}

@@ -1,0 +1,70 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: inventori-msu-app
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+      # .env.docker dijadikan .env di dalam container
+      - ./.env.docker:/var/www/.env
+    depends_on:
+      - db
+
+  nginx:
+    image: nginx:alpine
+    container_name: inventori-msu-nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - app
+
+  db:
+    image: mysql:8.0
+    container_name: inventori-msu-db
+    environment:
+      MYSQL_DATABASE: inventori_msu
+      MYSQL_ROOT_PASSWORD: bismillah
+      MYSQL_USER: habb
+      MYSQL_PASSWORD: 589654785
+    ports:
+      - "3307:3306"   # supaya tidak tabrakan dengan XAMPP/MySQL lokal
+    volumes:
+      - dbdata:/var/lib/mysql
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: inventori-msu-pma
+    links:
+      - db:mysql
+    environment:
+      # Nama host database, harus sama dengan nama service database Anda
+      PMA_HOST: db 
+      # Port MySQL, biarkan default
+      PMA_PORT: 3306 
+      # Untuk login menggunakan user yang Anda buat (habb)
+      MYSQL_ROOT_PASSWORD: bismillah 
+    ports:
+      - "8081:80" # Akses phpMyAdmin di host Anda melalui port 8081
+    depends_on:
+      - db
+  vite:
+    image: node:20-alpine
+    container_name: inventori-msu-vite
+    working_dir: /var/www
+    command: sh -c "npm install && npm run dev"
+    volumes:
+      - ./:/var/www
+    ports:
+      - "5173:5173"   # HMR Vite
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - VITE_HOST=0.0.0.0
+    depends_on:
+      - app
+
+volumes:
+  dbdata:
