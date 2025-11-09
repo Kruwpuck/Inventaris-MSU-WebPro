@@ -28,7 +28,6 @@
 					0 4px 6px rgba(0, 0, 0, 0.08);
 			}
 
-			/* Navbar */
 			.navbar-nav .nav-link {
 				color: #2fa16c;
 				font-weight: 600;
@@ -42,14 +41,43 @@
 				color: #0b492c !important;
 			}
 
-			/* Toolbar */
 			.toolbar .btn,
 			.toolbar .form-select,
-			.toolbar .form-control {
+			.toolbar .form-control,
+			.toolbar .input-group-text {
 				border-radius: 9999px;
 			}
 
-			/* Table wrapper */
+			.toolbar .btn-pill {
+				border-radius: 9999px;
+				border: 1px solid #0b492c;
+				color: #0b492c;
+				background: #fff;
+			}
+			.toolbar .btn-pill:hover,
+			.toolbar .btn-pill:focus {
+				color: #0b492c;
+				background: #f5fbf7;
+				border-color: #0b492c;
+			}
+
+			.toolbar .dropdown-menu {
+				border-radius: 14px;
+				border: 1px solid #0b492c;
+				box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
+				padding: 6px 0;
+				min-width: 100%; 
+			}
+			.toolbar .dropdown-item {
+				padding: 0.5rem 1rem;
+				border-radius: 10px;
+			}
+			.toolbar .dropdown-item.active,
+			.toolbar .dropdown-item:hover {
+				background: #e9f6ef;
+				color: #0b492c;
+			}
+
 			.table-wrapper {
 				background: #fff;
 				border-radius: 18px;
@@ -57,18 +85,16 @@
 				padding: 16px;
 			}
 
-			/* Head table: lebih kecil & nowrap agar tidak bertumpuk */
 			.table thead th {
 				color: #5f6b77;
 				font-weight: 700;
-				font-size: 0.9rem; /* kecilkan */
-				white-space: nowrap; /* cegah baris ganda */
+				font-size: 0.9rem;
+				white-space: nowrap;
 				vertical-align: middle;
-				background: #f7f8fa; /* kontras ringan */
+				background: #f7f8fa;
 				border-bottom: 2px solid #b7c1cc !important;
 			}
 
-			/* Table border tegas (formal untuk unduh/print) */
 			.table-bordered {
 				border: 1.5px solid #b7c1cc !important;
 			}
@@ -82,12 +108,14 @@
 				font-size: 0.95rem;
 			}
 
-			/* Badge status lebih kecil */
 			.badge-status {
+				display: inline-block;
+				min-width: 130px; 
+				text-align: center; 
 				border-radius: 9999px;
-				padding: 0.28rem 0.6rem; /* lebih kecil */
+				padding: 0.35rem 0.6rem;
 				font-weight: 600;
-				font-size: 0.75rem; /* kecilkan */
+				font-size: 0.8rem;
 				white-space: nowrap;
 			}
 			.status-sedang {
@@ -102,8 +130,12 @@
 				background: #7a2c2c;
 				color: #fff;
 			}
-
-			/* Print: pertajam border & hilangkan bayangan */
+			#fSearch:focus {
+				border-color: #000; 
+				box-shadow: none;
+				outline: none;
+			}
+			
 			@media print {
 				.shadow-soft,
 				.shadow-strong,
@@ -191,6 +223,7 @@
 		<div class="container">
 			<!-- Toolbar -->
 			<div class="toolbar d-flex flex-wrap gap-3 align-items-center mb-4">
+				<!-- Unduh split button -->
 				<div class="btn-group">
 					<button
 						type="button"
@@ -215,28 +248,136 @@
 					</ul>
 				</div>
 
-				<select id="fPeriode" class="form-select w-auto">
-					<option value="2w">2 Minggu Terakhir</option>
-					<option value="1m" selected>Bulan Ini</option>
-					<option value="prev1m">Bulan Lalu</option>
-					<option value="all">Semua Waktu</option>
-				</select>
+				<!-- PERIODE -->
+				<div class="dropdown">
+					<button
+						class="btn btn-pill dropdown-toggle"
+						type="button"
+						data-bs-toggle="dropdown"
+						aria-expanded="false"
+						id="btnPeriode"
+					>
+						Bulan Ini
+					</button>
+					<ul class="dropdown-menu" aria-labelledby="btnPeriode">
+						<li>
+							<a class="dropdown-item" href="#" data-value="2w"
+								>2 Minggu Terakhir</a
+							>
+						</li>
+						<li>
+							<a
+								class="dropdown-item active"
+								href="#"
+								data-value="1m"
+								>Bulan Ini</a
+							>
+						</li>
+						<li>
+							<a
+								class="dropdown-item"
+								href="#"
+								data-value="prev1m"
+								>Bulan Lalu</a
+							>
+						</li>
+						<li>
+							<a class="dropdown-item" href="#" data-value="all"
+								>Semua Waktu</a
+							>
+						</li>
+					</ul>
+				</div>
 
-				<select id="fKategori" class="form-select w-auto">
-					<option value="all" selected>Semua Kategori</option>
-					<option value="Barang">Barang</option>
-					<option value="Fasilitas">Fasilitas</option>
-				</select>
+				<!-- KATEGORI -->
+				<div class="dropdown">
+					<button
+						class="btn btn-pill dropdown-toggle"
+						type="button"
+						data-bs-toggle="dropdown"
+						aria-expanded="false"
+						id="btnKategori"
+					>
+						Semua Kategori
+					</button>
+					<ul class="dropdown-menu" aria-labelledby="btnKategori">
+						<li>
+							<a
+								class="dropdown-item active"
+								href="#"
+								data-value="all"
+								>Semua Kategori</a
+							>
+						</li>
+						<li>
+							<a
+								class="dropdown-item"
+								href="#"
+								data-value="Barang"
+								>Barang</a
+							>
+						</li>
+						<li>
+							<a
+								class="dropdown-item"
+								href="#"
+								data-value="Fasilitas"
+								>Fasilitas</a
+							>
+						</li>
+					</ul>
+				</div>
 
-				<select id="fStatus" class="form-select w-auto">
-					<option value="all" selected>Semua Status</option>
-					<option value="Sedang Dipinjam">Sedang Dipinjam</option>
-					<option value="Sudah Kembali">Sudah Kembali</option>
-					<option value="Terlambat">Terlambat</option>
-				</select>
+				<!-- STATUS -->
+				<div class="dropdown">
+					<button
+						class="btn btn-pill dropdown-toggle"
+						type="button"
+						data-bs-toggle="dropdown"
+						aria-expanded="false"
+						id="btnStatus"
+					>
+						Semua Status
+					</button>
+					<ul class="dropdown-menu" aria-labelledby="btnStatus">
+						<li>
+							<a
+								class="dropdown-item active"
+								href="#"
+								data-value="all"
+								>Semua Status</a
+							>
+						</li>
+						<li>
+							<a
+								class="dropdown-item"
+								href="#"
+								data-value="Sedang Dipinjam"
+								>Sedang Dipinjam</a
+							>
+						</li>
+						<li>
+							<a
+								class="dropdown-item"
+								href="#"
+								data-value="Sudah Kembali"
+								>Sudah Kembali</a
+							>
+						</li>
+						<li>
+							<a
+								class="dropdown-item"
+								href="#"
+								data-value="Terlambat"
+								>Terlambat</a
+							>
+						</li>
+					</ul>
+				</div>
 
 				<div class="ms-auto"></div>
 
+				<!-- Search -->
 				<div class="input-group" style="max-width: 320px">
 					<span class="input-group-text bg-white"
 						><i class="bi bi-search"></i
@@ -269,7 +410,7 @@
 							</tr>
 						</thead>
 						<tbody id="tbodyLaporan">
-							<!-- 15 data dummy rapi -->
+							<!-- DATA DUMMY -->
 							<tr
 								data-kategori="Barang"
 								data-status="Sudah Kembali"
@@ -551,7 +692,7 @@
 				</div>
 			</div>
 
-			<!-- ANALISIS TREN: hanya Top Item -->
+			<!-- ANALISIS TREN (placeholder) -->
 			<div class="card shadow-strong p-3 mb-5">
 				<h6 class="mb-3">
 					Top 10 yang paling sering dipinjam (hasil filter manual
@@ -563,5 +704,6 @@
 
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+		<script src="laporan.js"></script>
 	</body>
 </html>

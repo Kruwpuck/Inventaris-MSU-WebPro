@@ -36,14 +36,20 @@
 				transition: color 0.2s ease;
 			}
 
-			/* hover effect */
 			.navbar-nav .nav-link:hover {
 				color: #0b492c;
 			}
 
-			/* halaman aktif */
+			
 			.navbar-nav .nav-link.active {
 				color: #0b492c !important;
+			}
+			
+			input[type="search"]:focus,
+			input[type="text"]:focus,
+			.form-control:focus {
+				box-shadow: none !important;
+				border-color: #000 !important;
 			}
 		</style>
 	</head>
@@ -53,26 +59,12 @@
 		<nav class="navbar navbar-expand-lg fixed-top shadow-soft bg-white">
 			<div class="container">
 				<a class="navbar-brand" href="#">
-					<img
-						src="/pengelola/aset/logo.png"
-						alt="Logo MSU"
-						style="height: 45px"
-					/>
+					<img src="/pengelola/aset/logo.png"alt="Logo MSU"style="height: 45px"/>
 				</a>
-
-				<button
-					class="navbar-toggler"
-					type="button"
-					data-bs-toggle="collapse"
-					data-bs-target="#navmenu"
-				>
+				<button class="navbar-toggler"type="button"data-bs-toggle="collapse"data-bs-target="#navmenu">
 					<span class="navbar-toggler-icon"></span>
 				</button>
-
-				<div
-					class="collapse navbar-collapse justify-content-end"
-					id="navmenu"
-				>
+				<div class="collapse navbar-collapse justify-content-end"id="navmenu">
 					<ul class="navbar-nav mb-2 mb-lg-0">
 						<li class="nav-item">
 							<a class="nav-link active" href="#">Beranda</a>
@@ -81,7 +73,7 @@
 							<a class="nav-link" href="laporan.html">Laporan</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="#">Tambah Barang</a>
+							<a class="nav-link" href="tambah.html">Tambah Barang</a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link" href="#">Approval</a>
@@ -89,17 +81,8 @@
 					</ul>
 
 					<div class="ms-3 d-flex align-items-center">
-						<img
-							id="user"
-							src="/pengelola/aset/MSU.png"
-							alt="User"
-							class="rounded-circle me-2"
-							width="35"
-							height="35"
-						/>
-						<span id="userName" class="fw-semibold text-dark"
-							>Arina</span
-						>
+						<img id="user"src="/pengelola/aset/MSU.png"alt="User"class="rounded-circle me-2"width="35"height="35"/>
+						<span id="userName" class="fw-semibold text-dark">Arina</span>
 					</div>
 				</div>
 			</div>
@@ -114,9 +97,7 @@
 				background-image: url('/pengelola/aset/ramadhan.png');
 				background-size: contain;
 				background-position: center;
-				background-repeat: no-repeat;
-			"
-		>
+				background-repeat: no-repeat;">
 			<img
 				src="/pengelola/aset/MSU.png"
 				alt="Syamsul Ulum"
@@ -128,84 +109,16 @@
 		<!-- MAIN CONTENT -->
 		<div class="container">
 			<!-- SEARCH BOX -->
-			<div
-				class="bg-white rounded-pill px-4 py-4 position-relative shadow-strong"
-			>
-				<form class="row gx-3 gy-3 align-items-end">
-					<!-- Nama Barang -->
-					<div class="col-12 col-md-3">
-						<div class="d-flex flex-column">
-							<label
-								id="labelNama"
-								class="form-label fw-semibold small mb-2 text-secondary"
-								>Nama Barang</label
-							>
-							<select
-								id="selectNama"
-								class="form-select rounded-pill py-2"
-							>
-								<option selected>Pilih Barang</option>
-								<option>Proyektor</option>
-								<option>Karpet</option>
-								<option>Speaker</option>
-								<option>Meja</option>
-							</select>
-						</div>
+			<form id="searchForm" class="row align-items-center justify-content-center gx-2 gy-2">
+				<div class="col-12 col-md-6 col-lg-5">
+					<div class="input-group">
+						<input id="quickSearch"type="text"class="form-control rounded-start-pill py-2"placeholder="Cari barang atau fasilitas..."/>
+						<button class="btn btn-success rounded-end-pill px-4"type="submit">
+							<i class="bi bi-search me-1"></i>Cari
+						</button>
 					</div>
-
-					<!-- Tanggal Peminjaman -->
-					<div class="col-12 col-md-3">
-						<div class="d-flex flex-column">
-							<label
-								class="form-label fw-semibold small mb-2 text-secondary"
-								>Tanggal Peminjaman</label
-							>
-							<input
-								type="date"
-								class="form-control rounded-pill py-2"
-							/>
-						</div>
-					</div>
-
-					<!-- Tanggal Pengembalian -->
-					<div class="col-12 col-md-3">
-						<div class="d-flex flex-column">
-							<label
-								class="form-label fw-semibold small mb-2 text-secondary"
-								>Tanggal Pengembalian</label
-							>
-							<input
-								type="date"
-								class="form-control rounded-pill py-2"
-							/>
-						</div>
-					</div>
-
-					<!-- SEARCH BAR + BUTTON -->
-					<div class="col-12 col-md-3">
-						<div class="d-flex flex-column">
-							<label
-								class="form-label fw-semibold small mb-2 text-secondary"
-								>Cari cepat</label
-							>
-							<div class="input-group">
-								<input
-									id="quickSearch"
-									type="text"
-									class="form-control rounded-start-pill py-2"
-									placeholder="Ketik kata kunci..."
-								/>
-								<button
-									class="btn btn-success rounded-end-pill px-4"
-									type="submit"
-								>
-									Cari
-								</button>
-							</div>
-						</div>
-					</div>
-				</form>
-			</div>
+				</div>
+			</form>
 
 			<!-- INFO SECTION -->
 			<section class="text-center mt-5">
@@ -221,35 +134,16 @@
 				<!-- Dropdown Barang -->
 				<div class="text-start">
 					<div class="dropdown d-inline-block">
-						<button
-							id="kategoriBtn"
-							class="btn btn-success dropdown-toggle rounded-pill px-4 py-2"
-							type="button"
-							data-bs-toggle="dropdown"
-							aria-expanded="false"
-							style="
-								background-color: #0b492c;
-								border-color: #0b492c;
-							"
-						>
+						<button id="kategoriBtn" class="btn btn-success dropdown-toggle rounded-pill px-4 py-2"type="button"data-bs-toggle="dropdown"aria-expanded="false"
+							style="background-color: #0b492c;border-color: #0b492c;">
 							Barang
 						</button>
 						<ul class="dropdown-menu">
 							<li>
-								<a
-									class="dropdown-item"
-									href="#"
-									data-switch="barang"
-									>Barang</a
-								>
+								<a class="dropdown-item"href="#"data-switch="barang">Barang</a>
 							</li>
 							<li>
-								<a
-									class="dropdown-item"
-									href="#"
-									data-switch="fasilitas"
-									>Fasilitas</a
-								>
+								<a class="dropdown-item"href="#"data-switch="fasilitas">Fasilitas</a>
 							</li>
 						</ul>
 					</div>
@@ -587,7 +481,7 @@
 							style="max-width: 16rem"
 						>
 							<img
-								src="/pengelola/aset/syamsul ulum vip.jpg"
+								src="/pengelola/aset/ruangTamu.jpg"
 								class="card-img-top"
 								alt="Ruang Utama"
 								style="height: 160px; object-fit: cover"
@@ -617,14 +511,14 @@
 							style="max-width: 16rem"
 						>
 							<img
-								src="/pengelola/aset/"
+								src="/pengelola/aset/plaza.jpg"
 								class="card-img-top"
 								alt="Ruang Utama"
 								style="height: 160px; object-fit: cover"
 							/>
 							<div class="card-body py-3 px-3">
 								<h6 class="card-title fw-semibold mb-1">
-									Pelataran Masjid
+									Plaza
 								</h6>
 								<p class="card-text text-muted small mb-2">
 									Kapasitas besar untuk acara utama.
@@ -647,37 +541,7 @@
 							style="max-width: 16rem"
 						>
 							<img
-								src="/pengelola/aset/aula.jpg"
-								class="card-img-top"
-								alt="Ruang Utama"
-								style="height: 160px; object-fit: cover"
-							/>
-							<div class="card-body py-3 px-3">
-								<h6 class="card-title fw-semibold mb-1">
-									Selasar/Teras Selatan Masjid
-								</h6>
-								<p class="card-text text-muted small mb-2">
-									Kapasitas besar untuk acara utama.
-								</p>
-								<p class="text-secondary small mb-3">
-									Ketersediaan: <b>Tersedia</b>
-								</p>
-								<a
-									href="#"
-									class="btn btn-success btn-sm rounded-pill px-3 py-1"
-									style="background: #0b492c"
-									>Edit</a
-								>
-							</div>
-						</div>
-					</div>
-					<div class="col-12 col-sm-6 col-md-4 col-lg-3">
-						<div
-							class="card h-100 border-0 rounded-4 shadow-strong mx-auto"
-							style="max-width: 16rem"
-						>
-							<img
-								src="/pengelola/aset/aula.jpg"
+								src="/pengelola/aset/selasar.jpg"
 								class="card-img-top"
 								alt="Ruang Utama"
 								style="height: 160px; object-fit: cover"
@@ -707,164 +571,14 @@
 							style="max-width: 16rem"
 						>
 							<img
-								src="/pengelola/aset/aula.jpg"
+								src="/pengelola/aset/ruangKaca.jpg"
 								class="card-img-top"
 								alt="Ruang Utama"
 								style="height: 160px; object-fit: cover"
 							/>
 							<div class="card-body py-3 px-3">
 								<h6 class="card-title fw-semibold mb-1">
-									Selasar/Teras Timur Masjid
-								</h6>
-								<p class="card-text text-muted small mb-2">
-									Kapasitas besar untuk acara utama.
-								</p>
-								<p class="text-secondary small mb-3">
-									Ketersediaan: <b>Tersedia</b>
-								</p>
-								<a
-									href="#"
-									class="btn btn-success btn-sm rounded-pill px-3 py-1"
-									style="background: #0b492c"
-									>Edit</a
-								>
-							</div>
-						</div>
-					</div>
-					<div class="col-12 col-sm-6 col-md-4 col-lg-3">
-						<div
-							class="card h-100 border-0 rounded-4 shadow-strong mx-auto"
-							style="max-width: 16rem"
-						>
-							<img
-								src="/pengelola/aset/plaza dalem.jpg"
-								class="card-img-top"
-								alt="Ruang Utama"
-								style="height: 160px; object-fit: cover"
-							/>
-							<div class="card-body py-3 px-3">
-								<h6 class="card-title fw-semibold mb-1">
-									Plaza Masjid
-								</h6>
-								<p class="card-text text-muted small mb-2">
-									Kapasitas besar untuk acara utama.
-								</p>
-								<p class="text-secondary small mb-3">
-									Ketersediaan: <b>Tersedia</b>
-								</p>
-								<a
-									href="#"
-									class="btn btn-success btn-sm rounded-pill px-3 py-1"
-									style="background: #0b492c"
-									>Edit</a
-								>
-							</div>
-						</div>
-					</div>
-					<div class="col-12 col-sm-6 col-md-4 col-lg-3">
-						<div
-							class="card h-100 border-0 rounded-4 shadow-strong mx-auto"
-							style="max-width: 16rem"
-						>
-							<img
-								src="/pengelola/aset/aula.jpg"
-								class="card-img-top"
-								alt="Ruang Utama"
-								style="height: 160px; object-fit: cover"
-							/>
-							<div class="card-body py-3 px-3">
-								<h6 class="card-title fw-semibold mb-1">
-									Lantai 2 Timur Masjid
-								</h6>
-								<p class="card-text text-muted small mb-2">
-									Kapasitas besar untuk acara utama.
-								</p>
-								<p class="text-secondary small mb-3">
-									Ketersediaan: <b>Tersedia</b>
-								</p>
-								<a
-									href="#"
-									class="btn btn-success btn-sm rounded-pill px-3 py-1"
-									style="background: #0b492c"
-									>Edit</a
-								>
-							</div>
-						</div>
-					</div>
-					<div class="col-12 col-sm-6 col-md-4 col-lg-3">
-						<div
-							class="card h-100 border-0 rounded-4 shadow-strong mx-auto"
-							style="max-width: 16rem"
-						>
-							<img
-								src="/pengelola/aset/aula.jpg"
-								class="card-img-top"
-								alt="Ruang Utama"
-								style="height: 160px; object-fit: cover"
-							/>
-							<div class="card-body py-3 px-3">
-								<h6 class="card-title fw-semibold mb-1">
-									Lantai 2 Selatan Masjid
-								</h6>
-								<p class="card-text text-muted small mb-2">
-									Kapasitas besar untuk acara utama.
-								</p>
-								<p class="text-secondary small mb-3">
-									Ketersediaan: <b>Tersedia</b>
-								</p>
-								<a
-									href="#"
-									class="btn btn-success btn-sm rounded-pill px-3 py-1"
-									style="background: #0b492c"
-									>Edit</a
-								>
-							</div>
-						</div>
-					</div>
-					<div class="col-12 col-sm-6 col-md-4 col-lg-3">
-						<div
-							class="card h-100 border-0 rounded-4 shadow-strong mx-auto"
-							style="max-width: 16rem"
-						>
-							<img
-								src="/pengelola/aset/aula.jpg"
-								class="card-img-top"
-								alt="Ruang Utama"
-								style="height: 160px; object-fit: cover"
-							/>
-							<div class="card-body py-3 px-3">
-								<h6 class="card-title fw-semibold mb-1">
-									Lantai 2 Utara Masjid
-								</h6>
-								<p class="card-text text-muted small mb-2">
-									Kapasitas besar untuk acara utama.
-								</p>
-								<p class="text-secondary small mb-3">
-									Ketersediaan: <b>Tersedia</b>
-								</p>
-								<a
-									href="#"
-									class="btn btn-success btn-sm rounded-pill px-3 py-1"
-									style="background: #0b492c"
-									>Edit</a
-								>
-							</div>
-						</div>
-					</div>
-					<div class="col-12 col-sm-6 col-md-4 col-lg-3">
-						<div
-							class="card h-100 border-0 rounded-4 shadow-strong mx-auto"
-							style="max-width: 16rem"
-						>
-							<img
-								src="/pengelola/aset/depan samping.jpg"
-								class="card-img-top"
-								alt="Ruang Utama"
-								style="height: 160px; object-fit: cover"
-							/>
-							<div class="card-body py-3 px-3">
-								<h6 class="card-title fw-semibold mb-1">
-									Halaman Masjid
+									Lantai 2 Ruang Kaca
 								</h6>
 								<p class="card-text text-muted small mb-2">
 									Kapasitas besar untuk acara utama.
