@@ -3,8 +3,11 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "vite build",
-        "dev": "vite"
+    "up": "docker compose up -d",
+    "down": "docker compose down",
+    "migrate": "docker exec -it inventori-msu-app php artisan migrate",
+    "vite": "docker exec -it inventori-msu-vite npm run dev",
+    "build": "docker exec -it inventori-msu-vite npm run build"
     },
     "dependencies": {
         "@tailwindcss/vite": "^4.1.11",
