@@ -1,0 +1,68 @@
+:root{ --green-1:#eaf6ee; --green-2:#9bd0a5; --green-3:#2e8b57; --green-4:#236e47; --card-gap:16px; }
+
+/* NAVBAR (sama seperti halaman barang) */
+.navbar-masjid{background:#eaf6ee!important;border-bottom:1px solid rgba(0,0,0,.06);padding:.6rem 0}
+.navbar-masjid .logo{width:36px;height:36px;object-fit:contain}
+.navbar-masjid .brand-text{font-weight:700;color:#2e8b57}
+.navbar-masjid .nav-link{font-weight:700;color:#2e8b57;white-space:nowrap}
+.navbar-masjid .nav-link:hover{color:#236e47}
+.navbar-masjid .nav-link.active{color:#236e47;position:relative}
+.navbar-masjid .nav-link.active::after{content:"";position:absolute;left:0;right:0;bottom:-6px;margin:auto;width:44px;height:4px;border-radius:999px;background:#9bd0a5}
+
+
+/* BODY + HERO */
+body{background:#f6f8f7;color:#121816;font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+.hero{position:relative;border-radius:26px;overflow:hidden}
+.hero img{width:100%;height:320px;object-fit:cover;filter:brightness(.7)}
+.hero .caption{position:absolute;inset:0;display:grid;place-items:center;color:#fff;text-align:center}
+.hero h1{font-weight:800;text-shadow:0 4px 24px rgba(0,0,0,.5)}
+.section-title{font-weight:800}
+
+/* SEARCH */
+.search-wrap{position:relative;display:flex;align-items:center;gap:10px;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:12px;padding:8px 12px;box-shadow:0 6px 12px rgba(0,0,0,.05)}
+.search-wrap .bi-search{position:absolute;left:12px;font-size:18px;color:#789}
+.search-input{padding-left:36px;border:none;box-shadow:none}
+.search-input:focus{outline:none;box-shadow:none}
+.btn-clear{border:none;background:transparent;color:#789}
+
+/* GRID 5 kolom × 2 baris */
+.items-grid{display:flex;flex-wrap:wrap;gap:var(--card-gap);align-items:stretch}
+.items-grid .col{flex:0 0 calc((100% - (var(--card-gap) * 4)) / 5);max-width:calc((100% - (var(--card-gap) * 4)) / 5)}
+
+/* CARD */
+.item-card{background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:18px;box-shadow:0 6px 16px rgba(0,0,0,.08);transition:transform .28s ease, opacity .28s ease;transform-origin:center;height:100%}
+.item-thumb{position:relative;background:#f0f2f1;border-radius:16px 16px 0 0;overflow:hidden}
+.item-thumb img{width:100%;height:160px;object-fit:cover;transition:transform .28s}
+.item-card:hover .item-thumb img,.item-card.is-expanded .item-thumb img{transform:scale(1.02)}
+.badge-status{position:absolute;top:10px;left:10px;background:#167c73;color:#fff;padding:.25rem .6rem;border-radius:9px;font-weight:700}
+.qty-actions{position:absolute;left:10px;bottom:10px;display:flex;gap:.35rem}
+.qty-btn{background:#0f6f6b;color:#fff;border:none;border-radius:7px;width:28px;height:24px;font-weight:800;cursor:pointer}
+.qty-btn:disabled{opacity:.45;cursor:not-allowed}
+.item-body{padding:10px 12px;text-align:center}
+.item-title{font-weight:800}
+
+/* Fokus zoom */
+.items-grid:hover .item-card{transform:scale(.9);opacity:.65}
+.items-grid .item-card:hover{transform:scale(1.12);opacity:1;z-index:2}
+.item-card.is-expanded{transform:scale(1.12)!important;opacity:1!important;z-index:2}
+.items-grid.has-expanded .item-card:not(.is-expanded){transform:scale(.9);opacity:.65}
+
+/* Checkout bar */
+.checkout-bar{position:sticky;bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 14px;background:#ffffffcc;backdrop-filter:blur(6px);border:1px solid rgba(0,0,0,.08);border-radius:14px;box-shadow:0 10px 24px rgba(0,0,0,.12);margin-top:16px}
+.checkout-info{font-weight:700}
+.btn-checkout{background:#0f6f6b;color:#fff;border:none;border-radius:10px;padding:10px 16px;font-weight:800}
+.btn-checkout:disabled{background:#a8c7c6;cursor:not-allowed;opacity:.8}
+
+/* RESPONSIVE */
+@media (max-width:1200px){ .items-grid .col{flex:0 0 calc((100% - (var(--card-gap) * 3)) / 4);max-width:calc((100% - (var(--card-gap) * 3)) / 4)} }
+@media (max-width:992px){ .items-grid .col{flex:0 0 calc((100% - (var(--card-gap) * 2)) / 3);max-width:calc((100% - (var(--card-gap) * 2)) / 3)} }
+@media (max-width:768px){ .hero img{height:240px} .items-grid .col{flex:0 0 calc((100% - var(--card-gap)) / 2);max-width:calc((100% - var(--card-gap)) / 2)} }
+@media (max-width:480px){ .items-grid .col{flex:0 0 100%;max-width:100%} }
+@media (hover:none){ .items-grid:hover .item-card{transform:none;opacity:1} }
+
+/* Animasi */
+.drop-in{opacity:0;transform:translateY(-36px);transition:.9s}
+.drop-in.show{opacity:1;transform:none}
+.reveal-up{opacity:0;transform:translateY(22px);transition:opacity .7s ease, transform .7s ease}
+.reveal-up.show{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){ .drop-in,.reveal-up{opacity:1;transform:none;transition:none} }
