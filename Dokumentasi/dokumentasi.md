@@ -1,146 +1,221 @@
-# 🚀 Laravel + Docker Setup Guide — Inventory MSU
+# 🧭 Inventory MSU — Laravel Setup Guide (Docker & XAMPP)
 
-Panduan lengkap untuk menjalankan dan mengembangkan proyek **Inventory MSU** berbasis **Laravel + Docker** di Windows.
-
----
-
-## 🧩 Pre-Requisites
-Pastikan kamu sudah menginstal hal-hal berikut di komputermu:
-
-1. **Composer**
-2. **XAMPP 8.2.\*** (untuk PHP & MySQL lokal)
-3. **PHP 8.4.\*** (sesuaikan dengan versi Laravel)
-4. **VS Code** (atau IDE lain)
-5. **Docker Desktop**
+Panduan lengkap untuk menjalankan proyek **Inventory MSU** berbasis **Laravel 12.x**
+baik menggunakan **Docker Desktop** maupun **XAMPP (tanpa Docker)** di Windows.
 
 ---
 
-## ⚙️ Initial Laravel Setup
+<p align="center">
+  <img src="https://img.shields.io/badge/Laravel-12.x-ff2d20?style=for-the-badge&logo=laravel&logoColor=white" alt="Laravel 12.x Badge"/>
+  <img src="https://img.shields.io/badge/PHP-8.4-777BB4?style=for-the-badge&logo=php&logoColor=white" alt="PHP 8.4 Badge"/>
+  <img src="https://img.shields.io/badge/Docker-Desktop-blue?style=for-the-badge&logo=docker&logoColor=white" alt="Docker Desktop Badge"/>
+  <img src="https://img-shields.io/badge/Database-MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white" alt="MySQL Badge"/>
+</p>
 
-1. Buka **terminal** di folder project.
+---
 
-2. Jalankan perintah berikut:
-    
+## 🧩 Prasyarat Instalasi
+
+Pastikan software berikut sudah terpasang di sistem kamu:
+
+| Komponen | Keterangan |
+|-----------|------------|
+| 🧰 **Composer** | Dependency manager untuk PHP |
+| 🐘 **PHP 8.4.\*** | Bisa dari XAMPP atau standalone |
+| 🐬 **XAMPP 8.2.\*** | Untuk mode tanpa Docker |
+| 🐳 **Docker Desktop** | Untuk mode containerized |
+| 🖥️ **VS Code / IDE** | Untuk development |
+
+---
+
+## ⚙️ 1️⃣ Setup Awal Laravel
+
+Langkah-langkah ini wajib dilakukan terlepas dari metode deployment (Docker atau XAMPP) yang kamu pilih.
+
+1.  Buka **terminal** di root folder project.
+2.  Jalankan perintah berikut untuk menginstal *laravel installer global*:
+
     ```bash
     composer global require laravel/installer
     ```
 
-    Ikuti instruksi di layar untuk memilih starter kit dan testing framework.
+3.  Setelah proyek di-clone/didapatkan, jalankan:
 
-    ![alt text](image.png)
-    ![alt text](image-1.png)
+    ```bash
+    composer install
+    ```
 
-3. Setelah instalasi selesai, Laravel siap digunakan.
+    > **Catatan:** Kamu mungkin perlu menginstruksi Laravel untuk memilih starter kit (seperti Breeze atau Jetstream) dan testing framework (seperti Pest atau PHPUnit) jika ini adalah proyek baru.
+
+Setelah instalasi *dependency* selesai, Laravel siap digunakan 🎉
 
 ---
 
-## 🐳 Setup Docker Environment
+## 🐳 2️⃣ Menjalankan Menggunakan Docker
 
-1. Pastikan **Docker Desktop** sudah dijalankan.
+Mode ini menggunakan **Docker Desktop** untuk menjalankan aplikasi Laravel (PHP), Database (MySQL), dan server aset (Vite) dalam container terpisah.
 
-2. Pastikan di root project kamu sudah ada file berikut:
-    - `Dockerfile`
-    - `docker-compose.yml`
-    - `nginx.conf`
-    - `.env.docker`
+### 🔧 Persiapan Awal
 
-3. Jalankan perintah berikut untuk pertama kali:
-    
+Pastikan file konfigurasi Docker berikut sudah ada di root project:
+
+* **`Dockerfile`**
+* **`docker-compose.yml`**
+* **`nginx.conf`**
+* **`.env.docker`** (File environment khusus Docker)
+
+### 🚀 Langkah Menjalankan
+
+1.  Jalankan **Docker Desktop** terlebih dahulu.
+2.  **Build** dan jalankan semua container (perintah ini hanya perlu dijalankan pertama kali atau jika ada perubahan pada Dockerfile/compose):
+
     ```bash
     docker compose up -d --build
     ```
 
-4. Generate `APP_KEY`:
-    
+3.  Generate **APP\_KEY** menggunakan environment file `.env.docker`:
+
     ```bash
     docker exec -it inventori-msu-app php artisan key:generate --env=.env.docker
     ```
 
-5. Jalankan migrasi database:
-    
+4.  Jalankan **migrasi database** ke dalam container MySQL:
+
     ```bash
     docker exec -it inventori-msu-app php artisan migrate --env=.env.docker
     ```
 
-6. Jalankan Vite untuk build asset (mode dev):
-    
+5.  Jalankan **Vite** untuk mode pengembangan (agar asset CSS/JS bisa di-reload otomatis):
+
     ```bash
     docker exec -it inventori-msu-vite npm run dev
     ```
 
-7. Buka browser dan akses:
-    
-    👉 [http://localhost:8080](http://localhost:8080)
+### 🌐 Akses Aplikasi
+
+Akses melalui browser:
+
+👉 **`http://localhost:8080`**
+
+### ⚙️ Workflow Cepat (Perintah Harian)
+
+| Tujuan | Perintah |
+| :--- | :--- |
+| 🔥 Menyalakan semua container | `docker compose up -d` |
+| 🧱 Migrasi database | `docker exec -it inventori-msu-app php artisan migrate` |
+| 🧩 Jalankan Vite Dev Server | `docker exec -it inventori-msu-vite npm run dev` |
+| 🧯 Hentikan container | `docker compose down` |
+| 🧹 Reset database (dari nol) | `docker compose down -v && docker compose up -d` |
+
+### 🧠 Jika Ada Perubahan
+
+| Perubahan yang Kamu Lakukan | Jalankan Perintah |
+| :--- | :--- |
+| 🧑‍💻 Ubah file Laravel (controller, view, route) | Cukup **reload browser** saja 🚀 |
+| 🎨 Ubah CSS/JS (Vite) | Pastikan `npm run dev` berjalan |
+| ⚙️ Ubah file `.env.docker` | `docker compose restart app` |
+| 🧩 Ubah `Dockerfile` | `docker compose up -d --build` |
+| 🧱 Ubah `docker-compose.yml` | `docker compose up -d` |
+| 🗄️ Tambah migration baru | `docker exec -it inventori-msu-app php artisan migrate` |
+| 🧰 Ubah dependency Composer | `docker exec -it inventori-msu-app composer install` |
+| 🪄 Ubah dependency NPM | `docker exec -it inventori-msu-vite npm install` |
+
+### 💡 Tips Docker
+
+Gunakan `docker exec` untuk menjalankan Artisan Command atau Composer/NPM langsung di dalam container:
+
+* **Jalankan Artisan Command:**
+    ```bash
+    docker exec -it inventori-msu-app php artisan route:list
+    docker exec -it inventori-msu-app php artisan make:model Item -mcr
+    ```
+* **Install/update dependency Composer:**
+    ```bash
+    docker exec -it inventori-msu-app composer install
+    ```
+* **Build asset untuk production:**
+    ```bash
+    docker exec -it inventori-msu-vite npm run build
+    ```
 
 ---
 
-## 🧠 Catatan Penting
+## ⚙️ 3️⃣ Menjalankan Tanpa Docker (XAMPP)
 
-Docker Compose memiliki tiga level perubahan utama:
+Mode ini menggunakan lingkungan lokal (PHP, MySQL, Apache) yang disediakan oleh **XAMPP**.
 
-1. **Build image baru (`--build`)**  
-    → jika kamu ubah *Dockerfile* atau dependensi (Composer/NPM).  
+1.  **Jalankan XAMPP**
+    Buka XAMPP Control Panel dan klik **Start** pada:
+    * ✅ **Apache**
+    * ✅ **MySQL**
 
-2. **Restart container**  
-    → jika kamu ubah konfigurasi `docker-compose.yml` atau `.env.docker`.  
+2.  **Buat Database**
+    * Buka **`http://localhost/phpmyadmin`**
+    * Klik **New** → buat database baru bernama **`inventori_msu`**
 
-3. **Auto-reload kode**  
-    → jika kamu hanya ubah file Laravel (controller, view, route, dll).  
-    Docker akan langsung mendeteksi karena kita pakai **bind mount** (`- ./:/var/www`).
+3.  **Konfigurasi `.env`**
+    Edit file **`.env`** di root project, pastikan bagian database-nya seperti berikut:
+
+    ```ini
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=inventori_msu
+    DB_USERNAME=root
+    DB_PASSWORD=
+    SESSION_DRIVER=file
+    ```
+
+    > ⚠️ **Penting:** Default XAMPP user untuk MySQL adalah **`root`** tanpa password.
+
+4.  **Jalankan Migration**
+
+    ```bash
+    php artisan migrate
+    ```
+
+5.  **Jalankan Server Laravel (Development)**
+
+    ```bash
+    php artisan serve
+    ```
+
+### 🌐 Akses Aplikasi
+
+Akses di browser:
+
+👉 **`http://127.0.0.1:8000`**
+
+### 🧰 Tips Tambahan (Lokal)
+
+* **Generate key** (jika belum):
+    ```bash
+    php artisan key:generate
+    ```
+* **Bersihkan cache:**
+    ```bash
+    php artisan optimize:clear
+    ```
+* **Jalankan ulang migrasi dari nol:**
+    ```bash
+    php artisan migrate:fresh --seed
+    ```
 
 ---
 
-## 🔁 Jika Ada Perubahan
+## ⚡ Appendix: Shortcut Commands
 
-| Perubahan yang Kamu Lakukan                            | Harus Jalankan Apa                                                                  |
-| ------------------------------------------------------ | ----------------------------------------------------------------------------------- |
-| 🧑‍💻 Ubah file Laravel (controller, view, route, dll) | **Cukup reload browser saja** 🚀                                                    |
-| 🎨 Ubah CSS/JS (Vite)                                  | Jalankan `npm run dev` di container `vite` (atau biarkan service `vite` tetap nyala) |
-| ⚙️ Ubah file `.env.docker`                             | `docker compose restart app`                                                        |
-| 🧩 Ubah `Dockerfile`                                   | `docker compose up -d --build`                                                      |
-| 🧱 Ubah `docker-compose.yml`                           | `docker compose up -d`                                                              |
-| 🗄️ Tambah migration baru                              | `docker exec -it inventori-msu-app php artisan migrate`                             |
-| 🧰 Ubah dependency Composer                            | `docker exec -it inventori-msu-app composer install`                                |
-| 🪄 Ubah dependency NPM                                 | `docker exec -it inventori-msu-vite npm install`                                    |
-| 🪣 Reset database                                      | `docker compose down -v && docker compose up -d`                                    |
+Untuk memudahkan penggunaan perintah Docker, Anda dapat menambahkan script berikut ke dalam file **`package.json`** pada bagian `"scripts"`:
 
----
-
-## ▶️ Jalankan Langsung Setelah Clone Repository
-
-Langkah ini digunakan jika kamu **baru clone repo Laravel + Docker** dari GitHub:
-
-1. Jalankan **Docker Desktop**.
-
-2. Masuk ke folder project, lalu jalankan:
-    
-    ```bash
-    docker compose up -d --build
-    ```
-
-3. Generate `APP_KEY`:
-    
-    ```bash
-    docker exec -it inventori-msu-app php artisan key:generate --env=.env.docker
-    ```
-
-4. Jalankan migrasi database:
-    
-    ```bash
-    docker exec -it inventori-msu-app php artisan migrate --env=.env.docker
-    ```
-
-5. Jalankan Vite untuk mode development:
-    
-    ```bash
-    docker exec -it inventori-msu-vite npm run dev
-    ```
-
-6. Akses website di browser:
-    
-    👉 [http://localhost:8080](http://localhost:8080)
-
----
+```json
+"scripts": {
+  "up": "docker compose up -d",
+  "down": "docker compose down",
+  "migrate": "docker exec -it inventori-msu-app php artisan migrate",
+  "vite": "docker exec -it inventori-msu-vite npm run dev",
+  "build": "docker exec -it inventori-msu-vite npm run build"
+}
+```
 
 ## 🧭 Workflow Cepat (Development)
 
