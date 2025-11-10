@@ -1,4 +1,4 @@
-/* MSU Shared Cart (front-end only) */
+// MSU Shared Cart (front-end only)
 window.MSUCart = (function(){
   const KEY = "msu_cart_v1";
 
@@ -6,6 +6,7 @@ window.MSUCart = (function(){
   function set(items){ localStorage.setItem(KEY, JSON.stringify(items)); }
   function clear(){ localStorage.removeItem(KEY); }
 
+  // upsert by absolute qty
   function upsertItem({type, name, qty, thumb}){
     if (!name) return;
     qty = Math.max(0, Number(qty||0));
@@ -24,13 +25,33 @@ window.MSUCart = (function(){
     set(items);
   }
 
+  // increment helper
+  function add(name, type='barang', thumb='', inc=1){
+    const items = get();
+    const idx = items.findIndex(it => it.name===name && it.type===type);
+    if (idx>=0){
+      items[idx].qty = Number(items[idx].qty||0) + Math.max(1, inc);
+      if (thumb) items[idx].thumb = thumb;
+    } else {
+      items.push({type, name, qty: Math.max(1, inc), thumb: thumb||''});
+    }
+    set(items);
+  }
+
   function count(){
     return get().reduce((a,b)=> a + Number(b.qty||0), 0);
   }
 
   function renderBadge(){
-    const badge = document.querySelector(".msu-cart-badge");
-    if (badge) badge.textContent = String(count());
+    const c = count();
+    // badge di navbar
+    const navBadge = document.querySelector(".msu-cart-badge");
+    if (navBadge) navBadge.textContent = String(c);
+    // badge di FAB
+    const fab = document.getElementById("fabCount");
+    if (fab) fab.textContent = String(c);
+    const fabBtn = document.getElementById('fabCheckout');
+    if (fabBtn) fabBtn.classList.toggle('is-disabled', c<=0);
   }
 
   function toListHTML(){
@@ -52,20 +73,20 @@ window.MSUCart = (function(){
     </ul>`;
   }
 
-  return { get, set, clear, upsertItem, count, renderBadge, toListHTML };
+  return { get, set, clear, upsertItem, add, count, renderBadge, toListHTML };
 })();
 
-// Tambahkan ikon cart di navbar
+// Tambahkan ikon cart di navbar (sekali, kalau belum ada)
 (function injectCartNav(){
   const nav = document.querySelector("#navMain .navbar-nav");
-  if (!nav) return;
+  if (!nav || nav.querySelector('.msu-cart-entry')) return;
   const li = document.createElement("li");
-  li.className = "nav-item d-flex align-items-center";
+  li.className = "nav-item d-flex align-items-center msu-cart-entry";
   li.innerHTML = `
     <a class="nav-link position-relative" href="bookingbarang.html?from=cart">
       <i class="bi bi-bag-check"></i>
       <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger msu-cart-badge">0</span>
     </a>`;
   nav.appendChild(li);
-  window.addEventListener("load", ()=> MSUCart.renderBadge());
+  window.addEventListener("load", ()=> window.MSUCart && MSUCart.renderBadge());
 })();
