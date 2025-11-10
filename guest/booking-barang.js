@@ -185,3 +185,31 @@ document.getElementById('btnCancel')?.addEventListener('click', ()=>{
   }
   validateForm();
 })();
+
+/* --- Include donation amount & persist email for success page --- */
+function getDonation(){
+  const v = document.getElementById('donationAmount')?.value || '0';
+  const n = Number(v); return isNaN(n)?0:n;
+}
+function toRupiah(n){ return new Intl.NumberFormat('id-ID').format(n); }
+
+// Override submit handler to include donation + redirect to success
+(function wrapSubmit(){
+  const form = document.getElementById('bookingForm');
+  if (!form) return;
+  form.addEventListener('submit', (e)=>{
+    e.preventDefault(); e.stopPropagation();
+    const email = document.getElementById('email')?.value || '';
+    if (email) localStorage.setItem('lastBookingEmail', email);
+
+    const donation = getDonation();
+    const cart = (window.MSUCart && MSUCart.get()) || [];
+    const lines = cart.map(it => `- ${it.name} × ${it.qty}`).join('\n');
+    alert(`Ringkasan Keranjang:\n${lines || '(kosong)'}\n\nDonasi QRIS: Rp${toRupiah(donation)}`);
+
+    window.location.href = 'success.html';
+  }, { once: true });
+})();
+
+MSUCart.clear();
+MSUCart.renderBadge();
