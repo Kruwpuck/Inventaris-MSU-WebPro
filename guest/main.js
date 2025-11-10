@@ -1,3 +1,4 @@
+// main.js
 // ====== Animasi judul hero & reveal on scroll ======
 window.addEventListener('load', () => {
   document.querySelector('.drop-in')?.classList.add('show');
@@ -15,7 +16,7 @@ function addTapAnimation(el){
 }
 document.querySelectorAll('.tap-anim').forEach(addTapAnimation);
 
-// ====== Setup stok awal (max) untuk semua kartu ======
+// ====== Setup stok awal ======
 function initCards(){
   document.querySelectorAll('.item-card').forEach(card => {
     const sisaEl = card.querySelector('.sisa');
@@ -29,13 +30,12 @@ function initCards(){
 }
 initCards();
 
-// ====== Helper: update badge & state tombol ======
 function updateBadgeAndButtons(card, sisa) {
   const type = card.dataset.type || 'barang';
   const max = Number(card.dataset.max || 0);
   const badge = card.querySelector('.badge-status');
-  const minusBtn = card.querySelector('.qty-btn[data-action="inc"]'); // − tambah sisa / batal
-  const plusBtn  = card.querySelector('.qty-btn[data-action="dec"]'); // ＋ kurangi sisa / pilih
+  const minusBtn = card.querySelector('.qty-btn[data-action="inc"]'); // − batal / tambah sisa
+  const plusBtn  = card.querySelector('.qty-btn[data-action="dec"]'); // ＋ pilih
 
   if (badge) {
     if (sisa === 0) { badge.textContent = 'Habis'; badge.style.background = '#a94442'; }
@@ -43,14 +43,93 @@ function updateBadgeAndButtons(card, sisa) {
   }
   if (type === 'ruang'){
     if (minusBtn) { minusBtn.disabled = (sisa >= 1); minusBtn.style.opacity = minusBtn.disabled ? .6 : 1; }
-    if (plusBtn)  { plusBtn.disabled  = (sisa <= 0); plusBtn .style.opacity = plusBtn .disabled ? .6 : 1; }
+    if (plusBtn)  { plusBtn.disabled  = (sisa <= 0); plusBtn.style.opacity = plusBtn.disabled ? .6 : 1; }
   } else {
     if (minusBtn) { minusBtn.disabled = (sisa >= max); minusBtn.style.opacity = minusBtn.disabled ? .6 : 1; }
     if (plusBtn)  { plusBtn.disabled  = (sisa <= 0);  plusBtn .style.opacity = plusBtn .disabled ? .6 : 1; }
   }
 }
 
-// ====== Logika qty tombol (klik) ======
+// ====== Toast util ======
+function showToastSuccess(text){
+  const wrap = document.getElementById('toastStack');
+  if (!wrap) return alert(text);
+  const id = 't' + Date.now();
+  wrap.insertAdjacentHTML('beforeend', `
+    <div id="${id}" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body"><i class="bi bi-check2-circle me-1"></i>${text}</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>`);
+  const el = document.getElementById(id);
+  const t = new bootstrap.Toast(el, { delay: 2200 });
+  t.show();
+  el.addEventListener('hidden.bs.toast', ()=> el.remove());
+}
+
+// ====== Modal Konfirmasi Tambah ======
+let pendingCard = null;
+const confirmModalEl = document.getElementById('confirmAddModal');
+const confirmModal = confirmModalEl ? new bootstrap.Modal(confirmModalEl) : null;
+const confirmNameEl = document.getElementById('confirmName');
+const confirmTypeEl = document.getElementById('confirmType');
+const confirmThumbEl = document.getElementById('confirmThumb');
+
+function openConfirm(card){
+  pendingCard = card;
+  const name = card.querySelector('.item-title')?.textContent?.trim() || 'Item';
+  const type = (card.dataset.type || 'barang') === 'ruang' ? 'Fasilitas / Ruangan' : 'Barang';
+  const thumb = card.querySelector('.item-thumb img')?.getAttribute('src') || '';
+  if (confirmNameEl) confirmNameEl.textContent = name;
+  if (confirmTypeEl) confirmTypeEl.textContent = type;
+  if (confirmThumbEl) confirmThumbEl.src = thumb;
+  if (confirmModal) confirmModal.show();
+  else if (window.confirm(`Tambah "${name}" ke keranjang?`)) confirmAddNoRedirect();
+}
+
+document.getElementById('confirmAddBtn')?.addEventListener('click', () => {
+  confirmAddNoRedirect();
+  if (confirmModal) confirmModal.hide();
+});
+
+// Tambah ke keranjang TANPA redirect
+function confirmAddNoRedirect(){
+  if (!pendingCard) return;
+  const card = pendingCard; pendingCard = null;
+
+  const type = card.dataset.type || 'barang';
+  const sisaEl = card.querySelector('.sisa');
+  let sisa = Number(sisaEl.textContent.trim() || (type==='ruang'?1:0));
+  // kurangi stok 1
+  sisa = Math.max(0, sisa - 1);
+  sisaEl.textContent = String(sisa);
+  updateBadgeAndButtons(card, sisa);
+
+  const name = card.querySelector('.item-title')?.textContent?.trim() || (type==='ruang'?'Ruang':'Item');
+  const thumb = card.querySelector('.item-thumb img')?.getAttribute('src') || '';
+  try{
+    if (window.MSUCart){
+      MSUCart.add(name, type, thumb, 1);
+      MSUCart.renderBadge();
+    }
+  }catch(e){ /* ignore */ }
+
+  showToastSuccess(`${name} ditambahkan ke keranjang.`);
+}
+
+// ====== Expand visual saat klik kartu (kecuali tombol qty) ======
+document.addEventListener('click', (e) => {
+  const card = e.target.closest('.item-card'); if (!card) return;
+  if (e.target.closest('.qty-btn')) return;
+  const grid = card.closest('.items-grid');
+  const already = card.classList.contains('is-expanded');
+  grid.classList.remove('has-expanded');
+  grid.querySelectorAll('.item-card').forEach(c => c.classList.remove('is-expanded'));
+  if (!already){ card.classList.add('is-expanded'); grid.classList.add('has-expanded'); }
+});
+
+// ====== Klik tombol qty ======
 document.addEventListener('click', (e) => {
   const btn = e.target.closest('.qty-btn');
   if (!btn) return;
@@ -60,97 +139,31 @@ document.addEventListener('click', (e) => {
   const sisaEl = card.querySelector('.sisa');
   let sisa = Number(sisaEl.textContent.trim() || '0');
   const max = Number(card.dataset.max || 0);
-  const action = btn.dataset.action; // "dec" | "inc"
+  const action = btn.dataset.action; // "dec" (pilih) | "inc" (batal/restore)
 
-  if (type === 'ruang'){
-    if (action === 'dec') sisa = Math.max(0, sisa - 1);
-    if (action === 'inc') sisa = Math.min(1, sisa + 1);
-  } else {
-    if (action === 'dec') sisa = Math.max(0, sisa - 1);
-    if (action === 'inc') sisa = Math.min(max, sisa + 1);
+  if (action === 'dec'){
+    openConfirm(card);
+    return;
   }
 
+  // − : kembalikan stok tampilan (tidak mempengaruhi cart)
+  if (type === 'ruang'){
+    sisa = Math.min(1, sisa + 1);
+  } else {
+    sisa = Math.min(max, sisa + 1);
+  }
   sisaEl.textContent = String(sisa);
   updateBadgeAndButtons(card, sisa);
-  refreshCheckoutState();
-  refreshFab(); // sinkron FAB
 });
 
-// ====== Fokus zoom via klik (persist) ======
-document.addEventListener('click', (e) => {
-  const card = e.target.closest('.item-card'); if (!card) return;
-  if (e.target.closest('.qty-btn')) return;
-
-  const grid = card.closest('.items-grid');
-  const already = card.classList.contains('is-expanded');
-  grid.classList.remove('has-expanded');
-  grid.querySelectorAll('.item-card').forEach(c => c.classList.remove('is-expanded'));
-  if (!already){ card.classList.add('is-expanded'); grid.classList.add('has-expanded'); }
-});
-
-// ====== Hitung total dipilih dan set tombol checkout ======
-function refreshCheckoutState(){
-  let selected = 0;
-  document.querySelectorAll('.item-card').forEach(card => {
-    const type = card.dataset.type || 'barang';
-    const max  = Number(card.dataset.max || 0);
-    const sisa = Number(card.querySelector('.sisa')?.textContent?.trim() || (type==='ruang'?1:0));
-    if (type === 'ruang'){ selected += (sisa === 0 ? 1 : 0); }
-    else { selected += Math.max(0, max - sisa); }
-  });
-  const selectedCount = document.getElementById('selectedCount');
-  const checkoutBtn   = document.getElementById('checkoutBtn');
-  if (selectedCount) selectedCount.textContent = String(selected);
-  if (checkoutBtn)   checkoutBtn.disabled = (selected <= 0);
-}
-refreshCheckoutState();
-
-// ====== Checkout bar: masukkan ke MSUCart & redirect ======
-document.getElementById('checkoutBtn')?.addEventListener('click', doCheckout);
-function doCheckout(){
-  const picked = [];
-  document.querySelectorAll('.item-card').forEach(card => {
-    const type = card.dataset.type || 'barang';
-    const name = card.querySelector('.item-title')?.textContent?.trim() || (type==='ruang'?'Ruang':'Item');
-    const thumb = card.querySelector('.item-thumb img')?.getAttribute('src') || '';
-    const max  = Number(card.dataset.max || 0);
-    const sisa = Number(card.querySelector('.sisa')?.textContent?.trim() || (type==='ruang'?1:0));
-
-    const qty  = (type === 'ruang') ? (sisa===0 ? 1 : 0) : Math.max(0, max - sisa);
-    if (qty > 0) picked.push({type, name, qty, thumb});
-  });
-
-  if (!picked.length) return;
-  try{
-    picked.forEach(it => MSUCart.upsertItem(it));
-    MSUCart.renderBadge?.();
-  }catch(e){ /* ignore */ }
-
-  window.location.href = 'bookingbarang.html?from=home';
-}
-
-// ====== === Floating Checkout (FAB) === ======
-function msuSelectedCountFromCards(){
-  let total = 0;
-  document.querySelectorAll('.item-card').forEach(card=>{
-    const type = card.dataset.type || 'barang';
-    const max  = Number(card.dataset.max || (type==='ruang'?1:0));
-    const sisa = Number(card.querySelector('.sisa')?.textContent?.trim() || (type==='ruang'?1:0));
-    const qty  = (type==='ruang') ? (sisa===0 ? 1 : 0) : Math.max(0, max - sisa);
-    total += qty;
-  });
-  return total;
-}
-function refreshFab(){
-  const c = msuSelectedCountFromCards();
-  const el = document.getElementById('fabCheckout');
-  const badge = document.getElementById('fabCount');
-  if (badge) badge.textContent = String(c);
-  if (el) el.classList.toggle('is-disabled', c<=0);
-}
+// FAB → ke halaman booking (jika ada isi keranjang)
 document.getElementById('fabCheckout')?.addEventListener('click', ()=>{
-  const c = msuSelectedCountFromCards();
+  const c = (window.MSUCart ? MSUCart.count() : 0);
   if (c<=0) return;
-  doCheckout();
+  window.location.href = 'bookingbarang.html?from=fab';
 });
-window.addEventListener('DOMContentLoaded', refreshFab);
+
+// Inisialisasi badge saat load
+window.addEventListener('load', ()=> {
+  if (window.MSUCart) MSUCart.renderBadge();
+});
