@@ -297,7 +297,7 @@ nav a.active {
  .container {
     max-width: 900px;
     margin: 35px auto;
-    padding: 0 20px;  /* ✅ Tambah padding kanan-kiri */
+    padding: 0 20px;  
 }
 
 .section-title {
@@ -305,37 +305,36 @@ nav a.active {
     margin: 35px 0 12px 5px;
 }
 
-/* CARD */
 .card {
     background: #006d3b;
     color: white;
-    padding: 18px 22px;   /* ✅ Card jadi lebih tebal */
+    padding: 18px 22px;   
     border-radius: 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     cursor: pointer;
-    margin-bottom: 5px;   /* ✅ mengurangi gap sebelum dropdown */
+    margin-bottom: 5px;   
 }
 
 /* DROPDOWN CONTENT */
 .dropdown-content {
     display: none;
     background: #d4f5d8;
-    padding: 18px 25px;   /* ✅ tambah jarak konten */
+    padding: 18px 25px;   
     border-radius: 0 0 10px 10px;
     font-size: 14px;
     margin-top: -5px;
-    margin-bottom: 20px;  /* ✅ jarak antara dropdown dan checkbox */
+    margin-bottom: 20px; 
 }
 
 /* CHECKBOX AREA */
 .checkbox-area {
     display: flex;
-    gap: 35px;            /* ✅ jarak antar checkbox diperlebar */
+    gap: 35px;            
     align-items: center;
-    padding: 8px 4px 20px 8px; /* ✅ Tambah padding bawah agar tidak dempet */
-    margin-bottom: 15px;  /* ✅ lebih rapi */
+    padding: 8px 4px 20px 8px; 
+    margin-bottom: 15px;  
 }
 
 .checkbox-area label {
@@ -357,3 +356,4 @@ h1 {
     text-align: center;
     margin-top: 35px;
 }
+
