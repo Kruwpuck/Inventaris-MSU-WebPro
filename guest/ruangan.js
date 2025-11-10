@@ -135,3 +135,23 @@ function addTapAnimation(el){
   el.addEventListener('touchcancel',()=>el.classList.remove('tap-active'));
 }
 document.querySelectorAll('.tap-anim').forEach(addTapAnimation);
+
+/* MSU CART INTEGRATION */
+function msuCollectSelections_ruang(){ 
+  const items = [];
+  document.querySelectorAll('.item-card').forEach(card => {
+    const name = card.querySelector('.item-title')?.textContent?.trim() || '{ruang}';
+    const thumb = card.querySelector('.item-thumb img')?.getAttribute('src') || '';
+    const sisa = Number(card.querySelector('.sisa')?.textContent?.trim() || '1');
+    const qty  = (sisa===0 ? 1 : 0); // ruang: 1 jika dipilih (sisa 0)
+    if (qty>0) items.push({name, qty, thumb});
+  });
+  return items;
+}
+document.getElementById('checkoutBtn')?.addEventListener('click', ()=>{
+  const picked = msuCollectSelections_ruang();
+  if (!picked.length) return;
+  picked.forEach(it=> MSUCart.upsertItem({type:'ruang', name: it.name, qty: it.qty, thumb: it.thumb}));
+  MSUCart.renderBadge();
+  window.location.href = 'bookingbarang.html?from=cart';
+});
