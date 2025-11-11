@@ -15,20 +15,20 @@
     <nav>
       <ul>
         <li><a href="#" class="active">Beranda</a></li>
-        <li><a href="pinjamFasilitas.html">Peminjaman Ruangan</a></li>
-        <li><a href="pinjamBarang.html">Peminjaman Barang</a></li>
-        <li><a href="riwayat.html">Riwayat</a></li>
+        <li><a href="pinjamFasilitas.html">Peminjaman Fasilitas</a></li>
+        <li><a href="riwayatpinjam.html">Riwayat Peminjaman</a></li>
       </ul>
     </nav>
     <div class="nav-right">
-      <div class="profile-wrapper">
-        <div class="profile-info">
-          <strong>Jundi Hd</strong><br />
-          Pengurus
-        </div>
-        <div class="profile-pic"></div>
+    <div class="profile-wrapper">
+      <div class="profile-info">
+        <strong>Jundi Hd</strong><br />
+        Pengurus
       </div>
+      <div class="profile-pic"></div>
     </div>
+  </div>
+</div>
   </header>
 
   <section class="hero">
@@ -45,43 +45,69 @@
     <h1>Peminjaman Hari ini</h1>
   </section>
 
-  <main class="dashboard">
-    <div class="section">
-      <h2>Peminjaman Ruangan</h2>
+ <table>
+    <thead>
+      <tr>
+        <th>No</th>
+        <th>Nama Peminjam</th>
+        <th>Waktu Pengambilan</th>
+        <th>Waktu Pengembalian</th>
+        <th>Fasilitas yang dipinjam</th>
+        <th>Sudah Ambil</th>
+        <th>Sudah Terima</th>
+      </tr>
+    </thead>
 
-      <div class="room-card">
-        <img src="Assets/VIP.jpg" alt="Ruang VIP">
-        <h3>UKM Al Fath</h3>
-        <p>Ruang VIP<br>18.00 - 20.00</p>
-        <input type="checkbox">
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>UKM Al-Fath</td>
+        <td>18.00 WIB</td>
+        <td>20.00 WIB</td>
+        <td>
+          <button class="detail-btn" data-detail="Ruangan VIP | Aula Syamsul Ulum">Detail Peminjaman</button>
+        </td>
+        <td><input type="checkbox"></td>
+        <td><input type="checkbox"></td>
+      </tr>
+
+      <tr>
+        <td>2</td>
+        <td>HIPMI</td>
+        <td>29 Oktober 2025</td>
+        <td>30 Oktober 2025</td>
+        <td>
+          <button class="detail-btn" data-detail="Proyektor, Kabel HDMI, Pointer">Detail Peminjaman</button>
+        </td>
+        <td><input type="checkbox"></td>
+        <td><input type="checkbox"></td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="lihat-link">
+    <a href="pinjamFasilitas.html">Lihat Selengkapnya &raquo;</a>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal-bg" id="modalBg">
+    <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Detail Peminjaman</h2>
       </div>
-
-      <a href="pinjamFasilitas.html" class="lihat-link">Lihat Selengkapnya</a>
-    </div>
-
-    <div class="section">
-      <h2>Peminjaman Barang</h2>
-
-      <div class="barang-item">
-        <label>UKM Al-Fath</label>
-        <div class="checkbox-area">
-          <label><input type="checkbox"> Ambil</label>
-          <label><input type="checkbox"> Terima</label>
+      <div class="modal-body">
+      <p id="detailContent">...</p>
         </div>
-      </div>
-
-      <div class="barang-item">
-        <label>HIPMI</label>
-        <div class="checkbox-area">
-          <label><input type="checkbox"> Ambil</label>
-          <label><input type="checkbox"> Terima</label>
+        <div class="modal-footer">
+      <button class="close-btn" onclick="closeModal()">Tutup</button>
         </div>
-      </div>
-
-      <a href="pinjamBarang.html" class="lihat-link">Lihat Selengkapnya</a>
     </div>
-  </main>
+  </div>
+  </div>
 
-  <script src="script.js"></script>
+
+<script src ="shared-data.js"></script>
+
+
 </body>
 </html>
