@@ -6,6 +6,12 @@ window.MSUCart = (function(){
   function set(items){ localStorage.setItem(KEY, JSON.stringify(items)); }
   function clear(){ localStorage.removeItem(KEY); }
 
+  // helper: apakah item sudah ada
+  function has(name, type='barang'){
+    const items = get();
+    return items.some(it => it.name===name && it.type===type);
+  }
+
   // upsert by absolute qty
   function upsertItem({type, name, qty, thumb}){
     if (!name) return;
@@ -73,7 +79,7 @@ window.MSUCart = (function(){
     </ul>`;
   }
 
-  return { get, set, clear, upsertItem, add, count, renderBadge, toListHTML };
+  return { get, set, clear, upsertItem, add, count, renderBadge, toListHTML, has };
 })();
 
 // Tambahkan ikon cart di navbar (sekali, kalau belum ada)
@@ -83,7 +89,7 @@ window.MSUCart = (function(){
   const li = document.createElement("li");
   li.className = "nav-item d-flex align-items-center msu-cart-entry";
   li.innerHTML = `
-    <a class="nav-link position-relative" href="bookingbarang.html?from=cart">
+    <a class="nav-link position-relative" href="bookingbarang.html?from=cart" aria-label="Buka keranjang">
       <i class="bi bi-bag-check"></i>
       <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger msu-cart-badge">0</span>
     </a>`;
