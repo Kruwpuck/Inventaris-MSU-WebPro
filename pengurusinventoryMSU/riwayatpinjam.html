@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Riwayat Peminjaman</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <img src="Assets/logo.png" alt="Logo">
+    </div>
+    <nav>
+      <ul>
+        <li><a href="dashboard.html">Beranda</a></li>
+        <li><a href="pinjamFasilitas.html">Peminjaman Fasilitas</a></li>
+        <li><a href="#" class="active">Riwayat Peminjaman</a></li>
+      </ul>
+    </nav>
+     <div class="nav-right">
+    <div class="profile-wrapper">
+      <div class="profile-info">
+        <strong>Jundi Hd</strong><br />
+        Pengurus
+      </div>
+      <div class="profile-pic"></div>
+    </div>
+  </div>
+</div>
+  </header>
+
+  <h1>Riwayat Peminjaman</h1>
+
+<div class="container">
+
+    <table>
+    <thead>
+      <tr>
+        <th>No</th>
+        <th>Nama Peminjam</th>
+        <th>Waktu Ambil</th>
+        <th>Waktu Kembali</th>
+        <th>Fasilitas yang dipinjam</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>PRADA</td>
+        <td>...</td>
+        <td>...</td>
+        <td>
+          <button class="detail-btn" data-detail="Lantai 2 | Ruang Rapat">Detail Peminjaman</button>
+        </td>
+        <td><button type="reset" class="cancel-btn">Cancel</td>
+        <td><input type="submit" class="submit-btn"></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<!-- MODAL -->
+  <div class="modal-bg" id="modalBg">
+    <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Detail Peminjaman</h2>
+      </div>
+      <div class="modal-body">
+      <p id="detailContent">...</p>
+        </div>
+        <div class="modal-footer">
+      <button class="close-btn" onclick="closeModal()">Tutup</button>
+        </div>
+    </div>
+  </div>
+  </div>
+
+
+<script src ="shared-data.js"></script>
+
+</body>
+</html>
