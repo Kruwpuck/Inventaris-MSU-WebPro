@@ -170,7 +170,7 @@ function filterCards(query, grids) {
         editFormGroupFasilitas.style.display = "none";
         const itemStok = button.getAttribute("data-item-stok");
         editStokInput.value = itemStok;
-      } else if (itemTipe === "fasilitas") {
+      } else if (itemTipe === "ruangan") {
         editFormGroupBarang.style.display = "none";
         editFormGroupFasilitas.style.display = "block";
         const itemStatus = button.getAttribute("data-item-status");

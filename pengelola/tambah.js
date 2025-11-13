@@ -37,7 +37,7 @@ function applyKategoriUI(v) {
     inpStok.required = true;
     inpKapasitas.required = false;
     inpKapasitas.value = '';
-  } else if (v === 'Fasilitas') {
+  } else if (v === 'Ruangan') {
     wrapStok.style.display = 'none';
     wrapKapasitas.style.display = '';
     inpStok.required = false;
