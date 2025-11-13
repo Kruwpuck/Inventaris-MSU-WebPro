@@ -60,6 +60,51 @@ function filterCards(query, grids) {
 
 // =============== BOOT ===============
 (function initBeranda() {
+  // URL login (karena beranda.html & login.html satu folder: /pengelola/)
+  const LOGIN_URL = "login.html?role=pengelola";
+
+  // ====== CEK LOGIN / SESSION SEDERHANA ======
+  let currentUser = null;
+  try {
+    const raw = localStorage.getItem("msuUser");
+    if (!raw) {
+      // Belum login → kembali ke halaman login pengelola
+      window.location.href = LOGIN_URL;
+      return;
+    }
+    currentUser = JSON.parse(raw);
+  } catch (err) {
+    console.error("Gagal membaca data user:", err);
+    window.location.href = LOGIN_URL;
+    return;
+  }
+
+  // Set nama & role di navbar
+  const userNameEl = document.getElementById("userName");
+  const userRoleEl = document.getElementById("userRoleLabel");
+
+  if (userNameEl && currentUser.username) {
+    userNameEl.textContent = currentUser.username;
+  }
+
+  if (userRoleEl) {
+    userRoleEl.textContent =
+      currentUser.role === "pengelola" ? "Pengelola Side" : "Pengurus Side";
+  }
+
+  // Tombol logout → hapus localStorage & balik ke halaman login
+  const btnLogout = document.getElementById("btnLogout");
+  if (btnLogout) {
+    btnLogout.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (!confirm("Yakin ingin keluar dari akun?")) return;
+
+      localStorage.removeItem("msuUser");
+      window.location.href = LOGIN_URL;
+    });
+  }
+
+  // ====== KODE BERANDA YANG SUDAH ADA ======
   const els = getEls();
   if (!els.input) return;
 
@@ -91,9 +136,7 @@ function filterCards(query, grids) {
   filterCards("", els);
 
   /*
-   * ---
-   * LOGIKA MODAL EDIT (tetap sesuai punyamu)
-   * ---
+   * LOGIKA MODAL EDIT
    */
   const editModalEl = document.getElementById("editModal");
   if (editModalEl) {
@@ -167,19 +210,14 @@ function filterCards(query, grids) {
   }
 
   /*
-   * ---
-   * BARU: Titik-tiga (⋮) + Hapus (tanpa mengubah card HTML yang ada)
-   * ---
+   * Titik-tiga (⋮) + Hapus
    */
 
-  // Inject tombol ⋮ ke semua card di kedua grid
   function injectMenuToCards(root) {
     const cards = root.querySelectorAll(".card");
     cards.forEach((card) => {
-      // Pastikan absolute overlay bisa diposisikan relatif ke card
       card.classList.add("position-relative");
 
-      // Cegah duplikasi
       if (card.querySelector(".msu-action-menu")) return;
 
       const wrap = document.createElement("div");
@@ -202,18 +240,15 @@ function filterCards(query, grids) {
     });
   }
 
-  // Panggil sekali saat load
   if (els.gridBarang) injectMenuToCards(els.gridBarang);
   if (els.gridFasil) injectMenuToCards(els.gridFasil);
 
-  // Siapkan modal hapus
   const modalHapusEl = document.getElementById("modalHapus");
   const hapusNamaEl = document.getElementById("hapusNama");
   const hapusIdEl = document.getElementById("hapusId");
   const btnHapusKonfirm = document.getElementById("btnKonfirmasiHapus");
   const modalHapus = modalHapusEl ? new bootstrap.Modal(modalHapusEl) : null;
 
-  // Delegasi klik "Hapus" (berlaku untuk semua card, termasuk yang akan ditambahkan nanti)
   document.addEventListener("click", (e) => {
     const btn = e.target.closest("[data-action='delete']");
     if (!btn) return;
@@ -233,17 +268,12 @@ function filterCards(query, grids) {
     if (modalHapus) modalHapus.show();
   });
 
-  // Konfirmasi hapus → remove dari DOM (siap ganti ke API)
   if (btnHapusKonfirm) {
     btnHapusKonfirm.addEventListener("click", async () => {
       const id = hapusIdEl?.value;
       if (!id) { modalHapus?.hide(); return; }
 
       try {
-        // === Jika nanti pakai backend: ganti dengan fetch DELETE ===
-        // const res = await fetch(`/api/barang/${encodeURIComponent(id)}`, { method: 'DELETE' });
-        // if (!res.ok) throw new Error('Gagal hapus di server');
-
         const card =
           document.getElementById(id) ||
           document.querySelector(`[data-item-id="${CSS.escape(id)}"]`);
