@@ -5,59 +5,62 @@ document.addEventListener("DOMContentLoaded", () => {
 	const loginRoleInput = document.getElementById("loginRole");
 	const loginSubtitle = document.getElementById("login-subtitle");
 
-	// 1. Baca 'role' dari URL
+	// Ambil role dari URL
 	const params = new URLSearchParams(window.location.search);
 	const role = params.get("role");
 
-	if (role) {
-		// 2. Set role di input tersembunyi
-		loginRoleInput.value = role;
-		
-		// 3. Ubah judul agar lebih jelas
-		const roleName = role.charAt(0).toUpperCase() + role.slice(1);
-		loginSubtitle.textContent = `Masuk sebagai ${roleName} untuk melanjutkan.`;
-		
-		// Jika link "Daftar" ada, tambahkan role ke sana juga
-		const registerLink = document.querySelector('a[href="register.html"]');
-		if(registerLink) {
-			registerLink.href = `register.html?role=${role}`;
-		}
-		
-	} else {
-		// Jika tidak ada role, paksa kembali ke halaman pilih role
+	if (!role) {
 		alert("Anda harus memilih role terlebih dahulu.");
 		window.location.href = "index.html";
+		return;
 	}
 
-	// 4. Tangani submit form
+	// Set subtitle
+	if (role === "pengelola") {
+		loginSubtitle.textContent = "Masuk sebagai Pengelola untuk melanjutkan.";
+	} else if (role === "pengurus") {
+		loginSubtitle.textContent = "Role Pengurus belum tersedia.";
+	} else {
+		loginSubtitle.textContent = "Role tidak dikenal.";
+	}
+
+	loginRoleInput.value = role;
+
+	// Submit form
 	loginForm.addEventListener("submit", (e) => {
-		e.preventDefault(); // Mencegah reload halaman
+		e.preventDefault();
 
-		const username = document.getElementById("username").value;
+		const username = document.getElementById("username").value.trim();
 		const password = document.getElementById("password").value;
-		const loginRole = loginRoleInput.value;
 
-		// --- SIMULASI LOGIN ---
-		
-		if (loginRole === "pengelola") {
+		// === Role Pengelola (AKTIF) ===
+		if (role === "pengelola") {
 			if (username === "pengelola" && password === "admin123") {
-				alert("Login Pengelola berhasil!");
-				// Arahkan ke beranda pengelola
-				window.location.href = "beranda.html"; 
+				// Simpan data login
+				localStorage.setItem(
+					"msuUser",
+					JSON.stringify({
+						username: "pengelola",
+						role: "pengelola",
+					})
+				);
+
+				alert("Login berhasil!");
+				window.location.href = "beranda.html";
+				return;
 			} else {
-				alert("Username atau password Pengelola salah!");
+				alert("Username atau password salah!");
+				return;
 			}
-		} else if (loginRole === "pengurus") {
-			if (username === "pengurus" && password === "admin123") {
-				alert("Login Pengurus berhasil!");
-				// Ganti ini ke halaman pengurus jika sudah ada
-				// window.location.href = "pengurus.html"; 
-				alert("Halaman pengurus belum dibuat.");
-			} else {
-				alert("Username atau password Pengurus salah!");
-			}
-		} else {
-			alert("Role tidak valid.");
 		}
+
+		// === Role Pengurus (BELUM ADA PAGE) ===
+		if (role === "pengurus") {
+			alert("Halaman Pengurus belum dibuat. Silakan login sebagai Pengelola.");
+			return;
+		}
+
+		// Role lain (nggak mungkin tapi jaga-jaga)
+		alert("Role tidak valid.");
 	});
 });

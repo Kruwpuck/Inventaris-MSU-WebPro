@@ -1,26 +1,31 @@
-<!-- Contoh 1 kartu item -->
-<div class="col-12 col-sm-6 col-md-4 col-lg-3" data-item-id="BRG001">
-  <div class="card shadow-soft h-100 position-relative">
-    <div class="card-body">
-      <div class="d-flex justify-content-between align-items-start">
-        <h5 class="card-title mb-1">Kursi Lipat</h5>
-        <div class="dropdown">
-          <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="bi bi-three-dots-vertical"></i>
-          </button>
-          <ul class="dropdown-menu dropdown-menu-end">
-            <li><button class="dropdown-item" data-action="edit" data-id="BRG001">Edit</button></li>
-            <li><hr class="dropdown-divider"></li>
-            <li>
-              <button class="dropdown-item text-danger" data-action="delete" data-id="BRG001" data-name="Kursi Lipat">
-                <i class="bi bi-trash me-2"></i>Hapus
-              </button>
-            </li>
-          </ul>
-        </div>
-      </div>
-      <p class="text-muted mb-0">Kode: BRG001</p>
-      <p class="mb-0">Stok: 24</p>
-    </div>
-  </div>
-</div>
+<!-- di dalam navbar -->
+<ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+	<li class="nav-item dropdown">
+		<a
+			class="nav-link dropdown-toggle d-flex align-items-center"
+			href="#"
+			id="userMenu"
+			role="button"
+			data-bs-toggle="dropdown"
+			aria-expanded="false"
+		>
+			<i class="bi bi-person-circle me-2"></i>
+			<span>Admin MSU</span>
+		</a>
+		<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+			<!-- Opsional -->
+			<li>
+				<h6 class="dropdown-header">Admin MSU</h6>
+			</li>
+			<li><hr class="dropdown-divider" /></li>
+			<!-- Tombol logout utama -->
+			<li>
+				<form action="/logout" method="POST" class="px-3 py-1">
+					<button type="submit" class="btn btn-link p-0 text-danger">
+						<i class="bi bi-box-arrow-right me-1"></i> Keluar
+					</button>
+				</form>
+			</li>
+		</ul>
+	</li>
+</ul>
