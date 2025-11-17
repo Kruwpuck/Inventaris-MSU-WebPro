@@ -15,79 +15,15 @@ function addTapAnimation(el){
 }
 document.querySelectorAll('.tap-anim').forEach(addTapAnimation);
 
-// ==== Util ====
-function todayISO(){
-  const t = new Date(); t.setHours(0,0,0,0);
-  return t.toISOString().split('T')[0];
-}
-function saveBookingMeta(meta){
-  try{ localStorage.setItem('msu_booking_meta', JSON.stringify(meta)); }catch(e){}
-}
-function loadBookingMeta(){
-  try{ return JSON.parse(localStorage.getItem('msu_booking_meta') || '{}'); }catch(e){ return {}; }
-}
-
-// ==== Inject toolbar Tanggal/Jam/Durasi (seperti index) ====
-(function ensureBookingToolbar(){
-  const searchSection = document.querySelector('.search-wrap')?.parentElement; // <section> SEARCH
-  if(!searchSection || document.getElementById('bookingMetaBar')) return;
-
-  // nilai default / previously saved
-  const prev = loadBookingMeta();
-  const defDate = prev.tanggal || todayISO();
-  const defTime = prev.mulai || '10:00';
-  const defDur  = prev.durasi || '2';
-
-  const bar = document.createElement('div');
-  bar.id = 'bookingMetaBar';
-  bar.className = 'mt-3 reveal-up';
-  bar.innerHTML = `
-    <div class="row g-2 align-items-end">
-      <div class="col-12 col-md-4">
-        <label class="form-label mb-1">Tanggal Peminjaman</label>
-        <input type="date" class="form-control" id="loanDateMeta" min="${todayISO()}" value="${defDate}">
-      </div>
-      <div class="col-6 col-md-4">
-        <label class="form-label mb-1">Jam Mulai</label>
-        <input type="time" class="form-control" id="startTimeMeta" value="${defTime}">
-      </div>
-      <div class="col-6 col-md-4">
-        <label class="form-label mb-1">Durasi</label>
-        <select class="form-select" id="durationMeta">
-          <option value="" disabled>Pilih</option>
-          <option value="1">1 jam</option>
-          <option value="2">2 jam</option>
-          <option value="3">3 jam</option>
-          <option value="4">4 jam</option>
-          <option value="8">Seharian</option>
-        </select>
-      </div>
-    </div>
-  `;
-  searchSection.insertAdjacentElement('afterend', bar);
-
-  // set durasi default
-  const durSel = bar.querySelector('#durationMeta');
-  if(durSel) durSel.value = defDur;
-
-  // simpan saat berubah
-  function persist(){
-    const tanggal = document.getElementById('loanDateMeta')?.value || todayISO();
-    const mulai   = document.getElementById('startTimeMeta')?.value || '10:00';
-    const durasi  = document.getElementById('durationMeta')?.value || '2';
-    saveBookingMeta({ tanggal, mulai, durasi });
-  }
-  bar.addEventListener('input', persist);
-  bar.addEventListener('change', persist);
-})();
-
-// ==== Inisialisasi stok & tombol ====
+// ==== Inisialisasi setiap kartu ruang (max 1) ====
 function initCards(){
   document.querySelectorAll('.item-card').forEach(card=>{
     const sisaEl = card.querySelector('.sisa');
     if(!sisaEl) return;
-    const initial = Number(sisaEl.textContent.trim()||'0');
-    card.dataset.max = Number.isNaN(initial)?0:initial;
+    let initial = Number(sisaEl.textContent.trim()||'1');
+    if (Number.isNaN(initial)) initial = 1;
+    initial = Math.min(1, Math.max(0, initial));
+    card.dataset.max = 1;
     sisaEl.textContent = String(initial);
     updateBadgeAndButtons(card, initial);
   });
@@ -95,20 +31,19 @@ function initCards(){
 initCards();
 
 function updateBadgeAndButtons(card, sisa){
-  const max = Number(card.dataset.max || 0);
   const badge = card.querySelector('.badge-status');
-  const minusBtn = card.querySelector('.qty-btn[data-action="inc"]'); // − kembalikan sisa
-  const plusBtn  = card.querySelector('.qty-btn[data-action="dec"]'); // ＋ pilih (tambah ke cart)
+  const minusBtn = card.querySelector('.qty-btn[data-action="inc"]'); // − batal
+  const plusBtn  = card.querySelector('.qty-btn[data-action="dec"]'); // ＋ pilih
 
   if(badge){
     if(sisa===0){ badge.textContent='Habis'; badge.style.background='#a94442'; }
     else { badge.textContent='Active'; badge.style.background='#167c73'; }
   }
-  if(minusBtn) minusBtn.disabled = (sisa>=max);
+  if(minusBtn) minusBtn.disabled = (sisa>=1);
   if(plusBtn)  plusBtn.disabled  = (sisa<=0);
 }
 
-// ==== Search realtime ====
+// ==== Search ====
 const q = document.getElementById('searchInput');
 const clearBtn = document.getElementById('clearSearch');
 const gridEl = document.getElementById('itemsGrid');
@@ -116,7 +51,6 @@ const emptyState = document.getElementById('emptyState');
 
 function applyFilter(){
   const term = (q?.value||'').trim().toLowerCase();
-  if(!gridEl) return;
   let visible = 0;
   gridEl.querySelectorAll('.col').forEach(col=>{
     const title = col.querySelector('.item-title')?.textContent?.toLowerCase()||'';
@@ -147,11 +81,8 @@ function showToastSuccess(text){
   el.addEventListener('hidden.bs.toast', ()=> el.remove());
 }
 
-// ==== Modal konfirmasi tambah (seperti index) ====
-// SEKALI KONFIRM → klik berikutnya untuk item yang sama TIDAK muncul modal lagi
+// ==== Modal konfirmasi tambah ====
 let pendingCard = null;
-const confirmedOnce = new Set(); // nama item yang sudah dikonfirmasi setidaknya sekali
-
 const confirmModalEl = document.getElementById('confirmAddModal');
 const confirmModal = confirmModalEl ? new bootstrap.Modal(confirmModalEl) : null;
 const confirmNameEl = document.getElementById('confirmName');
@@ -159,22 +90,14 @@ const confirmTypeEl = document.getElementById('confirmType');
 const confirmThumbEl = document.getElementById('confirmThumb');
 
 function openConfirm(card){
-  const name = card.querySelector('.item-title')?.textContent?.trim() || 'Item';
-
-  // SKIP modal jika item ini sudah pernah dikonfirmasi sebelumnya
-  if(confirmedOnce.has(name)){
-    pendingCard = card;
-    confirmAddNoRedirect();
-    return;
-  }
-
   pendingCard = card;
+  const name = card.querySelector('.item-title')?.textContent?.trim() || 'Ruang';
   const thumb = card.querySelector('.item-thumb img')?.getAttribute('src') || '';
   if (confirmNameEl) confirmNameEl.textContent = name;
-  if (confirmTypeEl) confirmTypeEl.textContent = 'Barang';
+  if (confirmTypeEl) confirmTypeEl.textContent = 'Ruang';
   if (confirmThumbEl) confirmThumbEl.src = thumb;
   if (confirmModal) confirmModal.show();
-  else if (window.confirm(`Tambah "${name}" ke keranjang?`)) confirmAddNoRedirect();
+  else if (window.confirm(`Pilih "${name}"?`)) confirmAddNoRedirect();
 }
 
 document.getElementById('confirmAddBtn')?.addEventListener('click', ()=>{
@@ -186,32 +109,22 @@ function confirmAddNoRedirect(){
   if(!pendingCard) return;
   const card = pendingCard; pendingCard = null;
 
-  // simpan meta booking (biar pasti ke-save saat user mulai add)
-  const tanggal = document.getElementById('loanDateMeta')?.value || todayISO();
-  const mulai   = document.getElementById('startTimeMeta')?.value || '10:00';
-  const durasi  = document.getElementById('durationMeta')?.value || '2';
-  saveBookingMeta({ tanggal, mulai, durasi });
-
-  // Kurangi sisa 1
+  // pilih ruang (sisa -> 0)
   const sisaEl = card.querySelector('.sisa');
-  let sisa = Number(sisaEl.textContent.trim() || '0');
+  let sisa = Number(sisaEl.textContent.trim() || '1');
   sisa = Math.max(0, sisa - 1);
   sisaEl.textContent = String(sisa);
   updateBadgeAndButtons(card, sisa);
 
-  // Masukkan ke keranjang
-  const name  = card.querySelector('.item-title')?.textContent?.trim() || 'Item';
+  // masuk ke keranjang
+  const name  = card.querySelector('.item-title')?.textContent?.trim() || 'Ruang';
   const thumb = card.querySelector('.item-thumb img')?.getAttribute('src') || '';
   try{
     if(window.MSUCart){
-      MSUCart.add(name, 'barang', thumb, 1);
+      MSUCart.add(name, 'ruang', thumb, 1);
       MSUCart.renderBadge();
     }
   }catch(e){}
-
-  // tandai sudah pernah konfirmasi → klik selanjutnya tidak muncul modal
-  confirmedOnce.add(name);
-
   showToastSuccess(`${name} ditambahkan ke keranjang.`);
 }
 
@@ -221,17 +134,16 @@ document.addEventListener('click',(e)=>{
   const card = btn.closest('.item-card'); if(!card) return;
 
   const sisaEl = card.querySelector('.sisa');
-  let sisa = Number(sisaEl.textContent.trim()||'0');
-  const max = Number(card.dataset.max||0);
+  let sisa = Number(sisaEl.textContent.trim()||'1');
   const action = btn.dataset.action;
 
-  if(action==='dec'){ // ＋ → konfirmasi (atau skip jika sudah pernah)
+  if(action==='dec'){ // ＋ → pilih (konfirmasi)
     openConfirm(card);
     return;
   }
 
-  // − : kembalikan stok di tampilan (simulasi)
-  sisa = Math.min(max, sisa + 1);
+  // − : batalkan (kembalikan ketersediaan ke 1)
+  sisa = Math.min(1, sisa + 1);
   sisaEl.textContent = String(sisa);
   updateBadgeAndButtons(card, sisa);
 });
@@ -249,19 +161,15 @@ document.addEventListener('click',(e)=>{
 
 // FAB → ke halaman booking (jika ada isi keranjang)
 document.getElementById('fabCheckout')?.addEventListener('click', ()=>{
-  // pastikan meta booking tersimpan terbaru
-  const tanggal = document.getElementById('loanDateMeta')?.value || todayISO();
-  const mulai   = document.getElementById('startTimeMeta')?.value || '10:00';
-  const durasi  = document.getElementById('durationMeta')?.value || '2';
-  saveBookingMeta({ tanggal, mulai, durasi });
-
   const c = (window.MSUCart ? MSUCart.count() : 0);
   if (c<=0) return;
   window.location.href = 'bookingbarang.html?from=fab';
 });
 
-// Inisialisasi badge saat load & filter awal
+// Inisialisasi badge saat load
 window.addEventListener('load', ()=> {
   if (window.MSUCart) MSUCart.renderBadge();
-  applyFilter();
 });
+
+// Search awal
+applyFilter();
