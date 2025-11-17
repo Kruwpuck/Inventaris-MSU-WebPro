@@ -327,3 +327,159 @@ button:disabled, input:disabled {
     opacity: 0.5;
     cursor: not-allowed;
 }
+
+/* =======================
+   RESPONSIVE MODE
+   =======================*/
+
+/* Layar max 1024px (tablet landscape) */
+@media (max-width: 1024px) {
+    table {
+        width: 95%;
+    }
+
+    header {
+        padding: 10px 20px;
+    }
+
+    .hero img {
+        height: 350px;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+}
+
+/* Layar max 768px (tablet portrait) */
+@media (max-width: 768px) {
+
+    header {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+
+    nav ul {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .profile-wrapper {
+        justify-content: center;
+    }
+
+    .hero img {
+        height: 300px;
+    }
+
+    .hero-subtext p {
+        font-size: 14px;
+        padding: 7px 15px;
+    }
+
+    table {
+        width: 100%;
+        font-size: 14px;
+    }
+
+    button {
+        font-size: 12px;
+        padding: 5px 10px;
+    }
+
+    .container {
+        padding: 0 10px;
+    }
+}
+
+/* Layar max 600px (HP besar) */
+@media (max-width: 600px) {
+
+    table,
+    table thead,
+    table tbody,
+    table th,
+    table td,
+    table tr {
+        display: block;
+    }
+
+    /* Header tabel hilang */
+    table thead {
+        display: none;
+    }
+
+    /* Setiap baris jadi card */
+    table tr {
+        background: white;
+        margin-bottom: 12px;
+        border-radius: 10px;
+        padding: 15px;
+        border: 1px solid #dcdcdc;
+    }
+
+    table td {
+        border: none;
+        padding: 6px 0;
+        text-align: left;
+        font-size: 14px;
+    }
+
+    /* Label otomatis sebelum value */
+    table td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 2px;
+        color: #006400;
+    }
+
+    /* Tombol */
+    button {
+        width: 100%;
+        margin-top: 8px;
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .hero img {
+        height: 220px;
+    }
+
+    h1 {
+        font-size: 20px;
+    }
+
+    .judul-bawah h1 {
+        font-size: 20px;
+        padding: 10px 20px;
+    }
+}
+
+/* Layar max 430px (HP kecil) */
+@media (max-width: 430px) {
+    header {
+        gap: 5px;
+    }
+
+    nav ul {
+        gap: 10px;
+        font-size: 12px;
+    }
+
+    .hero-subtext p {
+        font-size: 12px;
+        padding: 6px 12px;
+    }
+
+    button {
+        font-size: 12px;
+        padding: 8px;
+    }
+
+    table td {
+        font-size: 13px;
+    }
+}
