@@ -70,6 +70,16 @@
         <!-- Form Booking -->
         <form id="bookingForm" class="form-card reveal-up needs-validation" novalidate>
           <div class="row g-3">
+            <!-- NOMOR PEMINJAMAN -->
+            <div class="col-md-6">
+              <label class="form-label">Nomor Telepon</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-receipt-cutoff"></i></span>
+                <input type="text" class="form-control" id="loanNumber" placeholder="Contoh: 08123456789" required />
+                <div class="invalid-feedback">Wajib diisi.</div>
+              </div>
+            </div>
+
             <div class="col-md-6">
               <label class="form-label">Penanggung jawab</label>
               <div class="input-group">

@@ -55,7 +55,7 @@
 						src="aset/logo.png"
 						alt="Logo MSU"
 						style="height: 45px"
-					/>  
+					/>
 				</a>
 				<button
 					class="navbar-toggler"
@@ -88,19 +88,55 @@
 						</li>
 					</ul>
 
-					<div class="ms-3 d-flex align-items-center">
-						<img
-							id="user"
-							src="aset/MSU.png"
-							alt="User"
-							class="rounded-circle me-2"
-							width="35"
-							height="35"
-						/>
-						<span id="userName" class="fw-semibold text-dark"
-							>Arina</span
+					<!-- USER DROPDOWN + LOGOUT SAMA SEPERTI BERANDA -->
+					<div class="ms-3 dropdown">
+						<button
+							class="btn btn-outline-secondary d-flex align-items-center rounded-pill px-3 py-1 border-0"
+							type="button"
+							id="userMenuButton"
+							data-bs-toggle="dropdown"
+							aria-expanded="false"
 						>
+							<img
+								id="userAvatar"
+								src="aset/MSU.png"
+								alt="User"
+								class="rounded-circle me-2"
+								width="32"
+								height="32"
+							/>
+							<div class="text-start">
+								<div
+									id="userName"
+									class="fw-semibold text-dark small"
+								>
+									Pengelola
+								</div>
+								<div
+									id="userRoleLabel"
+									class="text-muted"
+									style="font-size: 0.75rem"
+								>
+									Pengelola Side
+								</div>
+							</div>
+							<i class="bi bi-chevron-down ms-2 small"></i>
+						</button>
+
+						<ul class="dropdown-menu dropdown-menu-end mt-2">
+							<li>
+								<button
+									class="dropdown-item text-danger"
+									id="btnLogout"
+									type="button"
+								>
+									<i class="bi bi-box-arrow-right me-2"></i
+									>Keluar
+								</button>
+							</li>
+						</ul>
 					</div>
+					<!-- END USER DROPDOWN -->
 				</div>
 			</div>
 		</nav>
@@ -123,14 +159,12 @@
 									<th scope="col">Barang/Fasilitas</th>
 									<th scope="col">Tgl Pinjam</th>
 									<th scope="col">Status</th>
-
 									<th scope="col" style="min-width: 190px">
 										Aksi
 									</th>
 									<th scope="col" style="min-width: 150px">
 										Proposal
 									</th>
-									 
 								</tr>
 							</thead>
 							<tbody id="submissionTableBody"></tbody>

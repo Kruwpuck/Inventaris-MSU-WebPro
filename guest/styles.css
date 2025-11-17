@@ -69,18 +69,56 @@ body{background:#f6f8f7;color:#121816;margin:0;font-family:'Inter',sans-serif;}
 
 /* DATE BAR */
 .datebar{
-  background:#fff;border-top:1px solid rgba(0,0,0,.06);border-bottom:1px solid rgba(0,0,0,.06);
+  background:#fff;
+  border-top:1px solid rgba(0,0,0,.06);
+  border-bottom:1px solid rgba(0,0,0,.06);
   padding:.9rem 0;
 }
+
 .datebar-wrap{
-  display:grid;grid-template-columns:1fr 1fr auto; gap:12px; align-items:end;
+  display:grid;
+  gap:12px;
+  align-items:end;
+  grid-template-columns:repeat(3, minmax(0, 1fr));
+  grid-template-areas:
+    "start end time"
+    "dur   dur btn";
 }
-.datebar-field .form-label{font-weight:700;color:#0b5c58;font-size:.9rem;}
-.datebar .form-control{border-radius:10px;}
-.datebar-actions{min-width:220px;}
+
+.datebar-field .form-label{
+  font-weight:700;
+  color:#0b5c58;
+  font-size:.9rem;
+}
+
+.datebar .form-control,
+.datebar .form-select{
+  border-radius:10px;
+}
+
+.datebar-actions{
+  grid-area:btn;
+  min-width:220px;
+}
+
+/* mapping area */
+.datebar-field--start{ grid-area:start; }
+.datebar-field--end  { grid-area:end; }
+.datebar-field--time { grid-area:time; }
+.datebar-field--dur  { grid-area:dur; }
+
+/* responsive: hp jadi satu kolom */
 @media (max-width: 767px){
-  .datebar-wrap{grid-template-columns:1fr 1fr; }
-  .datebar-actions{grid-column:1 / -1;}
+  .datebar-wrap{
+    grid-template-columns:1fr;
+    grid-template-areas:
+      "start"
+      "end"
+      "time"
+      "dur"
+      "btn";
+  }
+  .datebar-actions{ min-width:auto; }
 }
 
 /* SECTION TITLE */
@@ -88,10 +126,39 @@ body{background:#f6f8f7;color:#121816;margin:0;font-family:'Inter',sans-serif;}
 
 /* FLOW */
 .flow-card{
-  background:#0e635d;border-radius:22px;padding:14px;color:#fff;
+  position:relative;               /* <--- tambah ini */
+  background:#0e635d;
+  border-radius:22px;
+  padding:14px;
+  color:#fff;
   box-shadow:0 8px 24px rgba(4,24,22,.12);
   transition:.35s;
 }
+
+.flow-step-badge{
+  position:absolute;
+  top:10px;
+  left:16px;              /* kalau mau di kanan atas: ganti left:16px; jadi right:16px; */
+  z-index:3;
+  background:white;
+  color:#0e635d;
+  font-weight:800;
+  font-size:.9rem;
+  padding:3px 10px;
+  border-radius:999px;
+  box-shadow:0 4px 10px rgba(0,0,0,.18);
+}
+
+@media (max-width:575px){
+  .flow-step-badge{
+    top:8px;
+    left:12px;
+    font-size:.8rem;
+    padding:2px 8px;
+  }
+}
+
+
 .flow-thumb{
   background:#eaf3f1;border-radius:14px;height:130px;overflow:hidden;
 }
