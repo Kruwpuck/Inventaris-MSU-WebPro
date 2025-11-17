@@ -3,7 +3,12 @@ window.addEventListener('load', () => {
   document.querySelector('.drop-in')?.classList.add('show');
 });
 const io = new IntersectionObserver((entries) => {
-  entries.forEach(e => { if (e.isIntersecting){ e.target.classList.add('show'); io.unobserve(e.target);} });
+  entries.forEach(e => {
+    if (e.isIntersecting){
+      e.target.classList.add('show');
+      io.unobserve(e.target);
+    }
+  });
 }, { threshold: 0.12 });
 document.querySelectorAll('.reveal-up').forEach(el => io.observe(el));
 
@@ -18,25 +23,38 @@ document.querySelectorAll('.tap-anim').forEach(addTapAnimation);
 // ====== Module: MSU Dates (disimpan di localStorage) ======
 window.MSUDates = (function(){
   const KEY = 'msu_dates_v1';
+
   function get(){
-    try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch(e){ return {}; }
+    try { return JSON.parse(localStorage.getItem(KEY) || '{}'); }
+    catch(e){ return {}; }
   }
-  function set({start,end}){
+
+  function set({start, end, time, duration}){
     const d = {};
-    if (start) d.start = start;
-    if (end) d.end = end;
+    if (start)    d.start    = start;
+    if (end)      d.end      = end;
+    if (time)     d.time     = time;
+    if (duration) d.duration = duration;
     localStorage.setItem(KEY, JSON.stringify(d));
   }
+
   function clear(){ localStorage.removeItem(KEY); }
+
   function isSet(){
     const d = get();
     return Boolean(d.start && d.end);
   }
+
   function formatRange(){
     const d = get();
     if (!d.start || !d.end) return '';
-    return `${d.start} → ${d.end}`;
+    const extra = [];
+    if (d.time)     extra.push(`Jam ${d.time}`);
+    if (d.duration) extra.push(`${d.duration} jam`);
+    const extraStr = extra.length ? ` (${extra.join(', ')})` : '';
+    return `${d.start} → ${d.end}${extraStr}`;
   }
+
   return {get,set,clear,isSet,formatRange};
 })();
 
@@ -44,22 +62,45 @@ window.MSUDates = (function(){
 (function initDateBar(){
   const inpStart = document.getElementById('dateStart');
   const inpEnd   = document.getElementById('dateEnd');
+  const inpTime  = document.getElementById('timeStart');
+  const selDur   = document.getElementById('durationSel');
   const btnSet   = document.getElementById('btnSetDates');
   const lbl      = document.querySelector('.js-daterange');
 
   // Prefill dari storage
   const saved = window.MSUDates.get();
-  if (inpStart && saved.start) inpStart.value = saved.start;
-  if (inpEnd && saved.end) inpEnd.value = saved.end;
-  if (lbl) lbl.textContent = saved.start && saved.end ? `Tanggal dipilih: ${window.MSUDates.formatRange()}` : 'Belum memilih tanggal.';
+  if (inpStart && saved.start)    inpStart.value = saved.start;
+  if (inpEnd   && saved.end)      inpEnd.value   = saved.end;
+  if (inpTime  && saved.time)     inpTime.value  = saved.time;
+  if (selDur   && saved.duration) selDur.value   = saved.duration;
+
+  if (lbl){
+    lbl.textContent = (saved.start && saved.end)
+      ? `Tanggal dipilih: ${window.MSUDates.formatRange()}`
+      : 'Belum memilih tanggal.';
+  }
 
   btnSet?.addEventListener('click', ()=>{
-    const s = inpStart?.value || '';
-    const e = inpEnd?.value || '';
-    if (!s || !e){ showToastInfo('Pilih tanggal pakai & kembali terlebih dahulu.'); return; }
-    if (e < s){ showToastInfo('Tanggal kembali tidak boleh lebih awal dari tanggal pakai.'); return; }
-    window.MSUDates.set({start:s,end:e});
-    if (lbl) lbl.textContent = `Tanggal dipilih: ${window.MSUDates.formatRange()}`;
+    const s   = inpStart?.value || '';
+    const e   = inpEnd?.value   || '';
+    const t   = inpTime?.value  || '';
+    const dur = selDur?.value   || '';
+
+    if (!s || !e){
+      showToastInfo('Pilih tanggal pakai & kembali terlebih dahulu.');
+      return;
+    }
+    if (e < s){
+      showToastInfo('Tanggal kembali tidak boleh lebih awal dari tanggal pakai.');
+      return;
+    }
+
+    window.MSUDates.set({start:s, end:e, time:t, duration:dur});
+
+    if (lbl){
+      lbl.textContent = `Tanggal dipilih: ${window.MSUDates.formatRange()}`;
+    }
+
     showToastSuccess('Tanggal pemakaian tersimpan. Gunakan tombol ＋ untuk tambah ke keranjang.');
   });
 })();
@@ -86,8 +127,13 @@ function updateBadgeAndButtons(card, sisa) {
   const plusBtn  = card.querySelector('.qty-btn[data-action="dec"]'); // ＋ pilih
 
   if (badge) {
-    if (sisa === 0) { badge.textContent = 'Habis'; badge.style.background = '#a94442'; }
-    else { badge.textContent = 'Active'; badge.style.background = '#167c73'; }
+    if (sisa === 0) {
+      badge.textContent = 'Habis';
+      badge.style.background = '#a94442';
+    } else {
+      badge.textContent = 'Active';
+      badge.style.background = '#167c73';
+    }
   }
   if (type === 'ruang'){
     if (minusBtn) { minusBtn.disabled = (sisa >= 1); minusBtn.style.opacity = minusBtn.disabled ? .6 : 1; }
@@ -212,7 +258,10 @@ document.addEventListener('click', (e) => {
   const already = card.classList.contains('is-expanded');
   grid.classList.remove('has-expanded');
   grid.querySelectorAll('.item-card').forEach(c => c.classList.remove('is-expanded'));
-  if (!already){ card.classList.add('is-expanded'); grid.classList.add('has-expanded'); }
+  if (!already){
+    card.classList.add('is-expanded');
+    grid.classList.add('has-expanded');
+  }
 });
 
 // ====== Klik tombol qty ======
