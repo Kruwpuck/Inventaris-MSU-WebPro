@@ -1,14 +1,14 @@
-// shared-data.js
+// shared-data.js (REVISI FINAL)
+
 // Sistem manajemen data peminjaman fasilitas
 
-// Struktur data untuk menyimpan semua peminjaman
 class DataManager {
   constructor() {
     this.STORAGE_KEY = 'peminjamanData';
     this.initData();
   }
 
-  // Inisialisasi data default jika belum ada
+  // Inisialisasi data awal
   initData() {
     if (!localStorage.getItem(this.STORAGE_KEY)) {
       const initialData = {
@@ -77,7 +77,7 @@ class DataManager {
     return JSON.parse(localStorage.getItem(this.STORAGE_KEY));
   }
 
-  // Simpan semua data
+  // Simpan data
   saveData(data) {
     localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
   }
@@ -96,112 +96,123 @@ class DataManager {
     return now.toLocaleString('id-ID', options) + ' WIB';
   }
 
-  // Pindahkan data dari dashboard/pinjamFasilitas ke riwayat
+  // Pindahkan data ke riwayat
   moveToRiwayat(source, id, checkType) {
     const data = this.getData();
-    let item = null;
     let sourceArray = source === 'dashboard' ? data.dashboard : data.pinjamFasilitas;
 
-    // Cari item berdasarkan id
     const index = sourceArray.findIndex(i => i.id === id);
     if (index === -1) return;
 
-    item = sourceArray[index];
+    const item = sourceArray[index];
 
-    // Cek apakah sudah ada di riwayat
-    let riwayatItem = data.riwayat.find(r => r.originalId === id && r.source === source);
+    // Cek apakah 2 checkbox akan dicentang
+    const willCheckAmbil = checkType === 'ambil' ? true : item.sudahAmbil;
+    const willCheckKembali = 
+      source === 'dashboard'
+      ? (checkType === 'terima' ? true : item.sudahTerima)
+      : (checkType === 'kembali' ? true : item.sudahKembali);
+
+    const bothChecked = willCheckAmbil && willCheckKembali;
+
+    // NOTIFIKASI saat centang dua-duanya
+    if (bothChecked) {
+      const ok = confirm("Apakah fasilitasnya sudah kembali?");
+      if (!ok) {
+        return false; // batalkan centang
+      }
+    }
+
+    // Cari di riwayat
+    let riwayatItem = data.riwayat.find(
+      r => r.originalId === id && r.source === source
+    );
 
     if (!riwayatItem) {
-      // Buat item baru di riwayat
       riwayatItem = {
         id: 'r' + Date.now(),
         originalId: id,
         source: source,
         no: data.riwayat.length + 1,
         nama: item.nama,
+        fasilitas: item.fasilitas,
+
+        // Waktu yang ditampilkan (mulai "...")
         waktuAmbil: '...',
         waktuKembali: '...',
-        fasilitas: item.fasilitas,
-        isSubmitted: false,
-        isCancelled: false
+
+        // MENYIMPAN WAKTU ASLI UNTUK CANCEL
+        waktuAsliAmbil: item.waktuPengambilan,
+        waktuAsliKembali: item.waktuPengembalian,
+
+        isSubmitted: false
       };
       data.riwayat.push(riwayatItem);
     }
 
-    // Update waktu sesuai checklist
+    // Update waktu sesuai centang
     if (checkType === 'ambil') {
       riwayatItem.waktuAmbil = this.getCurrentTime();
       item.sudahAmbil = true;
-    } else if (checkType === 'terima' || checkType === 'kembali') {
+    }
+    if (checkType === 'terima' || checkType === 'kembali') {
       riwayatItem.waktuKembali = this.getCurrentTime();
-      if (source === 'dashboard') {
-        item.sudahTerima = true;
-      } else {
-        item.sudahKembali = true;
-      }
+      if (source === 'dashboard') item.sudahTerima = true;
+      else item.sudahKembali = true;
     }
 
-    // Cek apakah kedua checkbox sudah tercentang
-    const bothChecked = source === 'dashboard' 
-      ? (item.sudahAmbil && item.sudahTerima)
-      : (item.sudahAmbil && item.sudahKembali);
-
+    // Jika dua-duanya sudah centang → hapus dari sumber
     if (bothChecked) {
-      // Hapus dari sumber
       sourceArray.splice(index, 1);
 
-      // Re-number items
-      sourceArray.forEach((item, idx) => {
-        item.no = idx + 1;
+      // Renumber
+      sourceArray.forEach((itm, idx) => {
+        itm.no = idx + 1;
       });
     }
 
     this.saveData(data);
+    return true;
   }
 
-  // Cancel riwayat - kembalikan ke pinjamFasilitas
+  // Cancel riwayat
   cancelRiwayat(riwayatId) {
     const data = this.getData();
-    const riwayatIndex = data.riwayat.findIndex(r => r.id === riwayatId);
+    const riIndex = data.riwayat.findIndex(r => r.id === riwayatId);
+    if (riIndex === -1) return;
 
-    if (riwayatIndex === -1) return;
-
-    const riwayatItem = data.riwayat[riwayatIndex];
-    const originalSource = riwayatItem.source;
-    const originalId = riwayatItem.originalId;
+    const riwayatItem = data.riwayat[riIndex];
 
     // Hapus dari riwayat
-    data.riwayat.splice(riwayatIndex, 1);
+    data.riwayat.splice(riIndex, 1);
 
-    // Re-number riwayat
-    data.riwayat.forEach((item, idx) => {
-      item.no = idx + 1;
+    // Renumber riwayat
+    data.riwayat.forEach((item, i) => {
+      item.no = i + 1;
     });
 
-    // Kembalikan ke pinjamFasilitas (reset checkbox)
-    const newItem = {
-      id: originalId,
+    // Mengembalikan data ke pinjamFasilitas (waktu asli)
+    data.pinjamFasilitas.push({
+      id: riwayatItem.originalId,
       no: data.pinjamFasilitas.length + 1,
       nama: riwayatItem.nama,
-      waktuPengambilan: '...',
-      waktuPengembalian: '...',
+      waktuPengambilan: riwayatItem.waktuAsliAmbil,
+      waktuPengembalian: riwayatItem.waktuAsliKembali,
       fasilitas: riwayatItem.fasilitas,
       sudahAmbil: false,
       sudahKembali: false
-    };
-
-    data.pinjamFasilitas.push(newItem);
+    });
 
     this.saveData(data);
   }
 
-  // Submit riwayat - disable buttons
+  // Submit riwayat
   submitRiwayat(riwayatId) {
     const data = this.getData();
-    const riwayatItem = data.riwayat.find(r => r.id === riwayatId);
+    const item = data.riwayat.find(r => r.id === riwayatId);
 
-    if (riwayatItem) {
-      riwayatItem.isSubmitted = true;
+    if (item) {
+      item.isSubmitted = true;
       this.saveData(data);
       return true;
     }
@@ -212,153 +223,149 @@ class DataManager {
 // Instance global
 const dataManager = new DataManager();
 
-// Fungsi untuk dashboard.html
+/* ------------------------------
+   DASHBOARD PAGE
+--------------------------------*/
 function initDashboard() {
   const data = dataManager.getData();
   const tbody = document.querySelector('table tbody');
-
   if (!tbody) return;
 
   tbody.innerHTML = '';
 
-  data.dashboard.forEach((item, index) => {
+  data.dashboard.forEach(item => {
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td>${item.no}</td>
       <td>${item.nama}</td>
       <td>${item.waktuPengambilan}</td>
       <td>${item.waktuPengembalian}</td>
-      <td>
-        <button class="detail-btn" data-detail="${item.fasilitas}">Detail Peminjaman</button>
-      </td>
+      <td><button class="detail-btn" data-detail="${item.fasilitas}">Detail Peminjaman</button></td>
       <td><input type="checkbox" data-id="${item.id}" data-type="ambil" ${item.sudahAmbil ? 'checked' : ''}></td>
       <td><input type="checkbox" data-id="${item.id}" data-type="terima" ${item.sudahTerima ? 'checked' : ''}></td>
     `;
     tbody.appendChild(tr);
   });
 
-  // Event listener untuk checkbox
-  document.querySelectorAll('table tbody input[type="checkbox"]').forEach(checkbox => {
-    checkbox.addEventListener('change', function() {
-      if (this.checked) {
-        const id = this.getAttribute('data-id');
-        const type = this.getAttribute('data-type');
-        dataManager.moveToRiwayat('dashboard', id, type);
-        initDashboard(); // Refresh tampilan
+  document.querySelectorAll('table tbody input[type="checkbox"]').forEach(cb => {
+    cb.addEventListener('change', function() {
+      if (!this.checked) return;
+      const id = this.getAttribute('data-id');
+      const type = this.getAttribute('data-type');
+
+      const ok = dataManager.moveToRiwayat('dashboard', id, type);
+      if (!ok) {
+        this.checked = false;
+      } else {
+        initDashboard();
       }
     });
   });
 
-  // Re-attach modal event listeners
   attachModalListeners();
 }
 
-// Fungsi untuk pinjamFasilitas.html
+/* ------------------------------
+   PINJAM FASILITAS PAGE
+--------------------------------*/
 function initPinjamFasilitas() {
   const data = dataManager.getData();
   const tbody = document.querySelector('table tbody');
-
   if (!tbody) return;
 
   tbody.innerHTML = '';
 
-  data.pinjamFasilitas.forEach((item, index) => {
+  data.pinjamFasilitas.forEach(item => {
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td>${item.no}</td>
       <td>${item.nama}</td>
       <td>${item.waktuPengambilan}</td>
       <td>${item.waktuPengembalian}</td>
-      <td>
-        <button class="detail-btn" data-detail="${item.fasilitas}">Detail Peminjaman</button>
-      </td>
+      <td><button class="detail-btn" data-detail="${item.fasilitas}">Detail Peminjaman</button></td>
       <td><input type="checkbox" data-id="${item.id}" data-type="ambil" ${item.sudahAmbil ? 'checked' : ''}></td>
       <td><input type="checkbox" data-id="${item.id}" data-type="kembali" ${item.sudahKembali ? 'checked' : ''}></td>
     `;
     tbody.appendChild(tr);
   });
 
-  // Event listener untuk checkbox
-  document.querySelectorAll('table tbody input[type="checkbox"]').forEach(checkbox => {
-    checkbox.addEventListener('change', function() {
-      if (this.checked) {
-        const id = this.getAttribute('data-id');
-        const type = this.getAttribute('data-type');
-        dataManager.moveToRiwayat('pinjamFasilitas', id, type);
-        initPinjamFasilitas(); // Refresh tampilan
+  document.querySelectorAll('table tbody input[type="checkbox"]').forEach(cb => {
+    cb.addEventListener('change', function() {
+      if (!this.checked) return;
+      const id = this.getAttribute('data-id');
+      const type = this.getAttribute('data-type');
+
+      const ok = dataManager.moveToRiwayat('pinjamFasilitas', id, type);
+      if (!ok) {
+        this.checked = false;
+      } else {
+        initPinjamFasilitas();
       }
     });
   });
 
-  // Re-attach modal event listeners
   attachModalListeners();
 }
 
-// Fungsi untuk riwayatpinjam.html
+/* ------------------------------
+   RIWAYAT PAGE
+--------------------------------*/
 function initRiwayat() {
   const data = dataManager.getData();
   const tbody = document.querySelector('table tbody');
-
   if (!tbody) return;
 
   tbody.innerHTML = '';
 
   if (data.riwayat.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Belum ada riwayat peminjaman</td></tr>';
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;">Belum ada riwayat peminjaman</td></tr>`;
     return;
   }
 
-  data.riwayat.forEach((item, index) => {
-    const tr = document.createElement('tr');
-    const isDisabled = item.isSubmitted ? 'disabled' : '';
+  data.riwayat.forEach(item => {
+    const disabled = item.isSubmitted ? 'disabled' : '';
 
+    const tr = document.createElement('tr');
     tr.innerHTML = `
       <td>${item.no}</td>
       <td>${item.nama}</td>
       <td>${item.waktuAmbil}</td>
       <td>${item.waktuKembali}</td>
-      <td>
-        <button class="detail-btn" data-detail="${item.fasilitas}">Detail Peminjaman</button>
-      </td>
-      <td><button type="button" class="cancel-btn" data-id="${item.id}" ${isDisabled}>Cancel</button></td>
-      <td><input type="submit" class="submit-btn" data-id="${item.id}" value="Submit" ${isDisabled}></td>
+      <td><button class="detail-btn" data-detail="${item.fasilitas}">Detail Peminjaman</button></td>
+      <td><button class="cancel-btn" data-id="${item.id}" ${disabled}>Cancel</button></td>
+      <td><button class="submit-btn" data-id="${item.id}" ${disabled}>Submit</button></td>
     `;
     tbody.appendChild(tr);
   });
 
-  // Event listener untuk cancel button
+  // Cancel
   document.querySelectorAll('.cancel-btn').forEach(btn => {
     btn.addEventListener('click', function() {
-      if (!this.disabled) {
-        const id = this.getAttribute('data-id');
-        if (confirm('Apakah Anda yakin ingin membatalkan peminjaman ini?')) {
-          dataManager.cancelRiwayat(id);
-          initRiwayat(); // Refresh tampilan
-        }
+      const id = this.getAttribute('data-id');
+      if (confirm("Anda yakin ingin membatalkan peminjaman ini?")) {
+        dataManager.cancelRiwayat(id);
+        initRiwayat();
       }
     });
   });
 
-  // Event listener untuk submit button
+  // Submit
   document.querySelectorAll('.submit-btn').forEach(btn => {
-    btn.addEventListener('click', function(e) {
-      e.preventDefault();
-      if (!this.disabled) {
-        const id = this.getAttribute('data-id');
-        const success = dataManager.submitRiwayat(id);
-        if (success) {
-          alert('Data berhasil disubmit!');
-          initRiwayat(); // Refresh tampilan
-        }
+    btn.addEventListener('click', function() {
+      const id = this.getAttribute('data-id');
+      if (dataManager.submitRiwayat(id)) {
+        alert("Data berhasil disubmit!");
+        initRiwayat();
       }
     });
   });
 
-  // Re-attach modal event listeners if exists
   attachModalListeners();
 }
 
-// Fungsi untuk attach modal listeners (untuk detail peminjaman)
+/* ------------------------------
+   MODAL DETAIL
+--------------------------------*/
 function attachModalListeners() {
   const detailButtons = document.querySelectorAll(".detail-btn");
   const modalBg = document.getElementById("modalBg");
@@ -366,37 +373,27 @@ function attachModalListeners() {
 
   if (!modalBg || !detailContent) return;
 
-  detailButtons.forEach(button => {
-    button.addEventListener("click", function () {
-      const detail = this.getAttribute("data-detail");
-      detailContent.textContent = detail;
+  detailButtons.forEach(btn => {
+    btn.addEventListener("click", function () {
+      detailContent.textContent = this.getAttribute("data-detail");
       modalBg.style.display = "flex";
     });
   });
 
   modalBg.addEventListener("click", function(e) {
-    if (e.target === modalBg) {
-      closeModal();
-    }
+    if (e.target === modalBg) closeModal();
   });
 }
 
 function closeModal() {
   const modalBg = document.getElementById("modalBg");
-  if (modalBg) {
-    modalBg.style.display = "none";
-  }
+  modalBg.style.display = "none";
 }
 
-// Auto-initialize berdasarkan halaman
-document.addEventListener('DOMContentLoaded', function() {
-  const currentPage = window.location.pathname;
-
-  if (currentPage.includes('dashboard.html') || currentPage.endsWith('/')) {
-    initDashboard();
-  } else if (currentPage.includes('pinjamFasilitas.html')) {
-    initPinjamFasilitas();
-  } else if (currentPage.includes('riwayatpinjam.html')) {
-    initRiwayat();
-  }
+// Auto inisialisasi halaman
+document.addEventListener('DOMContentLoaded', () => {
+  const page = window.location.pathname;
+  if (page.includes('dashboard.html')) initDashboard();
+  else if (page.includes('pinjamFasilitas.html')) initPinjamFasilitas();
+  else if (page.includes('riwayatpinjam.html')) initRiwayat();
 });

@@ -322,3 +322,8 @@ h1 {
 .submit-btn:hover {
     background-color: #146c43;
 }
+
+button:disabled, input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
