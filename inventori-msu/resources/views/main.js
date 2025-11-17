@@ -1,3 +1,4 @@
+// main.js
 // ====== Animasi judul hero & reveal on scroll ======
 window.addEventListener('load', () => {
   document.querySelector('.drop-in')?.classList.add('show');
@@ -14,55 +15,6 @@ function addTapAnimation(el){
   el.addEventListener('touchcancel',()=>el.classList.remove('tap-active'));
 }
 document.querySelectorAll('.tap-anim').forEach(addTapAnimation);
-
-// ====== Module: MSU Dates (disimpan di localStorage) ======
-window.MSUDates = (function(){
-  const KEY = 'msu_dates_v1';
-  function get(){
-    try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch(e){ return {}; }
-  }
-  function set({start,end}){
-    const d = {};
-    if (start) d.start = start;
-    if (end) d.end = end;
-    localStorage.setItem(KEY, JSON.stringify(d));
-  }
-  function clear(){ localStorage.removeItem(KEY); }
-  function isSet(){
-    const d = get();
-    return Boolean(d.start && d.end);
-  }
-  function formatRange(){
-    const d = get();
-    if (!d.start || !d.end) return '';
-    return `${d.start} → ${d.end}`;
-  }
-  return {get,set,clear,isSet,formatRange};
-})();
-
-// ====== Render & set DateBar ======
-(function initDateBar(){
-  const inpStart = document.getElementById('dateStart');
-  const inpEnd   = document.getElementById('dateEnd');
-  const btnSet   = document.getElementById('btnSetDates');
-  const lbl      = document.querySelector('.js-daterange');
-
-  // Prefill dari storage
-  const saved = window.MSUDates.get();
-  if (inpStart && saved.start) inpStart.value = saved.start;
-  if (inpEnd && saved.end) inpEnd.value = saved.end;
-  if (lbl) lbl.textContent = saved.start && saved.end ? `Tanggal dipilih: ${window.MSUDates.formatRange()}` : 'Belum memilih tanggal.';
-
-  btnSet?.addEventListener('click', ()=>{
-    const s = inpStart?.value || '';
-    const e = inpEnd?.value || '';
-    if (!s || !e){ showToastInfo('Pilih tanggal pakai & kembali terlebih dahulu.'); return; }
-    if (e < s){ showToastInfo('Tanggal kembali tidak boleh lebih awal dari tanggal pakai.'); return; }
-    window.MSUDates.set({start:s,end:e});
-    if (lbl) lbl.textContent = `Tanggal dipilih: ${window.MSUDates.formatRange()}`;
-    showToastSuccess('Tanggal pemakaian tersimpan. Gunakan tombol ＋ untuk tambah ke keranjang.');
-  });
-})();
 
 // ====== Setup stok awal ======
 function initCards(){
@@ -115,22 +67,6 @@ function showToastSuccess(text){
   t.show();
   el.addEventListener('hidden.bs.toast', ()=> el.remove());
 }
-function showToastInfo(text){
-  const wrap = document.getElementById('toastStack');
-  if (!wrap) return alert(text);
-  const id = 'i' + Date.now();
-  wrap.insertAdjacentHTML('beforeend', `
-    <div id="${id}" class="toast align-items-center text-bg-primary border-0" role="alert" aria-live="polite" aria-atomic="true">
-      <div class="d-flex">
-        <div class="toast-body"><i class="bi bi-info-circle me-1"></i>${text}</div>
-        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-      </div>
-    </div>`);
-  const el = document.getElementById(id);
-  const t = new bootstrap.Toast(el, { delay: 2400 });
-  t.show();
-  el.addEventListener('hidden.bs.toast', ()=> el.remove());
-}
 
 // ====== Modal Konfirmasi Tambah ======
 let pendingCard = null;
@@ -141,52 +77,37 @@ const confirmTypeEl = document.getElementById('confirmType');
 const confirmThumbEl = document.getElementById('confirmThumb');
 
 function openConfirm(card){
-  // Jika item SUDAH ada di cart → langsung tambah tanpa modal
-  const name = card.querySelector('.item-title')?.textContent?.trim() || 'Item';
-  const typeKey = (card.dataset.type || 'barang');
-  if (window.MSUCart?.has(name, typeKey)){
-    // Pastikan tanggal dipilih (beri info saja, tidak diblok)
-    if (!window.MSUDates.isSet()){
-      showToastInfo('Pilih tanggal pakai & kembali untuk cek ketersediaan.');
-    }
-    confirmAddNoRedirect(card); // langsung eksekusi tambah
-    return;
-  }
-
-  // Jika belum ada, tampilkan modal konfirmasi
   pendingCard = card;
-  const type = (typeKey === 'ruang') ? 'Fasilitas / Ruangan' : 'Barang';
+  const name = card.querySelector('.item-title')?.textContent?.trim() || 'Item';
+  const type = (card.dataset.type || 'barang') === 'ruang' ? 'Fasilitas / Ruangan' : 'Barang';
   const thumb = card.querySelector('.item-thumb img')?.getAttribute('src') || '';
   if (confirmNameEl) confirmNameEl.textContent = name;
   if (confirmTypeEl) confirmTypeEl.textContent = type;
   if (confirmThumbEl) confirmThumbEl.src = thumb;
   if (confirmModal) confirmModal.show();
-  else if (window.confirm(`Tambah "${name}" ke keranjang?`)) confirmAddNoRedirect(card);
+  else if (window.confirm(`Tambah "${name}" ke keranjang?`)) confirmAddNoRedirect();
 }
 
 document.getElementById('confirmAddBtn')?.addEventListener('click', () => {
-  if (pendingCard){
-    confirmAddNoRedirect(pendingCard);
-    pendingCard = null;
-  }
+  confirmAddNoRedirect();
   if (confirmModal) confirmModal.hide();
 });
 
-// Tambah ke keranjang TANPA redirect (bisa dipanggil langsung/dari modal)
-function confirmAddNoRedirect(card){
-  if (!card) return;
+// Tambah ke keranjang TANPA redirect
+function confirmAddNoRedirect(){
+  if (!pendingCard) return;
+  const card = pendingCard; pendingCard = null;
+
   const type = card.dataset.type || 'barang';
   const sisaEl = card.querySelector('.sisa');
-  let sisa = Number(sisaEl?.textContent.trim() || (type==='ruang'?1:0));
-
-  // Kurangi stok tampilan 1
+  let sisa = Number(sisaEl.textContent.trim() || (type==='ruang'?1:0));
+  // kurangi stok 1
   sisa = Math.max(0, sisa - 1);
-  if (sisaEl) sisaEl.textContent = String(sisa);
+  sisaEl.textContent = String(sisa);
   updateBadgeAndButtons(card, sisa);
 
-  const name  = card.querySelector('.item-title')?.textContent?.trim() || (type==='ruang'?'Ruang':'Item');
+  const name = card.querySelector('.item-title')?.textContent?.trim() || (type==='ruang'?'Ruang':'Item');
   const thumb = card.querySelector('.item-thumb img')?.getAttribute('src') || '';
-
   try{
     if (window.MSUCart){
       MSUCart.add(name, type, thumb, 1);
@@ -194,13 +115,6 @@ function confirmAddNoRedirect(card){
     }
   }catch(e){ /* ignore */ }
 
-  // Info tanggal (hanya informasi; cek real ke backend nanti)
-  if (!window.MSUDates.isSet()){
-    showToastInfo('Belum memilih tanggal. Kamu tetap bisa melanjutkan, tapi disarankan pilih tanggal untuk cek ketersediaan.');
-  } else {
-    showToastSuccess(`${name} ditambahkan (periode ${window.MSUDates.formatRange()}).`);
-    return;
-  }
   showToastSuccess(`${name} ditambahkan ke keranjang.`);
 }
 
@@ -228,10 +142,6 @@ document.addEventListener('click', (e) => {
   const action = btn.dataset.action; // "dec" (pilih) | "inc" (batal/restore)
 
   if (action === 'dec'){
-    // Sebelum tambah, sarankan pilih tanggal (opsional)
-    if (!window.MSUDates.isSet()){
-      showToastInfo('Pilih tanggal pakai & kembali untuk cek ketersediaan.');
-    }
     openConfirm(card);
     return;
   }
