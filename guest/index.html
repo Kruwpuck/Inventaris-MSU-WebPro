@@ -28,7 +28,6 @@
           <li class="nav-item"><a class="nav-link active" href="#beranda">Beranda</a></li>
           <li class="nav-item"><a class="nav-link" href="barang.html">Pinjam Barang</a></li>
           <li class="nav-item"><a class="nav-link" href="ruangan.html">Pinjam Fasilitas</a></li>
-          <!-- ikon cart disuntik oleh cart.js -->
         </ul>
       </div>
     </div>
@@ -47,7 +46,6 @@
 
   <!-- PROMO -->
   <section class="promo">
-    <div class="promo-mosque" aria-hidden="true"></div>
     <div class="container text-center position-relative">
       <h2 class="promo-title reveal-up">
         Satu langkah menuju <span class="text-highlight">kemudahan beraktivitas</span> di MSU
@@ -66,69 +64,108 @@
     <div class="container">
       <h3 class="section-title mb-3">Deskripsi Aplikasi</h3>
       <p class="mb-0">
-        Aplikasi Inventory MSU adalah sistem peminjaman barang dan fasilitas Masjid Syamsul Ulum yang memudahkan pengguna untuk mengecek ketersediaan, melakukan peminjaman, hingga pengembalian secara teratur dan tercatat. Dengan aplikasi ini, proses administrasi menjadi lebih cepat, transparan, dan efisien.
+        Aplikasi Inventory MSU memudahkan pengecekan ketersediaan, peminjaman, dan pengembalian barang/fasilitas secara tertib dan tercatat.
       </p>
     </div>
   </section>
 
-  <!-- FLOW PEMINJAMAN -->
-  <section class="pb-5">
-    <div class="container">
-      <h3 class="section-title mb-4">Flow Peminjaman</h3>
+  <!-- FLOW PEMINJAMAN (bernomor + panah) -->
+<section class="pb-4">
+  <div class="container">
+    <h3 class="section-title mb-4">Flow Peminjaman</h3>
 
-      <div class="row g-4">
-        <div class="col-6 col-lg-3">
-          <div class="flow-card tap-anim reveal-up">
-            <div class="flow-thumb">
-              <img src="peminjam.jpeg" alt="Mengisi Form Peminjaman" class="img-fluid">
-            </div>
-            <div class="flow-caption">Mengisi Form Peminjaman</div>
+    <div class="row g-4 flow-steps">
+      <div class="col-6 col-lg-3">
+        <div class="flow-card tap-anim reveal-up">
+          <span class="flow-step-badge">1</span>
+          <div class="flow-thumb">
+            <img src="peminjam.jpeg" alt="Mengisi Form Peminjaman" class="img-fluid">
           </div>
+          <div class="flow-caption">Mengisi Form Peminjaman</div>
         </div>
-        <div class="col-6 col-lg-3">
-          <div class="flow-card tap-anim reveal-up" style="transition-delay:.05s">
-            <div class="flow-thumb">
-              <img src="setuju.jpeg" alt="Pengelola Menyetujui" class="img-fluid">
-            </div>
-            <div class="flow-caption">Pengelola Menyetujui</div>
+      </div>
+
+      <div class="col-6 col-lg-3">
+        <div class="flow-card tap-anim reveal-up" style="transition-delay:.05s">
+          <span class="flow-step-badge">2</span>
+          <div class="flow-thumb">
+            <img src="setuju.jpeg" alt="Pengelola Menyetujui" class="img-fluid">
           </div>
+          <div class="flow-caption">Pengelola Menyetujui</div>
         </div>
-        <div class="col-6 col-lg-3">
-          <div class="flow-card tap-anim reveal-up" style="transition-delay:.1s">
-            <div class="flow-thumb">
-              <img src="jabat.jpg" alt="Pengurus Melakukan COD" class="img-fluid">
-            </div>
-            <div class="flow-caption">Pengurus Melakukan COD</div>
+      </div>
+
+      <div class="col-6 col-lg-3">
+        <div class="flow-card tap-anim reveal-up" style="transition-delay:.1s">
+          <span class="flow-step-badge">3</span>
+          <div class="flow-thumb">
+            <img src="jabat.jpg" alt="Pengurus Melakukan COD" class="img-fluid">
           </div>
+          <div class="flow-caption">Pengurus Melakukan COD</div>
         </div>
-        <div class="col-6 col-lg-3">
-          <div class="flow-card tap-anim reveal-up" style="transition-delay:.15s">
-            <div class="flow-thumb">
-              <img src="balik.jpg" alt="Pengembalian & Selesai" class="img-fluid">
-            </div>
-            <div class="flow-caption">Pengembalian & Selesai</div>
+      </div>
+
+      <div class="col-6 col-lg-3">
+        <div class="flow-card tap-anim reveal-up" style="transition-delay:.15s">
+          <span class="flow-step-badge">4</span>
+          <div class="flow-thumb">
+            <img src="balik.jpg" alt="Pengembalian & Selesai" class="img-fluid">
           </div>
+          <div class="flow-caption">Pengembalian & Selesai</div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- DATE BAR (DIPINDAH KE SINI: di bawah Flow, di atas Pinjam Barang) -->
+
+  <!-- WAKTU PEMINJAMAN -->
   <section class="datebar">
     <div class="container">
+      <h3 class="section-title mb-3 d-flex align-items-center gap-2">
+        <i class="bi bi-clock-history"></i> Waktu Peminjaman
+      </h3>
+
       <div class="datebar-wrap">
-        <div class="datebar-field">
+        <!-- Tanggal Pakai -->
+        <div class="datebar-field datebar-field--start">
           <label for="dateStart" class="form-label mb-1">
             <i class="bi bi-calendar-event me-1"></i>Tanggal Pakai
           </label>
           <input id="dateStart" type="date" class="form-control form-control-sm">
         </div>
-        <div class="datebar-field">
+
+        <!-- Tanggal Kembali -->
+        <div class="datebar-field datebar-field--end">
           <label for="dateEnd" class="form-label mb-1">
             <i class="bi bi-calendar-check me-1"></i>Tanggal Kembali
           </label>
           <input id="dateEnd" type="date" class="form-control form-control-sm">
         </div>
+
+        <!-- Jam Mulai -->
+        <div class="datebar-field datebar-field--time">
+          <label for="timeStart" class="form-label mb-1">
+            <i class="bi bi-alarm me-1"></i>Jam Mulai
+          </label>
+          <input id="timeStart" type="time" class="form-control form-control-sm">
+        </div>
+
+        <!-- Durasi -->
+        <div class="datebar-field datebar-field--dur">
+          <label for="durationSel" class="form-label mb-1">
+            <i class="bi bi-hourglass-split me-1"></i>Durasi
+          </label>
+          <select id="durationSel" class="form-select form-select-sm">
+            <option value="1">1 jam</option>
+            <option value="2">2 jam</option>
+            <option value="3">3 jam</option>
+            <option value="4">4 jam</option>
+            <option value="8">Seharian</option>
+          </select>
+        </div>
+
+        <!-- Tombol + info tanggal -->
         <div class="datebar-actions">
           <button id="btnSetDates" class="btn btn-success btn-sm w-100">
             <i class="bi bi-search me-1"></i>Cek Ketersediaan
@@ -139,22 +176,20 @@
     </div>
   </section>
 
-  <!-- PINJAM BARANG -->
+  <!-- PINJAM BARANG (contoh ringkas) -->
   <section id="pinjam-barang" class="py-4">
     <div class="container">
       <h3 class="section-title mb-3">Pinjam Barang</h3>
 
       <div class="row g-4 align-items-stretch items-grid">
-
-        <!-- ITEM 1: Proyektor -->
-        <div class="col-6 col-md-4 col-lg-2-4 order-1 order-lg-1">
+        <div class="col-6 col-md-4 col-lg-2-4">
           <article class="item-card tap-anim reveal-up h-100" data-max="7">
             <div class="item-thumb">
               <img src="proyektor.jpeg" alt="Proyektor" class="img-fluid">
               <span class="badge-status">Active</span>
               <div class="qty-actions">
-                <button type="button" class="qty-btn" data-action="inc" aria-label="Tambah sisa">−</button>
-                <button type="button" class="qty-btn" data-action="dec" aria-label="Tambahkan ke keranjang">＋</button>
+                <button type="button" class="qty-btn" data-action="inc">−</button>
+                <button type="button" class="qty-btn" data-action="dec">＋</button>
               </div>
             </div>
             <div class="item-body">
@@ -164,15 +199,14 @@
           </article>
         </div>
 
-        <!-- ITEM 2: Sound System -->
-        <div class="col-6 col-md-4 col-lg-2-4 order-2 order-lg-2">
+        <div class="col-6 col-md-4 col-lg-2-4">
           <article class="item-card tap-anim reveal-up h-100" data-max="5">
             <div class="item-thumb">
               <img src="sound.jpeg" alt="Sound System" class="img-fluid">
               <span class="badge-status">Active</span>
               <div class="qty-actions">
-                <button type="button" class="qty-btn" data-action="inc" aria-label="Tambah sisa">−</button>
-                <button type="button" class="qty-btn" data-action="dec" aria-label="Tambahkan ke keranjang">＋</button>
+                <button type="button" class="qty-btn" data-action="inc">−</button>
+                <button type="button" class="qty-btn" data-action="dec">＋</button>
               </div>
             </div>
             <div class="item-body">
@@ -182,15 +216,14 @@
           </article>
         </div>
 
-        <!-- ITEM 3: Terpal -->
-        <div class="col-6 col-md-4 col-lg-2-4 order-3 order-lg-3">
+        <div class="col-6 col-md-4 col-lg-2-4">
           <article class="item-card tap-anim reveal-up h-100" data-max="12">
             <div class="item-thumb">
               <img src="terpal.jpeg" alt="Terpal" class="img-fluid">
               <span class="badge-status">Active</span>
               <div class="qty-actions">
-                <button type="button" class="qty-btn" data-action="inc" aria-label="Tambah sisa">−</button>
-                <button type="button" class="qty-btn" data-action="dec" aria-label="Tambahkan ke keranjang">＋</button>
+                <button type="button" class="qty-btn" data-action="inc">−</button>
+                <button type="button" class="qty-btn" data-action="dec">＋</button>
               </div>
             </div>
             <div class="item-body">
@@ -200,15 +233,14 @@
           </article>
         </div>
 
-        <!-- ITEM 4: Karpet -->
-        <div class="col-6 col-md-4 col-lg-2-4 order-4 order-lg-4">
+        <div class="col-6 col-md-4 col-lg-2-4">
           <article class="item-card tap-anim reveal-up h-100" data-max="8">
             <div class="item-thumb">
               <img src="karpet.jpeg" alt="Karpet" class="img-fluid">
               <span class="badge-status">Active</span>
               <div class="qty-actions">
-                <button type="button" class="qty-btn" data-action="inc" aria-label="Tambah sisa">−</button>
-                <button type="button" class="qty-btn" data-action="dec" aria-label="Tambahkan ke keranjang">＋</button>
+                <button type="button" class="qty-btn" data-action="inc">−</button>
+                <button type="button" class="qty-btn" data-action="dec">＋</button>
               </div>
             </div>
             <div class="item-body">
@@ -218,34 +250,29 @@
           </article>
         </div>
 
-        <!-- CTA Cari Barang -->
-        <div class="col-12 col-md-4 col-lg-2-4 order-last order-lg-5">
+        <div class="col-12 col-md-4 col-lg-2-4">
           <a href="barang.html" class="cta-card tap-anim reveal-up h-100 text-decoration-none">
             <div class="cta-plus">+</div>
             <div>Cari Barang</div>
           </a>
         </div>
-
       </div>
     </div>
   </section>
 
-  <!-- PINJAM RUANGAN -->
+  <!-- PINJAM RUANGAN (contoh ringkas) -->
   <section id="pinjam-fasilitas" class="py-4">
     <div class="container">
       <h3 class="section-title mb-3">Pinjam Ruangan</h3>
-
       <div class="row g-4 align-items-stretch items-grid">
-
-        <!-- ITEM RUANG 1 -->
-        <div class="col-6 col-md-4 col-lg-2-4 order-1 order-lg-1">
+        <div class="col-6 col-md-4 col-lg-2-4">
           <article class="item-card tap-anim reveal-up h-100" data-type="ruang" data-max="1">
             <div class="item-thumb">
               <img src="plaza.jpeg" alt="Aula Utama" class="img-fluid">
               <span class="badge-status">Active</span>
               <div class="qty-actions">
-                <button type="button" class="qty-btn" data-action="inc" aria-label="Batalkan">−</button>
-                <button type="button" class="qty-btn" data-action="dec" aria-label="Pilih ruangan">＋</button>
+                <button type="button" class="qty-btn" data-action="inc">−</button>
+                <button type="button" class="qty-btn" data-action="dec">＋</button>
               </div>
             </div>
             <div class="item-body">
@@ -255,79 +282,74 @@
           </article>
         </div>
 
-        <!-- ITEM RUANG 2 -->
-        <div class="col-6 col-md-4 col-lg-2-4 order-2 order-lg-2">
+        <div class="col-6 col-md-4 col-lg-2-4">
           <article class="item-card tap-anim reveal-up h-100" data-type="ruang" data-max="1">
             <div class="item-thumb">
-              <img src="plaza.jpeg" alt="Ruang Rapat A" class="img-fluid">
+              <img src="plaza.jpeg" alt="Aula Utama" class="img-fluid">
               <span class="badge-status">Active</span>
               <div class="qty-actions">
-                <button type="button" class="qty-btn" data-action="inc" aria-label="Batalkan">−</button>
-                <button type="button" class="qty-btn" data-action="dec" aria-label="Pilih ruangan">＋</button>
+                <button type="button" class="qty-btn" data-action="inc">−</button>
+                <button type="button" class="qty-btn" data-action="dec">＋</button>
               </div>
             </div>
             <div class="item-body">
-              <div class="item-title">Ruang Rapat A</div>
+              <div class="item-title">Aula Utama</div>
               <div class="item-meta">Sisa : <span class="sisa">1</span></div>
             </div>
           </article>
         </div>
 
-        <!-- ITEM RUANG 3 -->
-        <div class="col-6 col-md-4 col-lg-2-4 order-3 order-lg-3">
+        <div class="col-6 col-md-4 col-lg-2-4">
           <article class="item-card tap-anim reveal-up h-100" data-type="ruang" data-max="1">
             <div class="item-thumb">
-              <img src="plaza.jpeg" alt="Ruang Rapat B" class="img-fluid">
+              <img src="plaza.jpeg" alt="Aula Utama" class="img-fluid">
               <span class="badge-status">Active</span>
               <div class="qty-actions">
-                <button type="button" class="qty-btn" data-action="inc" aria-label="Batalkan">−</button>
-                <button type="button" class="qty-btn" data-action="dec" aria-label="Pilih ruangan">＋</button>
+                <button type="button" class="qty-btn" data-action="inc">−</button>
+                <button type="button" class="qty-btn" data-action="dec">＋</button>
               </div>
             </div>
             <div class="item-body">
-              <div class="item-title">Ruang Rapat B</div>
+              <div class="item-title">Aula Utama</div>
               <div class="item-meta">Sisa : <span class="sisa">1</span></div>
             </div>
           </article>
         </div>
 
-        <!-- ITEM RUANG 4 -->
-        <div class="col-6 col-md-4 col-lg-2-4 order-4 order-lg-4">
+        <div class="col-6 col-md-4 col-lg-2-4">
           <article class="item-card tap-anim reveal-up h-100" data-type="ruang" data-max="1">
             <div class="item-thumb">
-              <img src="plaza.jpeg" alt="Ruang Kelas 1" class="img-fluid">
+              <img src="plaza.jpeg" alt="Aula Utama" class="img-fluid">
               <span class="badge-status">Active</span>
               <div class="qty-actions">
-                <button type="button" class="qty-btn" data-action="inc" aria-label="Batalkan">−</button>
-                <button type="button" class="qty-btn" data-action="dec" aria-label="Pilih ruangan">＋</button>
+                <button type="button" class="qty-btn" data-action="inc">−</button>
+                <button type="button" class="qty-btn" data-action="dec">＋</button>
               </div>
             </div>
             <div class="item-body">
-              <div class="item-title">Ruang Kelas 1</div>
+              <div class="item-title">Aula Utama</div>
               <div class="item-meta">Sisa : <span class="sisa">1</span></div>
             </div>
           </article>
         </div>
 
-        <!-- CTA Cari Ruang -->
-        <div class="col-12 col-md-4 col-lg-2-4 order-last order-lg-5">
+        <div class="col-6 col-md-4 col-lg-2-4">
           <a href="ruangan.html" class="cta-card tap-anim reveal-up h-100 text-decoration-none">
             <div class="cta-plus">+</div>
             <div>Cari Ruang</div>
           </a>
         </div>
-
       </div>
     </div>
   </section>
 
-  <!-- FLOATING CHECKOUT -->
+  <!-- FAB Checkout -->
   <button id="fabCheckout" class="fab-checkout" type="button" aria-label="Checkout">
     <i class="bi bi-bag-check"></i>
     <span id="fabCount" class="fab-count">0</span>
   </button>
 
-  <!-- MODAL KONFIRMASI TAMBAH -->
+  <!-- Modal Konfirmasi -->
   <div class="modal fade" id="confirmAddModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content rounded-4">
@@ -346,7 +368,7 @@
           </div>
           <div class="alert alert-info d-flex align-items-center gap-2 py-2 px-3 mt-3 mb-0">
             <i class="bi bi-info-circle"></i>
-            <div class="small">Setelah dikonfirmasi, barang masuk ke keranjang dan kamu tetap di halaman ini.</div>
+            <div class="small">Setelah dikonfirmasi, item masuk ke keranjang dan kamu tetap di halaman ini.</div>
           </div>
         </div>
         <div class="modal-footer border-0">
@@ -359,7 +381,7 @@
     </div>
   </div>
 
-  <!-- Toast stack -->
+  <!-- Toast -->
   <div id="toastStack" class="toast-container position-fixed top-0 end-0 p-3" style="z-index:2000"></div>
 
   <!-- FOOTER -->
@@ -383,7 +405,6 @@
     </div>
   </footer>
 
-  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="cart.js"></script>
   <script src="main.js"></script>
