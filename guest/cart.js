@@ -2,9 +2,21 @@
 window.MSUCart = (function(){
   const KEY = "msu_cart_v1";
 
-  function get(){ try{ return JSON.parse(localStorage.getItem(KEY) || "[]"); }catch(e){ return []; } }
-  function set(items){ localStorage.setItem(KEY, JSON.stringify(items)); }
-  function clear(){ localStorage.removeItem(KEY); }
+  function get(){
+    try{
+      return JSON.parse(localStorage.getItem(KEY) || "[]");
+    }catch(e){
+      return [];
+    }
+  }
+
+  function set(items){
+    localStorage.setItem(KEY, JSON.stringify(items));
+  }
+
+  function clear(){
+    localStorage.removeItem(KEY);
+  }
 
   // helper: apakah item sudah ada
   function has(name, type='barang'){
@@ -19,7 +31,10 @@ window.MSUCart = (function(){
     const items = get();
     const idx = items.findIndex(it => it.name===name && it.type===type);
     if (qty === 0){
-      if (idx>=0){ items.splice(idx,1); set(items); }
+      if (idx>=0){
+        items.splice(idx,1);
+        set(items);
+      }
       return;
     }
     if (idx>=0){

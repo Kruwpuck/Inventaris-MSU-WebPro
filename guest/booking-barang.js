@@ -1,5 +1,5 @@
 /* =======================
-   bookingbarang.js (FULL)
+   booking-barang.js (FULL)
    ======================= */
 
 /* ---------- Animasi ---------- */
@@ -15,7 +15,10 @@ function markRevealTargets(){
 function initRevealObserver(){
   const io = new IntersectionObserver((entries,obs)=>{
     entries.forEach(e=>{
-      if(e.isIntersecting){ e.target.classList.add('show'); obs.unobserve(e.target); }
+      if(e.isIntersecting){
+        e.target.classList.add('show');
+        obs.unobserve(e.target);
+      }
     });
   }, {threshold:.12, rootMargin:"0px 0px -40px 0px"});
   document.querySelectorAll('.reveal-up').forEach(el=>io.observe(el));
@@ -39,11 +42,11 @@ document.querySelectorAll('.btn-donasi').forEach(btn=>{
   });
 });
 
-/* ---------- CART RENDER ---------- */
+/* ---------- CART RENDER (list ke bawah) ---------- */
 const listEl = document.getElementById('cartList');
 function renderCartList(){
   if (listEl && window.MSUCart){
-    listEl.innerHTML = MSUCart.toListHTML();
+    listEl.innerHTML = MSUCart.toListHTML();  // sudah berbentuk <ul><li> list ke bawah
   }
 }
 renderCartList();
@@ -79,8 +82,8 @@ function getBookedDaysFor(itemName, y, m){
   // - Karpet: 3,9,27
   const base = (itemName||'').toLowerCase();
   if (base.includes('proyektor')) return [5,12,19];
-  if (base.includes('sound')) return [7,14,21];
-  if (base.includes('karpet')) return [3,9,27];
+  if (base.includes('sound'))     return [7,14,21];
+  if (base.includes('karpet'))    return [3,9,27];
   // default: 10 & 20
   return [10,20];
 }
@@ -88,6 +91,71 @@ function getBookedDaysFor(itemName, y, m){
 function isToday(y,m,d){
   const t=new Date();
   return y===t.getFullYear() && m===t.getMonth() && d===t.getDate();
+}
+
+/* ---------- Dummy booking list (1/3 hari) ---------- */
+function getBookingsFor(itemName, y, m, day){
+  // Contoh: data dummy untuk beberapa tanggal di November 2025
+  const res = [];
+  if (y===2025 && m===10 && day===7){
+    res.push(
+      {slot:'Pagi (1/3)',  kegiatan:'Latihan Paduan Suara', pj:'UKM PSM'},
+      {slot:'Siang (2/3)', kegiatan:'Lomba Cerdas Cermat', pj:'Panitia Acara Kampus'}
+    );
+  } else if (y===2025 && m===10 && day===12){
+    res.push(
+      {slot:'Pagi (1/3)',  kegiatan:'Briefing Panitia Kajian Akbar', pj:'DKM MSU'},
+      {slot:'Malam (3/3)', kegiatan:'Gladi Bersih Acara', pj:'Panitia Acara Kampus'}
+    );
+  } else if (y===2025 && m===10 && day===19){
+    res.push(
+      {slot:'Siang (2/3)', kegiatan:'Latihan Tari', pj:'UKM Seni Tari'}
+    );
+  }
+  return res;
+}
+
+/* Mapping label → jam */
+function slotTime(label){
+  const lower = (label || '').toLowerCase();
+  if (lower.startsWith('pagi'))  return '07.00 – 12.00';
+  if (lower.startsWith('siang')) return '12.00 – 17.00';
+  if (lower.startsWith('malam')) return '17.00 – 22.00';
+  return '';
+}
+
+/* Render booking list di bawah kalender */
+function renderBookingList(container, itemName, y, m, day){
+  const box = container.querySelector('.booking-list-body');
+  const headerDate = container.querySelector('.booking-list-header .date-label');
+  if (!box) return;
+
+  const bookings = getBookingsFor(itemName, y, m, day);
+  const dObj = new Date(y, m, day);
+  const label = dObj.toLocaleDateString('id-ID', {
+    weekday:'long', day:'numeric', month:'long', year:'numeric'
+  });
+  if (headerDate) headerDate.textContent = label;
+
+  if (!bookings.length){
+    box.innerHTML = `<div class="booking-list-empty">
+      Belum ada peminjaman tercatat pada tanggal ini.
+    </div>`;
+    return;
+  }
+
+  box.innerHTML = bookings.map(b => {
+    const time = slotTime(b.slot);
+    const slotLabel = time ? `${b.slot} • ${time}` : b.slot;
+
+    return `
+      <div class="booking-list-item">
+        <div class="bli-slot">${slotLabel}</div>
+        <div class="bli-main">${b.kegiatan}</div>
+        <div class="bli-meta">PJ: ${b.pj}</div>
+      </div>
+    `;
+  }).join('');
 }
 
 /* Render mini kalender spesifik barang */
@@ -102,20 +170,70 @@ function renderCalendarFor(container, itemName, refDate){
   const prevDays = new Date(y, m, 0).getDate();
   const booked = new Set(getBookedDaysFor(itemName, y, m));
 
-  calTitle.textContent = refDate.toLocaleDateString('id-ID', {month:'long', year:'numeric'});
+  if (calTitle){
+    calTitle.textContent = refDate.toLocaleDateString('id-ID', {
+      month:'long', year:'numeric'
+    });
+  }
 
   let html = '';
   'S N S R K J S'.split(' ').forEach(h=> html += `<span class="muted">${h}</span>`);
-  for(let i=startDay;i>0;i--) html += `<span class="muted">${prevDays - i + 1}</span>`;
+  for(let i=startDay;i>0;i--){
+    html += `<span class="muted">${prevDays - i + 1}</span>`;
+  }
 
   for(let d=1; d<=daysInMonth; d++){
     const cls = [
+      'day',
       isToday(y,m,d)?'today':'',
       booked.has(d)?'booked':''
     ].join(' ').trim();
-    html += `<span class="${cls}">${d}</span>`;
+    html += `<span class="${cls}" data-day="${d}">${d}</span>`;
   }
   calGrid.innerHTML = html;
+
+  const dayCells = calGrid.querySelectorAll('.day');
+
+  dayCells.forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const d = Number(el.dataset.day);
+      dayCells.forEach(c=>c.classList.remove('selected'));
+      el.classList.add('selected');
+      renderBookingList(container, itemName, y, m, d);
+    });
+  });
+
+  // Default: pilih hari ini / hari pertama yang terbooking / tgl 1
+  let defaultDay = null;
+  const today = new Date();
+  if (today.getFullYear()===y && today.getMonth()===m){
+    defaultDay = today.getDate();
+  }
+  if (!defaultDay){
+    for(let d=1; d<=daysInMonth; d++){
+      if (booked.has(d)){ defaultDay = d; break; }
+    }
+  }
+  if (!defaultDay) defaultDay = 1;
+
+  const defCell = calGrid.querySelector(`.day[data-day="${defaultDay}"]`);
+  if (defCell){
+    defCell.classList.add('selected');
+    renderBookingList(container, itemName, y, m, defaultDay);
+  } else {
+    const box = container.querySelector('.booking-list-body');
+    const headerDate = container.querySelector('.booking-list-header .date-label');
+    if (headerDate){
+      headerDate.textContent = new Date(y,m,1).toLocaleDateString('id-ID', {
+        month:'long', year:'numeric'
+      });
+    }
+    if (box){
+      box.innerHTML = `<div class="booking-list-empty">
+        Belum ada peminjaman tercatat pada bulan ini.
+      </div>`;
+    }
+  }
 }
 
 /* Build satu panel barang (isi tab) */
@@ -157,9 +275,14 @@ function buildItemPanelHTML(item){
           <span class="legend-box today"></span><small class="ms-1">Hari ini</small>
         </div>
         <div class="calendar-grid" aria-hidden="true"></div>
-        <small class="text-muted d-block mt-2">
-          <i class="bi bi-info-circle me-1"></i>Tanggal merah tidak dapat dipilih untuk <b>${name}</b>.
-        </small>
+      </div>
+
+      <div class="booking-list mt-3">
+        <div class="booking-list-header">
+          <span class="bl-title">Peminjaman (1/3 hari)</span>
+          <span class="date-label"></span>
+        </div>
+        <div class="booking-list-body mt-2 small"></div>
       </div>
     </div>
   `;
@@ -224,14 +347,15 @@ function buildTabsFromCart(){
 
 /* ---------- Helper: Panel aktif & nama item aktif ---------- */
 function getActivePanel(){
-  return tabsContent.querySelector('.tab-pane.active.show') || tabsContent.querySelector('.tab-pane.active') || null;
+  return tabsContent.querySelector('.tab-pane.active.show') ||
+         tabsContent.querySelector('.tab-pane.active') || null;
 }
 function getActiveItemName(){
   const pane = getActivePanel();
   return pane ? (pane.dataset.itemName || '') : '';
 }
 
-/* ---------- Kalender per-panel ---------- */
+/* ---------- Kalender per-panel & qty ---------- */
 function initPanels(){
   tabsContent.querySelectorAll('.tab-pane').forEach(pane => {
     const name = pane.dataset.itemName || '';
@@ -386,38 +510,59 @@ function buildMailtoURL({to, subject, body, cc='', bcc=''}){
     const f = reqInput.files?.[0];
     if (!f) return validateForm();
     const max = 10 * 1024 * 1024; // 10MB
-    if (f.size > max){ alert('Ukuran maksimum file 10 MB.'); reqInput.value=''; }
+    if (f.size > max){
+      alert('Ukuran maksimum file 10 MB.');
+      reqInput.value='';
+    }
     validateForm();
+  });
+
+  // tombol batal → kembali ke halaman barang
+  document.getElementById('btnCancel')?.addEventListener('click', ()=>{
+    if (confirm('Batalkan pengisian form dan kembali ke halaman sebelumnya?')){
+      window.location.href = 'barang.html';
+    }
   });
 
   form?.addEventListener('submit', async (e)=>{
     e.preventDefault(); e.stopPropagation();
-    if (!form.checkValidity()){ form.classList.add('was-validated'); validateForm(); return; }
+    if (!form.checkValidity()){
+      form.classList.add('was-validated');
+      validateForm();
+      return;
+    }
 
-    const email = document.getElementById('email')?.value?.trim() || '';
-    const pj    = document.getElementById('pjName')?.value?.trim() || '';
-    const nim   = document.getElementById('idNumber')?.value?.trim() || '';
-    const prodi = document.getElementById('studyProgram')?.value || '';
-    const kep   = document.getElementById('purpose')?.value?.trim() || '';
-    const det   = document.getElementById('longPurpose')?.value?.trim() || '';
-    const tgl   = document.getElementById('loanDate')?.value || '';
-    const jam   = document.getElementById('startTime')?.value || '';
-    const dur   = (document.getElementById('duration')?.value || '') + ' jam';
-    const don   = getDonation();
+    const loanNo = document.getElementById('loanNumber')?.value?.trim() || '';
+    const email  = document.getElementById('email')?.value?.trim() || '';
+    const pj     = document.getElementById('pjName')?.value?.trim() || '';
+    const nim    = document.getElementById('idNumber')?.value?.trim() || '';
+    const prodi  = document.getElementById('studyProgram')?.value || '';
+    const kep    = document.getElementById('purpose')?.value?.trim() || '';
+    const det    = document.getElementById('longPurpose')?.value?.trim() || '';
+    const tgl    = document.getElementById('loanDate')?.value || '';
+    const jam    = document.getElementById('startTime')?.value || '';
+    const dur    = (document.getElementById('duration')?.value || '') + ' jam';
+    const don    = getDonation();
 
     if (email) localStorage.setItem('lastBookingEmail', email);
 
     const cart = (MSUCart && MSUCart.get()) || [];
-    if (!cart.length){ alert('Keranjang kosong.'); return; }
-    const lines = cart.map(it => `- ${it.type==='ruang'?'[Ruang]':'[Barang]'} ${it.name} × ${it.qty}`).join('\n');
+    if (!cart.length){
+      alert('Keranjang kosong.');
+      return;
+    }
+    const lines = cart
+      .map(it => `- ${it.type==='ruang'?'[Ruang]':'[Barang]'} ${it.name} × ${it.qty}`)
+      .join('\n');
 
     const subject = `Konfirmasi Booking MSU — ${pj || email} — ${tgl || '-'}`;
     const body =
 `Assalamu’alaikum,
 
-Formulir booking Anda telah kami terima dan saat ini Sedang diproses pengelola.
+Formulir booking Anda telah kami terima dan saat ini sedang diproses pengelola.
 
 Ringkasan Peminjaman:
+Nomor Peminjaman : ${loanNo || '-'}
 Penanggung jawab : ${pj || '-'}
 NIM/NIP           : ${nim || '-'}
 Email             : ${email || '-'}
