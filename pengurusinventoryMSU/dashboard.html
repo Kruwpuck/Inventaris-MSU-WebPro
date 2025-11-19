@@ -17,6 +17,7 @@
         <li><a href="#" class="active">Beranda</a></li>
         <li><a href="pinjamFasilitas.html">Peminjaman Fasilitas</a></li>
         <li><a href="riwayatpinjam.html">Riwayat Peminjaman</a></li>
+        <li><a href="#" onclick="logout()">Logout</a></li>
       </ul>
     </nav>
     <div class="nav-right">
@@ -107,7 +108,25 @@
 
 
 <script src ="shared-data.js"></script>
+<script>
+function logout() {
+    localStorage.removeItem("msuUser");
+    alert("Anda telah logout.");
+    window.location.href = "login.html";
+}
+</script>
 
 
 </body>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const user = JSON.parse(localStorage.getItem("msuUser"));
+
+    if (!user || user.role !== "pengurus") {
+        alert("Silakan login terlebih dahulu.");
+        window.location.href = "login.html";
+    }
+});
+</script>
+
 </html>
