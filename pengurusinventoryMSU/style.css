@@ -328,158 +328,144 @@ button:disabled, input:disabled {
     cursor: not-allowed;
 }
 
-/* =======================
-   RESPONSIVE MODE
-   =======================*/
+//* =============================== */
+/*   RESPONSIVE TAMPAKAN SISTEM   */
+/* =============================== */
 
-/* Layar max 1024px (tablet landscape) */
-@media (max-width: 1024px) {
-    table {
-        width: 95%;
-    }
-
-    header {
-        padding: 10px 20px;
-    }
-
-    .hero img {
-        height: 350px;
-    }
-
-    h1 {
-        font-size: 24px;
-    }
+/* 1. Wrapper agar konten tidak mepet */
+.container,
+.wrapper {
+    width: 100%;
+    max-width: 1200px;
+    margin: auto;
+    padding: 0 16px;
 }
 
-/* Layar max 768px (tablet portrait) */
+/* 2. Tabel responsif saat layar kecil */
+.table-responsive {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+td, th {
+    padding: 8px 10px;
+    word-break: break-word;
+}
+
+/* 3. Card / box umum agar bisa mengecil */
+.card,
+.box,
+.content-box {
+    width: 100%;
+    border-radius: 12px;
+    padding: 16px;
+    box-sizing: border-box;
+}
+
+/* 4. Input & button agar tidak meledak */
+input, select, button {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* 5. Navbar responsif */
+.navbar,
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.navbar a, 
+.header a {
+    padding: 6px 10px;
+    display: inline-block;
+}
+
+/* =============================== */
+/*   BREAKPOINT TABLET (≤ 768px)   */
+/* =============================== */
 @media (max-width: 768px) {
 
-    header {
-        flex-direction: column;
-        text-align: center;
-        gap: 10px;
+    /* Judul font di kecilin */
+    h1, h2, h3, h4 {
+        font-size: 90%;
     }
 
-    nav ul {
-        flex-direction: row;
-        flex-wrap: wrap;
-        gap: 15px;
-    }
-
-    .profile-wrapper {
-        justify-content: center;
-    }
-
-    .hero img {
-        height: 300px;
-    }
-
-    .hero-subtext p {
-        font-size: 14px;
-        padding: 7px 15px;
+    /* Tabel dipaksa scroll */
+    .table-responsive {
+        overflow-x: scroll;
+        -webkit-overflow-scrolling: touch;
     }
 
     table {
-        width: 100%;
-        font-size: 14px;
+        min-width: 700px;
     }
 
-    button {
-        font-size: 12px;
-        padding: 5px 10px;
-    }
-
-    .container {
-        padding: 0 10px;
-    }
-}
-
-/* Layar max 600px (HP besar) */
-@media (max-width: 600px) {
-
-    table,
-    table thead,
-    table tbody,
-    table th,
-    table td,
-    table tr {
-        display: block;
-    }
-
-    /* Header tabel hilang */
-    table thead {
-        display: none;
-    }
-
-    /* Setiap baris jadi card */
-    table tr {
-        background: white;
-        margin-bottom: 12px;
-        border-radius: 10px;
-        padding: 15px;
-        border: 1px solid #dcdcdc;
-    }
-
-    table td {
-        border: none;
-        padding: 6px 0;
-        text-align: left;
-        font-size: 14px;
-    }
-
-    /* Label otomatis sebelum value */
-    table td::before {
-        content: attr(data-label);
-        font-weight: bold;
-        display: block;
-        margin-bottom: 2px;
-        color: #006400;
-    }
-
-    /* Tombol */
-    button {
-        width: 100%;
-        margin-top: 8px;
-        font-size: 14px;
-        padding: 10px;
-    }
-
-    .hero img {
-        height: 220px;
-    }
-
-    h1 {
-        font-size: 20px;
-    }
-
-    .judul-bawah h1 {
-        font-size: 20px;
-        padding: 10px 20px;
-    }
-}
-
-/* Layar max 430px (HP kecil) */
-@media (max-width: 430px) {
-    header {
-        gap: 5px;
-    }
-
-    nav ul {
+    /* Navbar turun ke bawah */
+    .navbar,
+    .header {
+        flex-direction: column;
         gap: 10px;
-        font-size: 12px;
     }
 
-    .hero-subtext p {
-        font-size: 12px;
-        padding: 6px 12px;
+    /* Kotak dashboard padding lebih kecil */
+    .card,
+    .box {
+        padding: 12px;
     }
 
+    /* Tombol lebih besar biar mudah diklik */
     button {
-        font-size: 12px;
-        padding: 8px;
+        padding: 10px 14px;
+        font-size: 14px;
+    }
+}
+
+/* =============================== */
+/*   BREAKPOINT MOBILE (≤ 480px)   */
+/* =============================== */
+@media (max-width: 480px) {
+
+    /* Judul makin kecil */
+    h1, h2, h3 {
+        font-size: 80%;
     }
 
-    table td {
-        font-size: 13px;
+    /* Atur layout form login */
+    .login-container,
+    .login-box,
+    .form-wrapper {
+        width: 100%;
+        padding: 14px;
+    }
+
+    /* Input full width */
+    input, select {
+        width: 100%;
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+
+    /* Tabel makin flexible */
+    table {
+        min-width: 600px;
+    }
+
+    /* Spasi antar elemen */
+    .section,
+    .card,
+    .box {
+        margin-bottom: 16px;
+    }
+
+    /* Tombol full width */
+    button {
+        width: 100%;
     }
 }
