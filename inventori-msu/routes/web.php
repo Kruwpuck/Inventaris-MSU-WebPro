@@ -4,6 +4,12 @@ use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
 
+// PENGELOLA (JANGAN DI PINDAH PINDAH!!!!!!!)
+use App\Livewire\Pengelola\Beranda;
+use App\Livewire\Pengelola\Laporan; 
+use App\Livewire\Pengelola\TambahHapus;
+use App\Livewire\Pengelola\Approval;
+
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
@@ -29,4 +35,14 @@ Route::middleware(['auth'])->group(function () {
             ),
         )
         ->name('two-factor.show');
+
+
 });
+
+// PENGELOLA 
+Route::prefix('pengelola')->name('pengelola.')->group(function () {
+    Route::get('/beranda', Beranda::class)->name('beranda');
+    Route::get('/laporan', Laporan::class)->name('laporan');
+    Route::get('/tambah-barang', TambahHapus::class)->name('tambah');
+    Route::get('/approval', Approval::class)->name('approval');
+}); 
