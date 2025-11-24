@@ -10,6 +10,9 @@ use App\Livewire\Pengelola\Laporan;
 use App\Livewire\Pengelola\TambahHapus;
 use App\Livewire\Pengelola\Approval;
 
+//PENGURUS (JANGAN DI GANGGU!!!!!!!!!!)
+
+
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
