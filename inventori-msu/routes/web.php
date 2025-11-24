@@ -11,6 +11,10 @@ use App\Livewire\Pengelola\TambahHapus;
 use App\Livewire\Pengelola\Approval;
 
 //PENGURUS (JANGAN DI GANGGU!!!!!!!!!!)
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+use App\Http\Controllers\PengurusController;
 
 
 Route::get('/', function () {
@@ -49,3 +53,33 @@ Route::prefix('pengelola')->name('pengelola.')->group(function () {
     Route::get('/tambah-barang', TambahHapus::class)->name('tambah');
     Route::get('/approval', Approval::class)->name('approval');
 }); 
+class CreatePeminjamenTable extends Migration
+{
+    public function up()
+    {
+        Schema::create('peminjamen', function (Blueprint $table) {
+            $table->id();
+            $table->string('nama');
+            $table->text('fasilitas');
+            $table->timestamp('waktu_pengambilan')->nullable();
+            $table->timestamp('waktu_pengembalian')->nullable();
+            $table->boolean('sudah_ambil')->default(false);
+            $table->boolean('sudah_kembali')->default(false);
+            $table->timestamps();
+        });
+    }
+
+    public function down()
+    {
+        Schema::dropIfExists('peminjamen');
+    }
+}
+
+// PENGURUS
+Route::middleware(['auth','pengurus'])->group(function () {
+    Route::get('/pengurus/dashboard', [PengurusController::class,'dashboard'])->name('pengurus.dashboard');
+    Route::get('/pengurus/pinjam', [PengurusController::class,'pinjamFasilitas'])->name('pengurus.pinjam');
+    Route::get('/pengurus/riwayat', [PengurusController::class,'riwayat'])->name('pengurus.riwayat');
+
+    Route::post('/pengurus/toggle-status', [PengurusController::class,'toggleStatus'])->name('pengurus.toggleStatus');
+});
