@@ -53,27 +53,6 @@ Route::prefix('pengelola')->name('pengelola.')->group(function () {
     Route::get('/tambah-barang', TambahHapus::class)->name('tambah');
     Route::get('/approval', Approval::class)->name('approval');
 }); 
-class CreatePeminjamenTable extends Migration
-{
-    public function up()
-    {
-        Schema::create('peminjamen', function (Blueprint $table) {
-            $table->id();
-            $table->string('nama');
-            $table->text('fasilitas');
-            $table->timestamp('waktu_pengambilan')->nullable();
-            $table->timestamp('waktu_pengembalian')->nullable();
-            $table->boolean('sudah_ambil')->default(false);
-            $table->boolean('sudah_kembali')->default(false);
-            $table->timestamps();
-        });
-    }
-
-    public function down()
-    {
-        Schema::dropIfExists('peminjamen');
-    }
-}
 
 // PENGURUS
 Route::middleware(['auth','pengurus'])->group(function () {
