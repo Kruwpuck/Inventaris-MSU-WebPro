@@ -397,3 +397,5 @@ document.addEventListener('DOMContentLoaded', () => {
   else if (page.includes('pinjamFasilitas.html')) initPinjamFasilitas();
   else if (page.includes('riwayatpinjam.html')) initRiwayat();
 });
+
+
