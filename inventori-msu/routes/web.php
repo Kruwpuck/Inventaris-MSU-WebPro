@@ -14,12 +14,16 @@ use App\Livewire\Pengelola\Approval;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Http\Controllers\PengurusController;
+use App\Livewire\Borrower\Home;
+use App\Livewire\Borrower\Catalogue;
+use App\Livewire\Borrower\Cart;
+use App\Livewire\Borrower\Success;
 
-
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+Route::get('/', Home::class)->name('home');
+Route::get('/barang', Catalogue::class)->name('catalogue.barang');
+Route::get('/ruangan', Catalogue::class)->name('catalogue.ruangan');
+Route::get('/booking-barang', Cart::class)->name('cart');
+Route::get('/success', Success::class)->name('success');
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
@@ -54,11 +58,11 @@ Route::prefix('pengelola')->name('pengelola.')->group(function () {
     Route::get('/approval', Approval::class)->name('approval');
 }); 
 
-// PENGURUS
-Route::middleware(['auth','pengurus'])->group(function () {
-    Route::get('/pengurus/dashboard', [PengurusController::class,'dashboard'])->name('pengurus.dashboard');
-    Route::get('/pengurus/pinjam', [PengurusController::class,'pinjamFasilitas'])->name('pengurus.pinjam');
-    Route::get('/pengurus/riwayat', [PengurusController::class,'riwayat'])->name('pengurus.riwayat');
-
-    Route::post('/pengurus/toggle-status', [PengurusController::class,'toggleStatus'])->name('pengurus.toggleStatus');
-});
+// // PENGURUS
+// Route::middleware(['auth','pengurus'])->group(function () {
+//     Route::get('/pengurus/dashboard', [PengurusController::class,'dashboard'])->name('pengurus.dashboard');
+//     Route::get('/pengurus/pinjam', [PengurusController::class,'pinjamFasilitas'])->name('pengurus.pinjam');
+//     Route::get('/pengurus/riwayat', [PengurusController::class,'riwayat'])->name('pengurus.riwayat');
+// 
+//     Route::post('/pengurus/toggle-status', [PengurusController::class,'toggleStatus'])->name('pengurus.toggleStatus');
+// });
