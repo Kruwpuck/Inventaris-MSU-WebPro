@@ -55,10 +55,22 @@ Route::prefix('pengelola')->name('pengelola.')->group(function () {
 }); 
 
 // PENGURUS
-Route::middleware(['auth','pengurus'])->group(function () {
-    Route::get('/pengurus/dashboard', [PengurusController::class,'dashboard'])->name('pengurus.dashboard');
-    Route::get('/pengurus/pinjam', [PengurusController::class,'pinjamFasilitas'])->name('pengurus.pinjam');
-    Route::get('/pengurus/riwayat', [PengurusController::class,'riwayat'])->name('pengurus.riwayat');
-
-    Route::post('/pengurus/toggle-status', [PengurusController::class,'toggleStatus'])->name('pengurus.toggleStatus');
+Route::get('/', function() {
+    return redirect()->route('dashboard');
 });
+
+Route::get('/dashboard', function() {
+    return view('dashboard');
+})->name('dashboard');
+
+Route::get('/peminjaman-fasilitas', function() {
+    return view('peminjaman-fasilitas');
+})->name('fasilitas');
+
+Route::get('/peminjaman-barang', function() {
+    return view('peminjaman-barang');
+})->name('barang');
+
+Route::get('/riwayat', function() {
+    return view('riwayat');
+})->name('riwayat');
