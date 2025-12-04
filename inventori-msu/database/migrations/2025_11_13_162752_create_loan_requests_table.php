@@ -13,6 +13,14 @@ return new class extends Migration
     {
         Schema::create('loan_requests', function (Blueprint $table) {
             $table->id();
+            $table->string('borrower_name');
+            $table->string('borrower_email');
+            $table->string('borrower_phone');
+            $table->text('borrower_reason');
+            $table->date('loan_date_start');
+            $table->date('loan_date_end');
+            $table->enum('status', ['pending', 'approved', 'rejected', 'handed_over', 'returned'])->default('pending');
+            $table->text('rejection_reason')->nullable();
             $table->timestamps();
         });
     }
