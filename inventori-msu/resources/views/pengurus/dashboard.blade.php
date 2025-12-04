@@ -1,17 +1,67 @@
-@extends('layouts.main')
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@yield('title') | Pengurus MSU</title>
 
-@section('title', 'Dashboard')
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+</head>
 
-@section('content')
+<body>
 
-@include('partials.hero') {{-- Jika mau modular --}}
+<header class="header">
+    <div class="logo">
+        <img src="{{ asset('Assets/logo.png') }}" alt="Logo">
+    </div>
 
-<section class="judul-bawah">
-    <h1>Peminjaman Hari ini</h1>
-</section>
+    <nav class="nav-desktop">
+        <a href="{{ route('dashboard') }}">Beranda</a>
+        <a href="{{ route('fasilitas') }}">Peminjaman Fasilitas</a>
+        <a href="{{ route('barang') }}">Peminjaman Barang</a>
+        <a href="{{ route('riwayat') }}">Riwayat Peminjaman</a>
+    </nav>
 
-<div class="dashboard">
-    … semua card dashboard kamu disini …
+    <div class="user-desktop" onclick="toggleUserDropdown()">
+        <div class="user-info-box">
+            <img src="{{ asset('Assets/logo.png') }}" class="user-photo">
+            <div>
+                <strong>pengurus</strong><br>
+                Pengurus Side
+            </div>
+            <span class="arrow">▼</span>
+        </div>
+
+        <div class="user-dropdown" id="user-dropdown">
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button type="submit" class="logout-btn">Keluar</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="hamburger" onclick="toggleMenu()">☰</div>
+</header>
+
+<div id="mobileMenu" class="mobile-menu">
+    <div class="mobile-logo">
+        <img src="{{ asset('Assets/logo.png') }}">
+    </div>
+    <a href="{{ route('dashboard') }}">Beranda</a>
+    <a href="{{ route('fasilitas') }}">Peminjaman Fasilitas</a>
+    <a href="{{ route('barang') }}">Peminjaman Barang</a>
+    <a href="{{ route('riwayat') }}">Riwayat Peminjaman</a>
+
+    <a href="#" class="logout">Keluar</a>
 </div>
 
-@endsection
+<div id="overlay" class="overlay" onclick="toggleMenu()"></div>
+
+<main>
+    @yield('content')
+</main>
+
+<script src="{{ asset('js/script.js') }}"></script>
+
+</body>
+</html>
