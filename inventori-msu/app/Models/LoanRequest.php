@@ -19,13 +19,20 @@ class LoanRequest extends Model
 
     protected $casts = [
         'loan_date_start' => 'date',
-        'loan_date_end' => 'date',
+        'loan_date_end'   => 'date',
     ];
 
+    // daftar inventory yang dipinjam + qty di pivot
     public function items()
     {
         return $this->belongsToMany(Inventory::class, 'loan_items')
                     ->withPivot('quantity')
                     ->withTimestamps();
+    }
+
+    // akses pivot loan_items langsung (lebih fleksibel)
+    public function loanItems()
+    {
+        return $this->hasMany(LoanItem::class);
     }
 }

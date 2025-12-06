@@ -3,156 +3,131 @@
 namespace App\Livewire\Pengelola;
 
 use Livewire\Component;
+use App\Models\Inventory;
 
 class Beranda extends Component
 {
     public $q = '';
 
-    public function render()
+    // ===== MODAL EDIT =====
+    public $editId;
+    public $editCategory; // 'barang' / 'ruangan'
+    public $editName;
+    public $editDescription;
+    public $editStock;
+    public $editCapacity;
+
+    // ===== MODAL HAPUS =====
+    public $deleteId;
+    public $deleteName;
+
+    protected function rules()
     {
-        // =========================
-        // DUMMY DATA BARANG (sesuai HTML)
-        // =========================
-        $barangs = collect([
-            (object)[
-                'id' => 1,
-                'nama' => 'Set Proyektor',
-                'deskripsi' => 'Unit proyektor untuk kegiatan presentasi.',
-                'stok' => 5,
-                'gambar' => 'aset/proyektor.png',
-                'is_active' => true,
-            ],
-            (object)[
-                'id' => 2,
-                'nama' => 'Set Sound System Portable',
-                'deskripsi' => 'Speaker untuk kegiatan indoor dan outdoor.',
-                'stok' => 8,
-                'gambar' => 'aset/speaker.png',
-                'is_active' => true,
-            ],
-            (object)[
-                'id' => 3,
-                'nama' => 'Terpal',
-                'deskripsi' => 'Terpal untuk kegiatan luar ruangan.',
-                'stok' => 10,
-                'gambar' => 'aset/terpal.png',
-                'is_active' => true,
-            ],
-            (object)[
-                'id' => 4,
-                'nama' => 'Akun Zoom MSU',
-                'deskripsi' => 'Akun Zoom resmi untuk kegiatan online MSU.',
-                'stok' => 6,
-                'gambar' => 'aset/zoom.jpg',
-                'is_active' => true,
-            ],
-            (object)[
-                'id' => 5,
-                'nama' => 'Karpet',
-                'deskripsi' => 'Karpet untuk aula dan ruangan besar.',
-                'stok' => 12,
-                'gambar' => 'aset/karpet.jpeg',
-                'is_active' => true,
-            ],
-            (object)[
-                'id' => 6,
-                'nama' => 'Peralatan Bukber',
-                'deskripsi' => 'Peralatan tambahan untuk kegiatan MSU.',
-                'stok' => 6,
-                'gambar' => 'aset/buker.jpg',
-                'is_active' => true,
-            ],
-            (object)[
-                'id' => 7,
-                'nama' => 'Hijab',
-                'deskripsi' => 'Hijab seragam untuk kegiatan MSU.',
-                'stok' => 6,
-                'gambar' => 'aset/hijab.png',
-                'is_active' => true,
-            ],
-            (object)[
-                'id' => 8,
-                'nama' => 'Meja',
-                'deskripsi' => 'Meja serbaguna untuk kegiatan belajar.',
-                'stok' => 4,
-                'gambar' => 'aset/meja.png',
-                'is_active' => true,
-            ],
-            (object)[
-                'id' => 9,
-                'nama' => 'Sofa',
-                'deskripsi' => 'Sofa nyaman untuk ruang tamu dan santai.',
-                'stok' => 3,
-                'gambar' => 'aset/sofa.webp',
-                'is_active' => true,
-            ],
-        ]);
+        // rules dinamis biar validasi gak berat & sesuai kategori
+        $rules = [
+            'editId'          => 'required|exists:inventories,id',
+            'editCategory'    => 'required|in:barang,ruangan',
+            'editName'        => 'required|string|max:150',
+            'editDescription' => 'nullable|string|max:500',
+        ];
 
-        // =========================
-        // DUMMY DATA FASILITAS (sesuai HTML)
-        // =========================
-        $fasilitas = collect([
-            (object)[
-                'id' => 1,
-                'nama' => 'Ruang Utama',
-                'deskripsi' => 'Kapasitas besar untuk acara utama.',
-                'status' => 'Tersedia',
-                'gambar' => 'aset/ruang utama.jpg',
-                'is_active' => true,
-            ],
-            (object)[
-                'id' => 2,
-                'nama' => 'Ruang Tamu VIP',
-                'deskripsi' => 'Kapasitas 10 orang untuk tamu penting.',
-                'status' => 'Tersedia',
-                'gambar' => 'aset/ruangTamu.jpg',
-                'is_active' => true,
-            ],
-            (object)[
-                'id' => 3,
-                'nama' => 'Plaza',
-                'deskripsi' => 'Area outdoor serbaguna di depan masjid.',
-                'status' => 'Tersedia',
-                'gambar' => 'aset/plaza.jpg',
-                'is_active' => true,
-            ],
-            (object)[
-                'id' => 4,
-                'nama' => 'Selasar/Teras Utara Masjid',
-                'deskripsi' => 'Area teras di sisi utara masjid.',
-                'status' => 'Tersedia',
-                'gambar' => 'aset/selasar.jpg',
-                'is_active' => true,
-            ],
-            (object)[
-                'id' => 5,
-                'nama' => 'Lantai 2 Ruang Kaca',
-                'deskripsi' => 'Ruang pertemuan indoor di lantai 2.',
-                'status' => 'Tersedia',
-                'gambar' => 'aset/ruangKaca.jpg',
-                'is_active' => true,
-            ],
-        ]);
-
-        // =========================
-        // FILTER SEARCH (untuk dummy biar search jalan)
-        // =========================
-        if ($this->q) {
-            $keyword = strtolower($this->q);
-
-            $barangs = $barangs->filter(function ($b) use ($keyword) {
-                return str_contains(strtolower($b->nama), $keyword)
-                    || str_contains(strtolower($b->deskripsi), $keyword);
-            })->values();
-
-            $fasilitas = $fasilitas->filter(function ($f) use ($keyword) {
-                return str_contains(strtolower($f->nama), $keyword)
-                    || str_contains(strtolower($f->deskripsi), $keyword);
-            })->values();
+        if ($this->editCategory === 'barang') {
+            $rules['editStock'] = 'required|integer|min:0';
+        } else {
+            $rules['editCapacity'] = 'required|integer|min:1';
         }
 
+        return $rules;
+    }
+
+    // ===== OPEN EDIT =====
+    public function openEdit($id)
+    {
+        // select kolom yang perlu aja (lebih cepat)
+        $item = Inventory::select('id','category','name','description','stock','capacity')
+            ->findOrFail($id);
+
+        $this->editId          = $item->id;
+        $this->editCategory    = $item->category;
+        $this->editName        = $item->name;
+        $this->editDescription = $item->description;
+        $this->editStock       = $item->stock;
+        $this->editCapacity    = $item->capacity;
+
+        $this->dispatch('open-edit-modal');
+    }
+
+    // ===== SAVE EDIT =====
+    public function saveEdit()
+    {
+        $this->validate();
+
+        $item = Inventory::findOrFail($this->editId);
+
+        $item->name        = $this->editName;
+        $item->description = $this->editDescription;
+
+        if ($this->editCategory === 'barang') {
+            $item->stock    = (int) $this->editStock;
+            $item->capacity = null;
+        } else {
+            $item->capacity = (int) $this->editCapacity;
+            $item->stock    = null;
+        }
+
+        $item->save();
+
+        session()->flash('success', 'Data berhasil diperbarui!');
+        $this->dispatch('close-edit-modal');
+
+        $this->reset([
+            'editId','editCategory','editName',
+            'editDescription','editStock','editCapacity'
+        ]);
+    }
+
+    // ===== CONFIRM DELETE =====
+    public function confirmDelete($id)
+    {
+        $item = Inventory::select('id','name')->findOrFail($id);
+
+        $this->deleteId   = $item->id;
+        $this->deleteName = $item->name;
+
+        $this->dispatch('open-delete-modal');
+    }
+
+    // ===== DELETE ITEM =====
+    public function deleteItem()
+    {
+        Inventory::whereKey($this->deleteId)->delete();
+
+        session()->flash('success', 'Item berhasil dihapus!');
+        $this->dispatch('close-delete-modal');
+
+        $this->reset(['deleteId','deleteName']);
+    }
+
+    public function render()
+    {
+        // ambil sekali aja
+        $items = Inventory::query()
+            ->select('id','name','description','category','stock','capacity','image_path','is_active')
+            ->when($this->q, function ($query) {
+                $query->where(function ($q) {
+                    $q->where('name', 'like', "%{$this->q}%")
+                      ->orWhere('description', 'like', "%{$this->q}%");
+                });
+            })
+            ->orderBy('name')
+            ->get();
+
+        // pisah di memory (tanpa query ulang)
+        $barangs   = $items->where('category', 'barang');
+        $fasilitas = $items->where('category', 'ruangan');
+
         return view('livewire.pengelola.beranda', [
-            'barangs' => $barangs,
+            'barangs'   => $barangs,
             'fasilitas' => $fasilitas,
         ])->layout('pengelola.layouts.pengelola');
     }

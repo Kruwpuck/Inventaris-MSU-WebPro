@@ -165,7 +165,8 @@
     {{-- Search --}}
     <div class="input-group" style="max-width:320px">
       <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
-      <input id="fSearch" type="text" class="form-control" placeholder="Cari laporan...">
+      <input id="fSearch" type="text" class="form-control" placeholder="Cari laporan..."
+             wire:model.live="q">
     </div>
   </div>
 
@@ -220,7 +221,7 @@
 
   {{-- ANALISIS TREN --}}
   <div class="card shadow-strong p-3 mb-5">
-    <h6 class="mb-3">Top 10 yang paling sering dipinjam (hasil filter manual nanti)</h6>
+    <h6 class="mb-3">Top 10 yang paling sering dipinjam (dummy chart dulu)</h6>
     <canvas id="chartTop"></canvas>
   </div>
 </div>
@@ -339,7 +340,7 @@
 
     filterTable();
 
-    // Chart dummy (sama kayak HTML)
+    // Chart dummy
     const ctx = document.getElementById("chartTop");
     if (ctx && window.Chart) {
       new Chart(ctx, {
