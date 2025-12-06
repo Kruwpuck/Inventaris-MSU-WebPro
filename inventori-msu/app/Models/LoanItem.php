@@ -14,6 +14,10 @@ class LoanItem extends Model
         'quantity',
     ];
 
+    protected $casts = [
+        'quantity' => 'integer',
+    ];
+
     public function loanRequest()
     {
         return $this->belongsTo(LoanRequest::class);
