@@ -28,17 +28,14 @@ class Laporan extends Component
         $laporans = $requests->flatMap(function ($lr) use ($today) {
             return $lr->items->map(function ($inv) use ($lr, $today) {
 
-                // tanggal dari loan_request
                 $tglPinjam  = Carbon::parse($lr->loan_date_start);
                 $jatuhTempo = Carbon::parse($lr->loan_date_end);
 
                 // ===== map status backend -> UI =====
-                // UI cuma punya: Sedang Dipinjam / Sudah Kembali / Terlambat
                 if ($lr->status === 'returned') {
                     $statusUi   = 'Sudah Kembali';
                     $tglKembali = $jatuhTempo->format('m/d/Y'); // sementara pakai loan_date_end
                 } else {
-                    // belum returned
                     if ($today->gt($jatuhTempo)) {
                         $statusUi = 'Terlambat';
                     } else {
@@ -47,7 +44,6 @@ class Laporan extends Component
                     $tglKembali = '-';
                 }
 
-                // kategori dari inventory (barang/ruangan)
                 $kategoriUi = $inv->category === 'ruangan' ? 'Ruangan' : 'Barang';
 
                 return (object) [
@@ -63,7 +59,7 @@ class Laporan extends Component
             });
         });
 
-        // optional: search backend biar data gak kebanyakan
+        // optional: search backend biar list gak terlalu banyak
         if ($this->q) {
             $q = strtolower($this->q);
             $laporans = $laporans->filter(function ($r) use ($q) {
