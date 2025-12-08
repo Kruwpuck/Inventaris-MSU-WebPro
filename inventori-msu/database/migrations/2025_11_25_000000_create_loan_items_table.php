@@ -6,23 +6,28 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('loan_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('loan_request_id')->constrained()->onDelete('cascade');
-            $table->foreignId('inventory_id')->constrained()->onDelete('cascade');
-            $table->integer('quantity');
+
+            $table->foreignId('loan_request_id')
+                ->constrained('loan_requests')
+                ->onDelete('cascade');
+
+            $table->foreignId('inventory_id')
+                ->constrained('inventories')
+                ->onDelete('cascade');
+
+            $table->integer('quantity')->default(1);
+
             $table->timestamps();
+
+            // biar item yg sama ga dobel dalam 1 request
+            $table->unique(['loan_request_id', 'inventory_id']);
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('loan_items');
