@@ -1,38 +1,13 @@
 <x-pengurus-layout>
 
-    {{-- JUDUL --}}
     <div class="judul-bawah">
-        <h1>Dashboard Peminjaman</h1>
+        <h1>Peminjaman Barang</h1>
     </div>
 
-    {{-- WRAPPER --}}
     <div class="container">
 
-        {{-- SECTION 1 --}}
-        <h2 class="section-title">Sedang Berlangsung</h2>
         <div class="table-responsive">
-            <table class="table1">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Nama</th>
-                        <th>Waktu Ambil</th>
-                        <th>Waktu Kembali</th>
-                        <th>Detail</th>
-                        <th>Sudah Ambil</th>
-                        <th>Sudah Terima</th>
-                    </tr>
-                </thead>
-                <tbody id="dashboardTable">
-                    {{-- Diisi oleh script.js / Livewire --}}
-                </tbody>
-            </table>
-        </div>
-
-        {{-- SECTION 2 --}}
-        <h2 class="section-title" style="margin-top:35px">Akan Dipinjam</h2>
-        <div class="table-responsive">
-            <table class="table2">
+            <table>
                 <thead>
                     <tr>
                         <th>No</th>
@@ -44,14 +19,16 @@
                         <th>Sudah Kembali</th>
                     </tr>
                 </thead>
+
                 <tbody id="pinjamFasilitasTable">
-                    {{-- Diisi oleh script.js / Livewire --}}
+                    {{-- Sama dengan fasilitas, jika butuh beda logic tinggal pisah JS nya --}}
                 </tbody>
             </table>
         </div>
+
     </div>
 
-    {{-- MODAL DETAIL --}}
+    {{-- MODAL --}}
     <div id="modalBg" class="modal-bg">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -61,7 +38,7 @@
                 </div>
 
                 <div class="modal-body">
-                    <p id="detailContent">Detail di sini...</p>
+                    <p id="detailContent"></p>
                 </div>
 
                 <div class="modal-footer">
@@ -71,5 +48,12 @@
             </div>
         </div>
     </div>
+
+    {{-- INIT --}}
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            initPinjamFasilitas();
+        });
+    </script>
 
 </x-pengurus-layout>
