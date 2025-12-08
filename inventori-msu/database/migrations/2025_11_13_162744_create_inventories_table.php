@@ -11,16 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('inventories', function (Blueprint $table) {
+       Schema::create('inventories', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->text('description')->nullable();
-            $table->string('category');
-            $table->integer('stock')->nullable(); // For 'barang'
-            $table->integer('capacity')->nullable(); // For 'fasilitas'
+            $table->string('category');      // 'barang' | 'ruangan'
+            $table->integer('stock')->nullable();
+            $table->integer('capacity')->nullable();
             $table->string('image_path')->nullable();
+            $table->boolean('is_active')->default(true); // <— baru
             $table->timestamps();
-        });
+    });
+
     }
 
     /**
