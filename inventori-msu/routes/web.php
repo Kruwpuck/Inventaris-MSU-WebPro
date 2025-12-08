@@ -13,17 +13,17 @@ use App\Livewire\Pengelola\TambahHapus;
 use App\Livewire\Pengelola\Approval;
 
 // =====================
+// CONTROLLER EXPORT
+// =====================
+use App\Http\Controllers\Pengelola\LaporanExportController;
+
+// =====================
 // LIVEWIRE BORROWER / GUEST
 // =====================
 use App\Livewire\Borrower\Home;
 use App\Livewire\Borrower\Catalogue;
 use App\Livewire\Borrower\Cart;
 use App\Livewire\Borrower\Success;
-
-// =====================
-// CONTROLLER EXPORT
-// =====================
-use App\Http\Controllers\Pengelola\LaporanExportController;
 
 
 // =====================
@@ -37,7 +37,7 @@ Route::get('/success', Success::class)->name('success');
 
 
 // =====================
-// DASHBOARD + SETTINGS
+// DASHBOARD + SETTINGS (USER LOGIN UMUM)
 // =====================
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
@@ -64,37 +64,41 @@ Route::middleware(['auth'])->group(function () {
 
 
 // =====================
-// PENGELOLA
+// PENGELOLA SECTION (ADMIN)
 // =====================
 Route::prefix('pengelola')->name('pengelola.')->group(function () {
 
     Route::get('/beranda', Beranda::class)->name('beranda');
     Route::get('/laporan', Laporan::class)->name('laporan');
 
-    // ✅ ROUTE EXPORT LAPORAN
+    // Export laporan
     Route::get('/laporan/export/{format}', [LaporanExportController::class, 'export'])
-        ->whereIn('format', ['xlsx','csv','pdf'])
+        ->whereIn('format', ['xlsx', 'csv', 'pdf'])
         ->name('laporan.export');
 
     Route::get('/tambah-barang', TambahHapus::class)->name('tambah');
     Route::get('/approval', Approval::class)->name('approval');
-}); 
+});
+
 
 // =====================
-// PENGURUS (BLADE STATIC)
+// PENGURUS SECTION (STATIC BLADE)
 // =====================
-Route::get('/pengurus/dashboard', function () {
-    return view('dashboard');
-})->name('pengurus.dashboard');
+Route::prefix('pengurus')->name('pengurus.')->group(function () {
 
-Route::get('/pengurus/peminjaman-fasilitas', function () {
-    return view('peminjaman-fasilitas');
-})->name('pengurus.fasilitas');
+    Route::get('/dashboard', function () {
+        return view('pengurus.dashboard');
+    })->name('dashboard');
 
-Route::get('/pengurus/peminjaman-barang', function () {
-    return view('peminjaman-barang');
-})->name('pengurus.barang');
+    Route::get('/peminjaman-fasilitas', function () {
+        return view('pengurus.peminjaman-fasilitas');
+    })->name('fasilitas');
 
-Route::get('/pengurus/riwayat', function () {
-    return view('riwayat');
-})->name('pengurus.riwayat');
+    Route::get('/peminjaman-barang', function () {
+        return view('pengurus.peminjaman-barang');
+    })->name('barang');
+
+    Route::get('/riwayat', function () {
+        return view('pengurus.riwayat');
+    })->name('riwayat');
+});
