@@ -22,4 +22,8 @@ RUN composer install --no-scripts --no-autoloader || true
 # Copy sisa kode saat runtime lewat bind mount (docker-compose)
 # Jadi composer autoload akan dijalankan saat container up
 
-CMD ["php-fpm"]
+# Copy entrypoint script
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+ENTRYPOINT ["docker-entrypoint.sh"]
