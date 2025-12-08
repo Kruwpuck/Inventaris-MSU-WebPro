@@ -108,7 +108,9 @@
 
     {{-- Unduh split button --}}
     <div class="btn-group">
-      <button type="button" class="btn btn-outline-success px-4" style="border-color:#0b492c;color:#0b492c">
+      <button type="button" class="btn btn-outline-success px-4"
+              style="border-color:#0b492c;color:#0b492c"
+              onclick="downloadLaporan('xlsx')">
         <i class="bi bi-download me-2"></i>Unduh
       </button>
       <button type="button" class="btn btn-outline-success dropdown-toggle dropdown-toggle-split"
@@ -116,9 +118,9 @@
         <span class="visually-hidden">Toggle Dropdown</span>
       </button>
       <ul class="dropdown-menu">
-        <li><a class="dropdown-item" href="#">.XLSX</a></li>
-        <li><a class="dropdown-item" href="#">.CSV</a></li>
-        <li><a class="dropdown-item" href="#">.PDF</a></li>
+        <li><a class="dropdown-item" href="#" onclick="downloadLaporan('xlsx')">.XLSX</a></li>
+        <li><a class="dropdown-item" href="#" onclick="downloadLaporan('csv')">.CSV</a></li>
+        <li><a class="dropdown-item" href="#" onclick="downloadLaporan('pdf')">.PDF</a></li>
       </ul>
     </div>
 
@@ -165,7 +167,8 @@
     {{-- Search --}}
     <div class="input-group" style="max-width:320px">
       <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
-      <input id="fSearch" type="text" class="form-control" placeholder="Cari laporan...">
+      <input id="fSearch" type="text" class="form-control" placeholder="Cari laporan..."
+             wire:model.live="q">
     </div>
   </div>
 
@@ -200,13 +203,13 @@
 
             <tr data-kategori="{{ $r->kategori }}" data-status="{{ $r->status }}">
               <td>{{ $i+1 }}</td>
-              <td>{{ $r->nama_item }}</td>
+              <td class="td-nama">{{ $r->nama_item }}</td>
               <td>{{ $r->kategori }}</td>
               <td>{{ $r->peminjam }}</td>
               <td>{{ $r->tgl_pinjam }}</td>
               <td>{{ $r->jatuh_tempo }}</td>
               <td>{{ $r->tgl_kembali }}</td>
-              <td class="text-center">{{ $r->jumlah }}</td>
+              <td class="text-center td-jumlah">{{ $r->jumlah }}</td>
               <td class="text-center">
                 <span class="badge-status {{ $statusClass }}">{{ $r->status }}</span>
               </td>
@@ -220,13 +223,16 @@
 
   {{-- ANALISIS TREN --}}
   <div class="card shadow-strong p-3 mb-5">
-    <h6 class="mb-3">Top 10 yang paling sering dipinjam (hasil filter manual nanti)</h6>
+    <h6 class="mb-3">Top 10 yang paling sering dipinjam (ikut filter)</h6>
     <canvas id="chartTop"></canvas>
   </div>
 </div>
 
 @push('scripts')
 <script>
+  // base export URL dari blade (biar ga hardcode)
+  const exportBase = @json(route('pengelola.laporan.export', ['format' => '__fmt__']));
+
   // =============== UTIL TANGGAL ===============
   function parseMDY(s) {
     if (!s || s.trim() === "-") return null;
@@ -266,6 +272,62 @@
 
   const inputSearch = document.getElementById("fSearch");
   const tbody = document.getElementById("tbodyLaporan");
+
+  // ========= CHART =========
+  let chartTop = null;
+
+  function buildTop10FromVisibleRows() {
+    if (!tbody) return { labels: [], data: [] };
+
+    const mapCount = new Map();
+
+    Array.from(tbody.querySelectorAll("tr")).forEach((tr) => {
+      if (tr.style.display === "none") return;
+
+      const nama = tr.querySelector(".td-nama")?.textContent?.trim() || "-";
+      const jumlah = parseInt(tr.querySelector(".td-jumlah")?.textContent || "1", 10) || 1;
+
+      mapCount.set(nama, (mapCount.get(nama) || 0) + jumlah);
+    });
+
+    const sorted = Array.from(mapCount.entries())
+      .sort((a,b) => b[1] - a[1])
+      .slice(0, 10);
+
+    return {
+      labels: sorted.map(x => x[0]),
+      data: sorted.map(x => x[1]),
+    };
+  }
+
+  function renderOrUpdateChart() {
+    const ctx = document.getElementById("chartTop");
+    if (!ctx || !window.Chart) return;
+
+    const top = buildTop10FromVisibleRows();
+
+    if (chartTop) {
+      chartTop.data.labels = top.labels;
+      chartTop.data.datasets[0].data = top.data;
+      chartTop.update();
+      return;
+    }
+
+    chartTop = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: top.labels,
+        datasets: [{
+          label: "Dipinjam",
+          data: top.data,
+        }],
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: true } },
+      },
+    });
+  }
 
   function filterTable() {
     if (!tbody) return;
@@ -308,6 +370,8 @@
         tr.children[0].textContent = rowIdx;
       }
     });
+
+    renderOrUpdateChart();
   }
 
   function syncMenuWidth() {
@@ -327,6 +391,21 @@
     });
   }
 
+  // ========= DOWNLOAD =========
+  function downloadLaporan(format){
+    const q = encodeURIComponent(inputSearch?.value || "");
+    const urlBase = exportBase.replace('__fmt__', format);
+
+    const url = urlBase
+      + `?periode=${encodeURIComponent(vPeriode)}`
+      + `&kategori=${encodeURIComponent(vKategori)}`
+      + `&status=${encodeURIComponent(vStatus)}`
+      + `&q=${q}`;
+
+    window.location.href = url;
+  }
+  window.downloadLaporan = downloadLaporan;
+
   window.addEventListener("load", () => {
     hookupFilterDropdown("btnPeriode", (v) => (vPeriode = v));
     hookupFilterDropdown("btnKategori", (v) => (vKategori = v));
@@ -338,28 +417,19 @@
     window.addEventListener("resize", syncMenuWidth);
 
     filterTable();
+  });
 
-    // Chart dummy (sama kayak HTML)
-    const ctx = document.getElementById("chartTop");
-    if (ctx && window.Chart) {
-      new Chart(ctx, {
-        type: "bar",
-        data: {
-          labels: [
-            "Proyektor","Meja","Speaker","Terpal","Sofa","Hijab",
-            "Ruang Utama","Selasar","Zoom","Ruang VIP"
-          ],
-          datasets: [{
-            label: "Dipinjam",
-            data: [12,10,9,8,7,6,5,4,3,2],
-          }],
-        },
-        options: {
-          responsive: true,
-          plugins: { legend: { display: true } },
-        },
+  // ====== Livewire re-render support ======
+  // Livewire v3
+  document.addEventListener("livewire:init", () => {
+    if (window.Livewire) {
+      Livewire.hook('morph.updated', () => {
+        setTimeout(filterTable, 0);
       });
     }
   });
+
+  // fallback kalau event di atas ga kebaca
+  document.addEventListener("livewire:navigated", () => filterTable());
 </script>
 @endpush
