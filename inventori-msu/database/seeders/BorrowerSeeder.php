@@ -13,6 +13,11 @@ class BorrowerSeeder extends Seeder
      */
     public function run(): void
     {
+        // Check if data already exists to prevent wiping data on every deployment/restart
+        if (DB::table('inventories')->count() > 0) {
+            return;
+        }
+
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         DB::table('inventories')->truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
