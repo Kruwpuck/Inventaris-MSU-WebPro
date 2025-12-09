@@ -35,7 +35,11 @@ class LaporanExportController extends Controller
 
                 // map backend -> UI status
                 if ($lr->status === 'returned') {
-                    $statusUi   = 'Sudah Kembali';
+                    if ($lr->loanRecord && $lr->loanRecord->is_submitted) {
+                        $statusUi = 'Selesai';
+                    } else {
+                        $statusUi = 'Menunggu Submit';
+                    }
                     $tglKembali = $jatuhTempo->format('m/d/Y');
                 } else {
                     $statusUi   = $today->gt($jatuhTempo) ? 'Terlambat' : 'Sedang Dipinjam';
