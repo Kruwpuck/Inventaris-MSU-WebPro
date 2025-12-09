@@ -18,8 +18,8 @@ class LoanRequest extends Model
     ];
 
     protected $casts = [
-        'loan_date_start' => 'date',
-        'loan_date_end'   => 'date',
+        'loan_date_start' => 'datetime',
+        'loan_date_end'   => 'datetime',
     ];
 
     // daftar inventory yang dipinjam + qty di pivot

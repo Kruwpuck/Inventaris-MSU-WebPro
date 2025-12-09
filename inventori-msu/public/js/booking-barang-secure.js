@@ -1,6 +1,5 @@
 /* =======================
-   booking-barang.js (FULL)
-   Adapted for Laravel: Fixed Asset Paths & redirects
+   booking-barang.js (Cleaned for Alpine/Livewire)
    ======================= */
 
 /* ---------- Animasi ---------- */
@@ -26,36 +25,17 @@ function initRevealObserver() {
 }
 window.addEventListener('load', () => document.querySelector('.drop-in')?.classList.add('show'));
 
-// NOTE: In SPA (livewire node), use livewire:navigated+DOMContentLoaded
 function initBookingBarang() {
     markRevealTargets();
     initRevealObserver();
 
-    // Bootstrap awal logic
+    // Init UI Components
     buildTabsFromCart();
-    prefillBookingForm(); // <--- Add this
+
+    // NOTE: Form prefill is now handled by Alpine in the Blade file
+
+    // Init Cart Badge
     window.MSUCart?.renderBadge();
-}
-
-function loadBookingMeta() {
-    try { return JSON.parse(localStorage.getItem('msu_booking_meta') || '{}'); } catch (e) { return {}; }
-}
-
-function prefillBookingForm() {
-    const meta = loadBookingMeta();
-    const dateEl = document.getElementById('loanDate');
-    const timeEl = document.getElementById('startTime');
-    const durEl = document.getElementById('duration');
-
-    if (meta.tanggal && dateEl) { dateEl.value = meta.tanggal; dateEl.dispatchEvent(new Event('input')); }
-    if (meta.mulai && timeEl) { timeEl.value = meta.mulai; timeEl.dispatchEvent(new Event('input')); }
-    if (meta.durasi && durEl) { durEl.value = meta.durasi; durEl.dispatchEvent(new Event('input')); }
-
-    // Trigger validation update if form elements exist
-    if (document.getElementById('bookingForm')) {
-        // Create a synthetic event to trigger validation logic
-        document.getElementById('bookingForm').dispatchEvent(new Event('change', { bubbles: true }));
-    }
 }
 
 document.addEventListener('DOMContentLoaded', initBookingBarang);
@@ -69,7 +49,6 @@ function todayISO() {
 }
 
 /* ---------- Donasi Quick Fill ---------- */
-// Use delegate or re-attach
 document.addEventListener('click', function (e) {
     if (e.target && e.target.classList.contains('btn-donasi')) {
         const amt = e.target.getAttribute('data-amt');
@@ -82,8 +61,10 @@ document.addEventListener('click', function (e) {
 function renderCartList() {
     const listEl = document.getElementById('cartList');
     if (listEl && window.MSUCart) {
-        listEl.innerHTML = MSUCart.toListHTML();  // sudah berbentuk <ul><li> list ke bawah
+        listEl.innerHTML = MSUCart.toListHTML();
     }
+    // Dispatch Global Event for Alpine (Livewire Sync)
+    window.dispatchEvent(new CustomEvent('msu:cart-updated'));
 }
 
 /* Hapus semua cart */
@@ -92,17 +73,23 @@ document.addEventListener('click', function (e) {
         if (!confirm("Yakin ingin menghapus semua dari keranjang?")) return;
         if (window.MSUCart) MSUCart.clear();
         renderCartList();
-        buildTabsFromCart(); // refresh panel kiri
+        buildTabsFromCart();
         window.MSUCart?.renderBadge();
     }
 });
 
+// Hook into global cart render if it exists from other files
+const originalRenderCartList = window.renderCartList;
+window.renderCartList = function () {
+    if (originalRenderCartList) originalRenderCartList();
+    renderCartList();
+};
+
+
 /* ---------- PANEL KIRI: Tabs Horizontal Multi-Item ---------- */
 
-/* Gambar default jika tidak ada thumb */
 function fallbackThumbFor(name) {
     const lower = (name || '').toLowerCase();
-    // Path fix for Laravel
     if (lower.includes('proyektor')) return '/assets/proyektor.jpeg';
     if (lower.includes('sound')) return '/assets/sound.jpeg';
     if (lower.includes('karpet')) return '/assets/karpet.jpeg';
@@ -110,14 +97,11 @@ function fallbackThumbFor(name) {
     return 'https://placehold.co/600x400';
 }
 
-/* Booked dates berbeda per barang (contoh) */
 function getBookedDaysFor(itemName, y, m) {
-    // MAPPING CONTOH:
     const base = (itemName || '').toLowerCase();
     if (base.includes('proyektor')) return [5, 12, 19];
     if (base.includes('sound')) return [7, 14, 21];
     if (base.includes('karpet')) return [3, 9, 27];
-    // default: 10 & 20
     return [10, 20];
 }
 
@@ -126,7 +110,6 @@ function isToday(y, m, d) {
     return y === t.getFullYear() && m === t.getMonth() && d === t.getDate();
 }
 
-/* ---------- Dummy booking list (1/3 hari) ---------- */
 function getBookingsFor(itemName, y, m, day) {
     const res = [];
     if (y === 2025 && m === 10 && day === 7) {
@@ -147,7 +130,6 @@ function getBookingsFor(itemName, y, m, day) {
     return res;
 }
 
-/* Mapping label → jam */
 function slotTime(label) {
     const lower = (label || '').toLowerCase();
     if (lower.startsWith('pagi')) return '07.00 – 12.00';
@@ -156,7 +138,6 @@ function slotTime(label) {
     return '';
 }
 
-/* Render booking list di bawah kalender */
 function renderBookingList(container, itemName, y, m, day) {
     const box = container.querySelector('.booking-list-body');
     const headerDate = container.querySelector('.booking-list-header .date-label');
@@ -170,16 +151,13 @@ function renderBookingList(container, itemName, y, m, day) {
     if (headerDate) headerDate.textContent = label;
 
     if (!bookings.length) {
-        box.innerHTML = `<div class="booking-list-empty">
-        Belum ada peminjaman tercatat pada tanggal ini.
-      </div>`;
+        box.innerHTML = `<div class="booking-list-empty">Belum ada peminjaman tercatat pada tanggal ini.</div>`;
         return;
     }
 
     box.innerHTML = bookings.map(b => {
         const time = slotTime(b.slot);
         const slotLabel = time ? `${b.slot} • ${time}` : b.slot;
-
         return `
         <div class="booking-list-item">
           <div class="bli-slot">${slotLabel}</div>
@@ -190,14 +168,13 @@ function renderBookingList(container, itemName, y, m, day) {
     }).join('');
 }
 
-/* Render mini kalender spesifik barang */
 function renderCalendarFor(container, itemName, refDate) {
     const calTitle = container.querySelector('.cal-title');
     const calGrid = container.querySelector('.calendar-grid');
     const y = refDate.getFullYear(), m = refDate.getMonth();
 
     const first = new Date(y, m, 1);
-    const startDay = (first.getDay() + 6) % 7; // Senin=0
+    const startDay = (first.getDay() + 6) % 7;
     const daysInMonth = new Date(y, m + 1, 0).getDate();
     const prevDays = new Date(y, m, 0).getDate();
     const booked = new Set(getBookedDaysFor(itemName, y, m));
@@ -235,7 +212,7 @@ function renderCalendarFor(container, itemName, refDate) {
         });
     });
 
-    // Default: pilih hari ini / hari pertama yang terbooking / tgl 1
+    // Default selection logic
     let defaultDay = null;
     const today = new Date();
     if (today.getFullYear() === y && today.getMonth() === m) {
@@ -254,21 +231,10 @@ function renderCalendarFor(container, itemName, refDate) {
         renderBookingList(container, itemName, y, m, defaultDay);
     } else {
         const box = container.querySelector('.booking-list-body');
-        const headerDate = container.querySelector('.booking-list-header .date-label');
-        if (headerDate) {
-            headerDate.textContent = new Date(y, m, 1).toLocaleDateString('id-ID', {
-                month: 'long', year: 'numeric'
-            });
-        }
-        if (box) {
-            box.innerHTML = `<div class="booking-list-empty">
-          Belum ada peminjaman tercatat pada bulan ini.
-        </div>`;
-        }
+        if (box) box.innerHTML = `<div class="booking-list-empty">Belum ada peminjaman pada bulan ini.</div>`;
     }
 }
 
-/* Build satu panel barang (isi tab) */
 function buildItemPanelHTML(item) {
     const name = item.name || 'Barang';
     const thumb = item.thumb || fallbackThumbFor(name);
@@ -285,22 +251,18 @@ function buildItemPanelHTML(item) {
           <div class="text-muted">Dipinjam: <b><span class="qty-display-text">${qty}</span>x</b></div>
   
           <div class="d-flex justify-content-center gap-2 mt-2">
-            <button class="btn btn-qty btn-qminus" type="button" aria-label="Kurangi">
-              <i class="bi bi-dash-lg"></i>
-            </button>
+            <button class="btn btn-qty btn-qminus" type="button" aria-label="Kurangi"><i class="bi bi-dash-lg"></i></button>
             <div class="qty-display">${qty}</div>
-            <button class="btn btn-qty btn-qplus" type="button" aria-label="Tambah">
-              <i class="bi bi-plus-lg"></i>
-            </button>
+            <button class="btn btn-qty btn-qplus" type="button" aria-label="Tambah"><i class="bi bi-plus-lg"></i></button>
           </div>
           <small class="text-muted d-block mt-1">Atur jumlah yang akan dipinjam</small>
         </div>
   
         <div class="mini-calendar mt-3">
           <div class="d-flex align-items-center justify-content-between mb-2">
-            <button class="cal-nav cal-prev" type="button" aria-label="Bulan sebelumnya"><i class="bi bi-chevron-left"></i></button>
+            <button class="cal-nav cal-prev" type="button"><i class="bi bi-chevron-left"></i></button>
             <strong class="cal-title">-</strong>
-            <button class="cal-nav cal-next" type="button" aria-label="Bulan berikutnya"><i class="bi bi-chevron-right"></i></button>
+            <button class="cal-nav cal-next" type="button"><i class="bi bi-chevron-right"></i></button>
           </div>
           <div class="calendar-legend mb-2">
             <span class="legend-box booked"></span><small class="ms-1 me-3">Terbooking/Habis</small>
@@ -320,7 +282,6 @@ function buildItemPanelHTML(item) {
     `;
 }
 
-/* ---------- Build Tabs dari Keranjang ---------- */
 function buildTabsFromCart() {
     const tabsUL = document.getElementById('itemTabs');
     const tabsContent = document.getElementById('itemTabContent');
@@ -328,15 +289,11 @@ function buildTabsFromCart() {
 
     const cart = (window.MSUCart && MSUCart.get()) || [];
 
-    // Kosongkan dulu
     tabsUL.innerHTML = '';
     tabsContent.innerHTML = '';
 
     if (!cart.length) {
-        tabsContent.innerHTML = `
-        <div class="p-3 text-center text-muted border rounded-3">
-          Keranjang kosong. Silakan pilih barang/ruang dari halaman sebelumnya.
-        </div>`;
+        tabsContent.innerHTML = `<div class="p-3 text-center text-muted border rounded-3">Keranjang kosong.</div>`;
         return;
     }
 
@@ -344,7 +301,6 @@ function buildTabsFromCart() {
         const tabId = `tab-${idx}`;
         const panelId = `panel-${idx}`;
 
-        // Tab header (horizontal)
         const li = document.createElement('li');
         li.className = 'nav-item';
         li.innerHTML = `
@@ -357,14 +313,10 @@ function buildTabsFromCart() {
       `;
         tabsUL.appendChild(li);
 
-        // Panel body
         const pane = document.createElement('div');
         pane.className = `tab-pane fade ${idx === 0 ? 'show active' : ''}`;
         pane.id = panelId;
         pane.setAttribute('role', 'tabpanel');
-        pane.setAttribute('aria-labelledby', tabId);
-
-        // Simpan nama item & refDate sebagai state panel
         pane.dataset.itemName = it.name;
         pane.dataset.refDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString();
 
@@ -372,27 +324,19 @@ function buildTabsFromCart() {
         tabsContent.appendChild(pane);
     });
 
-    // Inisialisasi kalender & handler tiap panel
     initPanels();
-    // Sinkronkan validasi tanggal sesuai tab aktif
     syncDateBlockWithActiveItem();
-    // Render ringkasan keranjang kanan
-    renderCartList();
+    renderCartList(); // This also syncs to Alpine
 }
 
-/* ---------- Helper: Panel aktif & nama item aktif ---------- */
+
 function getActivePanel() {
     const tabsContent = document.getElementById('itemTabContent');
     if (!tabsContent) return null;
     return tabsContent.querySelector('.tab-pane.active.show') ||
         tabsContent.querySelector('.tab-pane.active') || null;
 }
-function getActiveItemName() {
-    const pane = getActivePanel();
-    return pane ? (pane.dataset.itemName || '') : '';
-}
 
-/* ---------- Kalender per-panel & qty ---------- */
 function initPanels() {
     const tabsContent = document.getElementById('itemTabContent');
     if (!tabsContent) return;
@@ -400,12 +344,9 @@ function initPanels() {
 
     tabsContent.querySelectorAll('.tab-pane').forEach(pane => {
         const name = pane.dataset.itemName || '';
-        // Ref date dari dataset
         let ref = new Date(pane.dataset.refDate || (new Date().toISOString()));
-        // Render pertama
         renderCalendarFor(pane, name, ref);
 
-        // Nav prev/next
         const prevBtn = pane.querySelector('.cal-prev');
         const nextBtn = pane.querySelector('.cal-next');
         prevBtn?.addEventListener('click', () => {
@@ -421,7 +362,6 @@ function initPanels() {
             if (pane.classList.contains('active')) syncDateBlockWithActiveItem();
         });
 
-        // Qty +/- per panel → update cart
         const minus = pane.querySelector('.btn-qminus');
         const plus = pane.querySelector('.btn-qplus');
         const qtyBox = pane.querySelector('.qty-display');
@@ -432,7 +372,6 @@ function initPanels() {
             qtyBox.textContent = String(clean);
             qtyText.textContent = String(clean);
 
-            // Update badge pada tab header
             const index = Array.from(tabsContent.children).findIndex(pp => pp === pane);
             const tabButton = document.getElementById(index >= 0 ? `tab-${index}` : '');
             if (tabButton) {
@@ -440,12 +379,10 @@ function initPanels() {
                 if (badge) badge.textContent = `${clean}x`;
             }
 
-            // Update cart
             MSUCart?.upsertItem({ type: 'barang', name: name, qty: clean, thumb: '' });
             MSUCart?.renderBadge();
             renderCartList();
 
-            // Jika qty=0 → rebuild tabs biar panel menghilang
             if (clean === 0) {
                 buildTabsFromCart();
             }
@@ -461,13 +398,13 @@ function initPanels() {
         });
     });
 
-    // Saat ganti tab → sinkron blok tanggal sesuai item aktif
     tabsUL?.querySelectorAll('[data-bs-toggle="tab"]').forEach(btn => {
         btn.addEventListener('shown.bs.tab', () => {
             syncDateBlockWithActiveItem();
         });
     });
 }
+
 
 /* ---------- Blocking tanggal berdasarkan item aktif ---------- */
 
@@ -482,22 +419,21 @@ function bookedSetFor(date) {
 function syncDateBlockWithActiveItem() {
     const loanDate = document.getElementById('loanDate');
     if (!loanDate) return;
-    // Min hari ini
     const today = new Date(); today.setHours(0, 0, 0, 0);
     loanDate.min = today.toISOString().split('T')[0];
 
-    // Jika nilai loanDate saat ini kebetulan termasuk merah untuk item aktif → kosongkan
     if (loanDate.value) {
         const d = new Date(loanDate.value);
         const booked = bookedSetFor(d);
         if (booked.has(d.getDate())) {
             loanDate.value = '';
+            // If livewire/alpine is listening, we might need to dispatch input but 
+            // since this is just validtion, let user re-pick
+            loanDate.dispatchEvent(new Event('input'));
         }
     }
 }
 
-// Validasi saat user memilih tanggal
-// Delegate listener since loanDate might be re-rendered (though here it's static)
 document.addEventListener('change', function (e) {
     if (e.target && e.target.id === 'loanDate') {
         const loanDate = e.target;
@@ -507,123 +443,7 @@ document.addEventListener('change', function (e) {
         if (booked.has(d.getDate())) {
             alert('Tanggal yang dipilih terbooking untuk item aktif. Silakan pilih tanggal lain.');
             loanDate.value = '';
+            loanDate.dispatchEvent(new Event('input'));
         }
     }
 });
-
-/* =========================================================
-   SUBMIT VIA MAILTO (Tanpa backend) — kirim ke email peminjam
-   ========================================================= */
-
-/* Konfigurasi admin untuk cc/bcc (opsional) */
-const MAIL_CC_ADMIN = 'admin@msu.ac.id';   // kosongkan '' jika tidak perlu CC
-const MAIL_BCC_ADMIN = '';                  // isi jika ingin BCC
-
-/* Build mailto URL */
-function buildMailtoURL({ to, subject, body, cc = '', bcc = '' }) {
-    const params = [];
-    if (cc) params.push('cc=' + encodeURIComponent(cc));
-    if (bcc) params.push('bcc=' + encodeURIComponent(bcc));
-    if (subject) params.push('subject=' + encodeURIComponent(subject));
-    if (body) params.push('body=' + encodeURIComponent(body));
-    const query = params.join('&');
-    return `mailto:${encodeURIComponent(to)}${query ? '?' + query : ''}`;
-}
-
-/* ---------- Submit: VALIDASI & PREPARE DATA untuk Livewire ---------- */
-(function wrapSubmit_Backend() {
-
-    function validateForm() {
-        const form = document.getElementById('bookingForm');
-        const btnSubmit = document.getElementById('btnSubmit');
-        const reqInput = document.getElementById('requirements');
-
-        if (!form || !btnSubmit) return;
-        const requiredValid = [...form.querySelectorAll('[required]')].every(el => el.value && el.checkValidity());
-        const cartHasQty = (MSUCart?.count() || 0) > 0;
-        const fileOK = !!reqInput?.files?.length;
-
-        // Disable button if invalid
-        btnSubmit.disabled = !(requiredValid && cartHasQty && fileOK);
-    }
-
-    // Listeners for validation
-    document.addEventListener('input', function (e) {
-        if (e.target.closest('#bookingForm')) validateForm();
-    });
-    document.addEventListener('change', function (e) {
-        if (e.target.closest('#bookingForm')) validateForm();
-    });
-
-    // File size check
-    document.addEventListener('change', function (e) {
-        if (e.target.id === 'requirements') {
-            const reqInput = e.target;
-            const f = reqInput.files?.[0];
-            if (!f) return validateForm();
-            const max = 10 * 1024 * 1024; // 10MB
-            if (f.size > max) {
-                alert('Ukuran maksimum file 10 MB.');
-                reqInput.value = '';
-            }
-            validateForm();
-        }
-    });
-
-    // Cancel Button
-    document.addEventListener('click', function (e) {
-        if (e.target.id === 'btnCancel' || e.target.closest('#btnCancel')) {
-            if (confirm('Batalkan pengisian form dan kembali ke halaman sebelumnya?')) {
-                window.location.href = '/barang';
-            }
-        }
-    });
-
-    // SUBMIT handler: Just prepare data, let Livewire handle actual submit
-    document.addEventListener('submit', function (e) {
-        if (e.target.id !== 'bookingForm') return;
-
-        // Manual validation check before letting livewire take over
-        const form = e.target;
-        if (!form.checkValidity()) {
-            e.preventDefault();
-            e.stopPropagation();
-            form.classList.add('was-validated');
-            validateForm();
-            return;
-        }
-
-        // Populate Hidden Cart Input
-        const cartInput = document.getElementById('cartJsonInput');
-        if (cartInput && window.MSUCart) {
-            const items = MSUCart.get();
-            cartInput.value = JSON.stringify(items);
-            cartInput.dispatchEvent(new Event('input', { bubbles: true }));
-        }
-
-        // We do NOT preventDefault() here, so Livewire's wire:submit can run.
-    });
-
-    // Helper to sync continuously (just in case)
-    function syncCartToInput() {
-        const cartInput = document.getElementById('cartJsonInput');
-        if (cartInput && window.MSUCart) {
-            const items = MSUCart.get();
-            cartInput.value = JSON.stringify(items);
-            cartInput.dispatchEvent(new Event('input', { bubbles: true }));
-        }
-        validateForm();
-    }
-
-    // Hook into renderCartList (which is called on any cart change)
-    // We can't easily hook into MSUCart directly without modifying it, 
-    // but renderCartList is global and called by MSUCart operations in this file.
-    const originalRenderCartList = window.renderCartList;
-    window.renderCartList = function () {
-        if (originalRenderCartList) originalRenderCartList();
-        syncCartToInput();
-    };
-
-    // Initial check
-    syncCartToInput();
-})();

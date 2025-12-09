@@ -23,6 +23,10 @@ php artisan migrate --force
 echo "Running seeders..."
 php artisan db:seed --force
 
+# Link storage directory
+echo "Linking storage directory..."
+php artisan storage:link
+
 # Start PHP-FPM
 echo "Starting PHP-FPM..."
 exec php-fpm

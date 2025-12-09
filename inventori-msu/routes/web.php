@@ -33,6 +33,7 @@ Route::get('/', Home::class)->name('home');
 Route::get('/barang', Catalogue::class)->name('catalogue.barang');
 Route::get('/ruangan', Catalogue::class)->name('catalogue.ruangan');
 Route::get('/booking-barang', Cart::class)->name('cart');
+Route::redirect('/cart', '/booking-barang');
 Route::get('/success', Success::class)->name('success');
 
 
