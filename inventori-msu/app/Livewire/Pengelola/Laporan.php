@@ -37,7 +37,13 @@ class Laporan extends Component
 
                 switch ($lr->status) {
                     case 'returned':
-                        $statusUi = 'Sudah Kembali';
+                        // Cek status sumbission
+                        if ($lr->loanRecord && $lr->loanRecord->is_submitted) {
+                            $statusUi = 'Selesai';
+                        } else {
+                            $statusUi = 'Menunggu Submit';
+                        }
+                        
                         // Coba ambil dari loanRecord kalau ada loaded
                         if ($lr->loanRecord && $lr->loanRecord->returned_at) {
                             $tglKembali = Carbon::parse($lr->loanRecord->returned_at)->format('m/d/Y');
