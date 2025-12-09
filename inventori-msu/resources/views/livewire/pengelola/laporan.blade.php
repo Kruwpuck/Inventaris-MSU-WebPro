@@ -80,6 +80,9 @@
     .status-sedang { background:#f3f7cf; color:#6a7b00; }
     .status-sudah { background:#d9f3e7; color:#0b492c; }
     .status-terlambat { background:#7a2c2c; color:#fff; }
+    .status-pending { background:#fff3cd; color:#856404; }
+    .status-approved { background:#cff4fc; color:#055160; }
+    .status-ditolak { background:#f8d7da; color:#721c24; }
 
     #fSearch:focus { border-color:#000; box-shadow:none; outline:none; }
 
@@ -157,8 +160,11 @@
       <ul class="dropdown-menu" aria-labelledby="btnStatus">
         <li><a class="dropdown-item active" href="#" data-value="all">Semua Status</a></li>
         <li><a class="dropdown-item" href="#" data-value="Sedang Dipinjam">Sedang Dipinjam</a></li>
+        <li><a class="dropdown-item" href="#" data-value="Siap Diambil">Siap Diambil</a></li>
         <li><a class="dropdown-item" href="#" data-value="Sudah Kembali">Sudah Kembali</a></li>
         <li><a class="dropdown-item" href="#" data-value="Terlambat">Terlambat</a></li>
+        <li><a class="dropdown-item" href="#" data-value="Menunggu Approve">Menunggu Approve</a></li>
+        <li><a class="dropdown-item" href="#" data-value="Ditolak">Ditolak</a></li>
       </ul>
     </div>
 
@@ -197,6 +203,9 @@
                 'Sedang Dipinjam' => 'status-sedang',
                 'Sudah Kembali'  => 'status-sudah',
                 'Terlambat'      => 'status-terlambat',
+                'Siap Diambil'   => 'status-approved',
+                'Menunggu Approve' => 'status-pending',
+                'Ditolak'        => 'status-ditolak',
                 default          => 'status-sedang'
               };
             @endphp

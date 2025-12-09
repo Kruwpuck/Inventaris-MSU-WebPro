@@ -3,90 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventaris MSU - Pengurus</title>
+    <title>Pengurus – Inventaris MSU</title>
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="{{ asset('aset/pengurus-assets/style.css') }}">
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/aset/pengurus-assets/style.css">
 </head>
 
 <body>
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary px-3">
+        <a class="navbar-brand fw-bold text-white" href="#">Pengurus</a>
 
-    {{-- ======================================
-         HEADER / NAVBAR 
-    ======================================= --}}
-    <header class="header">
+        <!-- Hamburger -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-        {{-- LOGO KIRI --}}
-        <div class="logo">
-            <img src="{{ asset('aset/pengurus-assets/logo.png') }}" alt="Logo MSU">
-            <span style="font-weight:700; color:#004d00;">Pengurus MSU</span>
-        </div>
+        <div class="collapse navbar-collapse" id="navMenu">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
-        {{-- NAV DESKTOP --}}
-        <nav class="nav-desktop">
-            <a href="{{ route('pengurus.dashboard') }}" class="{{ request()->routeIs('pengurus.dashboard') ? 'active' : '' }}">
-                Dashboard
-            </a>
-            
-            <a href="{{ route('pengurus.fasilitas') }}" class="{{ request()->routeIs('pengurus.fasilitas') ? 'active' : '' }}">
-                Peminjaman Fasilitas
-            </a>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('pengurus.dashboard') }}">Dashboard</a>
+                </li>
 
-            <a href="{{ route('pengurus.barang') }}" class="{{ request()->routeIs('pengurus.barang') ? 'active' : '' }}">
-                Peminjaman Barang
-            </a>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('pengurus.fasilitas') }}">Peminjaman Fasilitas</a>
+                </li>
 
-            <a href="{{ route('pengurus.riwayat') }}" class="{{ request()->routeIs('pengurus.riwayat') ? 'active' : '' }}">
-                Riwayat
-            </a>
-        </nav>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('pengurus.barang') }}">Peminjaman Barang</a>
+                </li>
 
-        {{-- USER DESKTOP --}}
-        <div class="user-desktop" id="userMenu">
-            <div class="user-info-box" id="userDropdownToggle">
-                <img src="{{ asset('aset/pengurus-assets/user.png') }}" class="user-photo">
-                <span>Pengurus</span>
-                <span class="arrow">▼</span>
-            </div>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('pengurus.riwayat') }}">Riwayat</a>
+                </li>
+            </ul>
 
-            {{-- DROPDOWN --}}
-            <div class="user-dropdown" id="userDropdown">
-                <a href="#">Logout</a>
+            <!-- USER DROPDOWN -->
+            <div class="dropdown">
+                <button class="btn btn-light dropdown-toggle fw-semibold" data-bs-toggle="dropdown">
+                    Pengurus
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item text-danger fw-semibold" href="/logout">Logout</a></li>
+                </ul>
             </div>
         </div>
+    </nav>
 
-        {{-- HAMBURGER (MOBILE) --}}
-        <div class="hamburger" id="hamburgerMenu">☰</div>
-    </header>
-
-    {{-- ======================================
-         MOBILE SIDEBAR 
-    ======================================= --}}
-    <div class="mobile-menu" id="mobileMenu">
-        <div class="mobile-logo">
-            <img src="{{ asset('aset/pengurus-assets/logo.png') }}">
-        </div>
-
-        <a href="{{ route('pengurus.dashboard') }}">Dashboard</a>
-        <a href="{{ route('pengurus.fasilitas') }}">Peminjaman Fasilitas</a>
-        <a href="{{ route('pengurus.barang') }}">Peminjaman Barang</a>
-        <a href="{{ route('pengurus.riwayat') }}">Riwayat</a>
-
-        <a href="#" class="logout">Logout</a>
+    <!-- MAIN CONTENT -->
+    <div class="container py-4">
+        @yield('content')
     </div>
 
-    <div class="overlay" id="overlay"></div>
+    <!-- Bootstrap Script -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-
-    {{-- ======================================
-         KONTEN HALAMAN 
-    ======================================= --}}
-    <main style="padding: 30px 20px;">
-        {{ $slot }}
-    </main>
-
-    {{-- JS --}}
-    <script src="{{ asset('aset/pengurus-assets/script.js') }}"></script>
-
+    <!-- Custom JS -->
+    <script src="/aset/pengurus-assets/script.js"></script>
 </body>
 </html>
