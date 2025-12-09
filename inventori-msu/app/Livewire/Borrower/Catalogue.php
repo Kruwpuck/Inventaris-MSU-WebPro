@@ -17,7 +17,7 @@ class Catalogue extends Component
         if (request()->routeIs('catalogue.barang')) {
             $this->category = 'barang';
         } elseif (request()->routeIs('catalogue.ruangan')) {
-            $this->category = 'fasilitas';
+            $this->category = 'ruangan';
         } else {
             $this->category = 'barang'; // Default
         }
