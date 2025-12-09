@@ -1,117 +1,176 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard Pengurus</title>
   <link rel="stylesheet" href="style.css" />
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+  <script>
+    // Cek apakah sudah login sebagai pengurus
+    const user = JSON.parse(localStorage.getItem("msuUser"));
+    if (!user || user.role !== "pengurus") {
+      window.location.href = "login.html";
+    }
+  </script>
 </head>
 
 <body>
 
-<!-- ==============================
+  <!-- ==============================
      HEADER FULLSCREEN
 =============================== -->
-<header class="header">
-  <div class="logo">
-    <img src="Assets/logo.png" alt="Logo">
-  </div>
+  <header class="header">
+    <div class="logo">
+      <img src="Assets/logo.png" alt="Logo">
+    </div>
 
-  <!-- NAV DESKTOP -->
-  <nav class="nav-desktop">
-    <a href="#" class="active">Beranda</a>
+    <!-- NAV DESKTOP -->
+    <nav class="nav-desktop">
+      <a href="#" class="active">Beranda</a>
+      <a href="pinjamFasilitas.html">Peminjaman Fasilitas</a>
+      <a href="riwayatpinjam.html">Riwayat Peminjaman</a>
+    </nav>
+
+    <!-- USER DROPDOWN DESKTOP -->
+    <div class="user-desktop" onclick="toggleUserDropdown()">
+      <div class="user-info-box">
+        <img src="Assets/logo.png" class="user-photo">
+        <div>
+          <strong>pengurus</strong><br>
+          Pengurus Side
+        </div>
+        <span class="arrow">▼</span>
+      </div>
+
+      <div class="user-dropdown" id="user-dropdown">
+        <a href="#" id="logout-btn">Keluar</a>
+      </div>
+    </div>
+
+    <!-- HAMBURGER MOBILE -->
+    <div class="hamburger" onclick="toggleMenu()">☰</div>
+  </header>
+
+  <!-- ==============================
+     SIDEBAR MOBILE
+=============================== -->
+  <div id="mobileMenu" class="mobile-menu">
+    <div class="mobile-logo">
+      <img src="Assets/logo.png" alt="logo">
+    </div>
+
+    <a href="#">Beranda</a>
     <a href="pinjamFasilitas.html">Peminjaman Fasilitas</a>
-    <a href="riwayatpinjam.html">Riwayat Peminjaman</a>
-  </nav>
+    <a href="riwayat.html">Riwayat Peminjaman</a>
+    <a href="#" class="logout">Keluar</a>
 
-  <!-- USER DROPDOWN DESKTOP -->
-  <div class="user-desktop" onclick="toggleUserDropdown()">
-    <div class="user-info-box">
-      <img src="Assets/logo.png" class="user-photo">
+    <div class="user-box">
+      <img src="Assets/logo.png" class="user-pic">
       <div>
         <strong>pengurus</strong><br>
         Pengurus Side
       </div>
-      <span class="arrow">▼</span>
-    </div>
-
-    <div class="user-dropdown" id="user-dropdown">
-      <a href="#" id="logout-btn">Keluar</a>
     </div>
   </div>
 
-  <!-- HAMBURGER MOBILE -->
-  <div class="hamburger" onclick="toggleMenu()">☰</div>
-</header>
+  <div id="overlay" class="overlay" onclick="toggleMenu()"></div>
 
-<!-- ==============================
-     SIDEBAR MOBILE
-=============================== -->
-<div id="mobileMenu" class="mobile-menu">
-  <div class="mobile-logo">
-    <img src="Assets/logo.png" alt="logo">
-  </div>
-
-  <a href="#">Beranda</a>
-  <a href="pinjamFasilitas.html">Peminjaman Fasilitas</a>
-  <a href="riwayat.html">Riwayat Peminjaman</a>
-  <a href="#" class="logout">Keluar</a>
-
-  <div class="user-box">
-    <img src="Assets/logo.png" class="user-pic">
-    <div>
-      <strong>pengurus</strong><br>
-      Pengurus Side
-    </div>
-  </div>
-</div>
-
-<div id="overlay" class="overlay" onclick="toggleMenu()"></div>
-
-<!-- ==============================
+  <!-- ==============================
      HERO SECTION
 =============================== -->
-<section class="hero">
-  <img src="Assets/gedung.png">
-  <div class="hero-subtext">
-    <p>
-      Satu langkah menuju <b>kemudahan beraktivitas</b> di MSU <br>
-      Semua urusan peminjaman dan perizinan kini bisa dilakukan secara online.
-    </p>
+  <section class="hero">
+    <img src="Assets/gedung.png">
+    <div class="hero-subtext">
+      <p>
+        Satu langkah menuju <b>kemudahan beraktivitas</b> di MSU <br>
+        Semua urusan peminjaman dan perizinan kini bisa dilakukan secara online.
+      </p>
+    </div>
+  </section>
+
+  <!-- CONTAINER FLUID BOOTSTRAP -->
+  <div class="container-fluid px-4">
+    <section class="judul-bawah my-4">
+      <h1>Peminjaman Hari ini</h1>
+    </section>
+
+    <div class="table-responsive">
+      <table class="table table-striped table-hover table-bordered">
+        <thead class="table-success">
+          <tr>
+            <th>No</th>
+            <th>Nama Peminjam</th>
+            <th>Waktu Pengambilan</th>
+            <th>Waktu Pengembalian</th>
+            <th>Detail</th>
+            <th>Ambil</th>
+            <th>Terima</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Data populated by JS -->
+        </tbody>
+      </table>
+    </div>
   </div>
-</section>
+  <div class="lihat-link">
+    <a href="pinjamFasilitas.html" class="link-success text-decoration-none fw-bold">Lihat Selengkapnya &raquo;</a>
+  </div>
 
-<section class="judul-bawah">
-  <h1>Peminjaman Hari ini</h1>
-</section>
-
-<!-- ==============================
+  <!-- ==============================
      SHARED DATA SCRIPT
 =============================== -->
-<script src="shared-data.js"></script>
+  <script src="shared-data.js"></script>
 
-<!-- ==============================
+  <!-- BOOTSTRAP MODAL -->
+  <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title w-100 text-center text-white" id="detailModalLabel">Detail Fasilitas</h5>
+        </div>
+        <div class="modal-body text-center">
+          <p id="detailContent" class="fs-5">...</p>
+        </div>
+        <div class="modal-footer justify-content-center">
+          <button type="button" class="btn btn-success rounded-pill px-4" data-bs-dismiss="modal">Tutup</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+    crossorigin="anonymous"></script>
+
+  <!-- ==============================
      DROPDOWN SCRIPT
 =============================== -->
-<script>
-function toggleUserDropdown() {
-  document.getElementById("user-dropdown").classList.toggle("open");
-}
+  <script>
+    function toggleUserDropdown() {
+      document.getElementById("user-dropdown").classList.toggle("open");
+    }
 
-window.addEventListener("click", function(e) {
-  const box = document.querySelector(".user-desktop");
-  const dropdown = document.getElementById("user-dropdown");
+    window.addEventListener("click", function (e) {
+      const box = document.querySelector(".user-desktop");
+      const dropdown = document.getElementById("user-dropdown");
 
-  if (!box.contains(e.target)) {
-    dropdown.classList.remove("open");
-  }
-});
+      if (!box.contains(e.target)) {
+        dropdown.classList.remove("open");
+      }
+    });
 
-function toggleMenu() {
-  document.getElementById("mobileMenu").classList.toggle("open");
-  document.getElementById("overlay").classList.toggle("show");
-}
-</script>
+    function toggleMenu() {
+      document.getElementById("mobileMenu").classList.toggle("open");
+      document.getElementById("overlay").classList.toggle("show");
+    }
+  </script>
 
 </body>
+
 </html>

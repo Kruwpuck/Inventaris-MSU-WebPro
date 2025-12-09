@@ -18,7 +18,7 @@ class Laporan extends Component
     public function render()
     {
         // ambil semua loan + items + inventory
-        $requests = LoanRequest::with(['items'])
+        $requests = LoanRequest::with(['items', 'loanRecord'])
             ->orderByDesc('id')
             ->get();
 
@@ -32,16 +32,53 @@ class Laporan extends Component
                 $jatuhTempo = Carbon::parse($lr->loan_date_end);
 
                 // ===== map status backend -> UI =====
-                if ($lr->status === 'returned') {
-                    $statusUi   = 'Sudah Kembali';
-                    $tglKembali = $jatuhTempo->format('m/d/Y'); // sementara pakai loan_date_end
-                } else {
-                    if ($today->gt($jatuhTempo)) {
-                        $statusUi = 'Terlambat';
-                    } else {
-                        $statusUi = 'Sedang Dipinjam';
-                    }
-                    $tglKembali = '-';
+                $statusUi = 'Unknown';
+                $tglKembali = '-';
+
+                switch ($lr->status) {
+                    case 'returned':
+                        // Cek status sumbission
+                        if ($lr->loanRecord && $lr->loanRecord->is_submitted) {
+                            $statusUi = 'Selesai';
+                        } else {
+                            $statusUi = 'Menunggu Submit';
+                        }
+                        
+                        // Coba ambil dari loanRecord kalau ada loaded
+                        if ($lr->loanRecord && $lr->loanRecord->returned_at) {
+                            $tglKembali = Carbon::parse($lr->loanRecord->returned_at)->format('m/d/Y');
+                        } else {
+                            $tglKembali = $jatuhTempo->format('m/d/Y');
+                        }
+                        break;
+                    
+                    case 'handed_over':
+                        if ($today->gt($jatuhTempo)) {
+                            $statusUi = 'Terlambat';
+                        } else {
+                            $statusUi = 'Sedang Dipinjam';
+                        }
+                        break;
+
+                    case 'approved':
+                        $statusUi = 'Siap Diambil';
+                        break;
+
+                    case 'pending':
+                        $statusUi = 'Menunggu Approve';
+                        break;
+
+                    case 'rejected':
+                        $statusUi = 'Ditolak';
+                        break;
+                        
+                    default:
+                        // Fallback logic lama jika status null / lain
+                        if ($today->gt($jatuhTempo)) {
+                            $statusUi = 'Terlambat';
+                        } else {
+                            $statusUi = 'Sedang Dipinjam';
+                        }
                 }
 
                 $kategoriUi = $inv->category === 'ruangan' ? 'Ruangan' : 'Barang';

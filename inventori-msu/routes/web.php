@@ -13,6 +13,11 @@ use App\Livewire\Pengelola\TambahHapus;
 use App\Livewire\Pengelola\Approval;
 
 // =====================
+// LIVEWIRE PENGURUS
+// =====================
+use App\Http\Controllers\PengurusController;
+
+// =====================
 // CONTROLLER EXPORT
 // =====================
 use App\Http\Controllers\Pengelola\LaporanExportController;
@@ -82,24 +87,32 @@ Route::prefix('pengelola')->name('pengelola.')->group(function () {
 });
 
 
-// =====================
-// PENGURUS SECTION (STATIC BLADE)
-// =====================
 Route::prefix('pengurus')->name('pengurus.')->group(function () {
 
-    Route::get('/dashboard', function () {
-        return view('pengurus.dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('/peminjaman-fasilitas', function () {
-        return view('pengurus.peminjaman-fasilitas');
-    })->name('fasilitas');
+    Route::get('/peminjaman-fasilitas', [PeminjamanController::class, 'fasilitas'])->name('fasilitas');
+    Route::get('/peminjaman-barang', [PeminjamanController::class, 'barang'])->name('barang');
 
-    Route::get('/peminjaman-barang', function () {
-        return view('pengurus.peminjaman-barang');
-    })->name('barang');
+    Route::post('/toggle-status', [PeminjamanController::class, 'toggleStatus'])->name('toggle');
 
-    Route::get('/riwayat', function () {
-        return view('pengurus.riwayat');
-    })->name('riwayat');
+    Route::get('/riwayat', [RiwayatController::class, 'index'])->name('riwayat');
+    Route::post('/riwayat/cancel/{id}', [RiwayatController::class, 'cancel'])->name('cancel');
+    Route::post('/riwayat/submit/{id}', [RiwayatController::class, 'submit'])->name('submit');
 });
+
+
+Route::prefix('pengurus')->name('pengurus.')->group(function () {
+
+    Route::get('/dashboard',            [PengurusController::class, 'dashboard'])->name('dashboard');
+    Route::get('/peminjaman-fasilitas', [PengurusController::class, 'peminjamanFasilitas'])->name('fasilitas');
+    Route::get('/peminjaman-barang',    [PengurusController::class, 'peminjamanBarang'])->name('barang');
+    Route::get('/riwayat',              [PengurusController::class, 'riwayat'])->name('riwayat');
+
+    // Ajax routes
+    Route::post('/toggle-checklist',    [PengurusController::class, 'toggleChecklist'])->name('toggle');
+    Route::post('/override',            [PengurusController::class, 'overrideRiwayat'])->name('override');
+    Route::post('/submit',              [PengurusController::class, 'submitRiwayat'])->name('submit');
+});
+
+
