@@ -6,6 +6,7 @@ class DataManager {
   constructor() {
     this.STORAGE_KEY = 'peminjamanData';
     this.initData();
+    this.repairData(); // Auto fix corrupted data
   }
 
   // Inisialisasi data awal
@@ -72,6 +73,78 @@ class DataManager {
     }
   }
 
+  // Perbaiki data yang korup ("...")
+  repairData() {
+    const data = this.getData();
+    if (!data) return;
+
+    let changed = false;
+
+    // Fix Pinjam Fasilitas Defaults
+    const defaults = {
+      'p1': {
+        waktuPengambilan: '28 Oktober 2025 | 18.00 WIB',
+        waktuPengembalian: '28 Oktober 2025 | 20.00 WIB'
+      },
+      'p2': {
+        waktuPengambilan: '28 Oktober 2025 | 17.00 WIB',
+        waktuPengembalian: '30 Oktober 2025 | 08.00 WIB'
+      },
+      'p3': {
+        waktuPengambilan: '29 Oktober 2025 | 20.00 WIB',
+        waktuPengembalian: '30 Oktober 2025 | 17.00 WIB'
+      }
+    };
+
+    if (data.pinjamFasilitas) {
+      data.pinjamFasilitas.forEach(item => {
+        if (defaults[item.id]) {
+          if (item.waktuPengambilan === '...' || !item.waktuPengambilan) {
+            item.waktuPengambilan = defaults[item.id].waktuPengambilan;
+            changed = true;
+          }
+          if (item.waktuPengembalian === '...' || !item.waktuPengembalian) {
+            item.waktuPengembalian = defaults[item.id].waktuPengembalian;
+            changed = true;
+          }
+        }
+      });
+    }
+
+    if (changed) {
+      this.saveData(data);
+    }
+
+    // Clean up "Zombie" items:
+    // If item is in Riwayat and has both times taken (completed),
+    // it should NOT be in the source list.
+    let cleaned = false;
+    data.riwayat.forEach(r => {
+      // Check if "full cycle" (ambil & kembali/terima) is done
+      // Note: check logic for '...' is sufficient? 
+      // User's screenshot shows valid times in Riwayat.
+      const isComplete = r.waktuAmbil !== '...' && r.waktuKembali !== '...';
+
+      if (isComplete) {
+        let sourceArray = r.source === 'dashboard' ? data.dashboard : data.pinjamFasilitas;
+        const idx = sourceArray.findIndex(s => s.id === r.originalId);
+
+        if (idx !== -1) {
+          // Remove from source
+          sourceArray.splice(idx, 1);
+          cleaned = true;
+        }
+      }
+    });
+
+    if (cleaned) {
+      // Renumber source arrays
+      data.dashboard.forEach((item, i) => item.no = i + 1);
+      data.pinjamFasilitas.forEach((item, i) => item.no = i + 1);
+      this.saveData(data);
+    }
+  }
+
   // Ambil semua data
   getData() {
     return JSON.parse(localStorage.getItem(this.STORAGE_KEY));
@@ -85,9 +158,9 @@ class DataManager {
   // Format waktu saat ini
   getCurrentTime() {
     const now = new Date();
-    const options = { 
-      day: 'numeric', 
-      month: 'long', 
+    const options = {
+      day: 'numeric',
+      month: 'long',
       year: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
@@ -97,21 +170,56 @@ class DataManager {
   }
 
   // Pindahkan data ke riwayat
-  moveToRiwayat(source, id, checkType) {
+  moveToRiwayat(source, id, checkType, isChecked) {
     const data = this.getData();
     let sourceArray = source === 'dashboard' ? data.dashboard : data.pinjamFasilitas;
 
     const index = sourceArray.findIndex(i => i.id === id);
-    if (index === -1) return;
+    if (index === -1) return false;
 
     const item = sourceArray[index];
 
-    // Cek apakah 2 checkbox akan dicentang
+    // HANDLE UNCHECK
+    if (!isChecked) {
+      if (checkType === 'ambil') {
+        item.sudahAmbil = false;
+      } else if (checkType === 'terima' || checkType === 'kembali') {
+        if (source === 'dashboard') item.sudahTerima = false;
+        else item.sudahKembali = false;
+      }
+
+      // Remove from riwayat if partial (optional, but requested to "cancel" action)
+      // If uncheck "ambil", logic implies we are reverting the action.
+      // We iterate to find if there's a riwayat item to update or remove.
+      const riIndex = data.riwayat.findIndex(r => r.originalId === id && r.source === source);
+      if (riIndex !== -1) {
+        const riwayatItem = data.riwayat[riIndex];
+        // If we uncheck 'ambil', revert time.
+        if (checkType === 'ambil') {
+          riwayatItem.waktuAmbil = '...';
+        }
+        if (checkType === 'terima' || checkType === 'kembali') {
+          riwayatItem.waktuKembali = '...';
+        }
+
+        // If both are reset, maybe remove from riwayat?
+        if (riwayatItem.waktuAmbil === '...' && riwayatItem.waktuKembali === '...') {
+          data.riwayat.splice(riIndex, 1);
+          // Renumber
+          data.riwayat.forEach((itm, idx) => itm.no = idx + 1);
+        }
+      }
+
+      this.saveData(data);
+      return true;
+    }
+
+    // HANDLE CHECK
     const willCheckAmbil = checkType === 'ambil' ? true : item.sudahAmbil;
-    const willCheckKembali = 
+    const willCheckKembali =
       source === 'dashboard'
-      ? (checkType === 'terima' ? true : item.sudahTerima)
-      : (checkType === 'kembali' ? true : item.sudahKembali);
+        ? (checkType === 'terima' ? true : item.sudahTerima)
+        : (checkType === 'kembali' ? true : item.sudahKembali);
 
     const bothChecked = willCheckAmbil && willCheckKembali;
 
@@ -123,7 +231,7 @@ class DataManager {
       }
     }
 
-    // Cari di riwayat
+    // Cari di riwayat atau Buat baru
     let riwayatItem = data.riwayat.find(
       r => r.originalId === id && r.source === source
     );
@@ -136,15 +244,11 @@ class DataManager {
         no: data.riwayat.length + 1,
         nama: item.nama,
         fasilitas: item.fasilitas,
-
-        // Waktu yang ditampilkan (mulai "...")
         waktuAmbil: '...',
         waktuKembali: '...',
-
-        // MENYIMPAN WAKTU ASLI UNTUK CANCEL
+        // Simpan waktu asli agar bisa restore
         waktuAsliAmbil: item.waktuPengambilan,
         waktuAsliKembali: item.waktuPengembalian,
-
         isSubmitted: false
       };
       data.riwayat.push(riwayatItem);
@@ -164,7 +268,6 @@ class DataManager {
     // Jika dua-duanya sudah centang → hapus dari sumber
     if (bothChecked) {
       sourceArray.splice(index, 1);
-
       // Renumber
       sourceArray.forEach((itm, idx) => {
         itm.no = idx + 1;
@@ -183,24 +286,40 @@ class DataManager {
 
     const riwayatItem = data.riwayat[riIndex];
 
+    // Cek apakah item masih ada di source (belum dihapus karena baru partial check)
+    // atau sudah dihapus (both checked).
+    let sourceArray = riwayatItem.source === 'dashboard' ? data.dashboard : data.pinjamFasilitas;
+    let existingItemIndex = sourceArray.findIndex(i => i.id === riwayatItem.originalId);
+
+    if (existingItemIndex !== -1) {
+      // Item masih ada di source (Duplicate prevention)
+      // Kita hanya reset statusnya.
+      const item = sourceArray[existingItemIndex];
+      item.sudahAmbil = false;
+      if (riwayatItem.source === 'dashboard') item.sudahTerima = false;
+      else item.sudahKembali = false;
+    } else {
+      // Item sudah tidak ada, kembalikan (Restore)
+      sourceArray.push({
+        id: riwayatItem.originalId,
+        no: sourceArray.length + 1,
+        nama: riwayatItem.nama,
+        // Restore waktu asli, handle potential undefined
+        waktuPengambilan: riwayatItem.waktuAsliAmbil || '...',
+        waktuPengembalian: riwayatItem.waktuAsliKembali || '...',
+        fasilitas: riwayatItem.fasilitas,
+        sudahAmbil: false,
+        sudahKembali: false,
+        sudahTerima: false // Reset flag for dashboard
+      });
+    }
+
     // Hapus dari riwayat
     data.riwayat.splice(riIndex, 1);
 
     // Renumber riwayat
     data.riwayat.forEach((item, i) => {
       item.no = i + 1;
-    });
-
-    // Mengembalikan data ke pinjamFasilitas (waktu asli)
-    data.pinjamFasilitas.push({
-      id: riwayatItem.originalId,
-      no: data.pinjamFasilitas.length + 1,
-      nama: riwayatItem.nama,
-      waktuPengambilan: riwayatItem.waktuAsliAmbil,
-      waktuPengembalian: riwayatItem.waktuAsliKembali,
-      fasilitas: riwayatItem.fasilitas,
-      sudahAmbil: false,
-      sudahKembali: false
     });
 
     this.saveData(data);
@@ -248,14 +367,14 @@ function initDashboard() {
   });
 
   document.querySelectorAll('table tbody input[type="checkbox"]').forEach(cb => {
-    cb.addEventListener('change', function() {
-      if (!this.checked) return;
+    cb.addEventListener('change', function () {
       const id = this.getAttribute('data-id');
       const type = this.getAttribute('data-type');
 
-      const ok = dataManager.moveToRiwayat('dashboard', id, type);
+      const ok = dataManager.moveToRiwayat('dashboard', id, type, this.checked);
       if (!ok) {
-        this.checked = false;
+        // Revert check if action cancelled
+        this.checked = !this.checked;
       } else {
         initDashboard();
       }
@@ -290,14 +409,14 @@ function initPinjamFasilitas() {
   });
 
   document.querySelectorAll('table tbody input[type="checkbox"]').forEach(cb => {
-    cb.addEventListener('change', function() {
-      if (!this.checked) return;
+    cb.addEventListener('change', function () {
       const id = this.getAttribute('data-id');
       const type = this.getAttribute('data-type');
 
-      const ok = dataManager.moveToRiwayat('pinjamFasilitas', id, type);
+      const ok = dataManager.moveToRiwayat('pinjamFasilitas', id, type, this.checked);
       if (!ok) {
-        this.checked = false;
+        // Revert check if action cancelled
+        this.checked = !this.checked;
       } else {
         initPinjamFasilitas();
       }
@@ -340,7 +459,7 @@ function initRiwayat() {
 
   // Cancel
   document.querySelectorAll('.cancel-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
+    btn.addEventListener('click', function () {
       const id = this.getAttribute('data-id');
       if (confirm("Anda yakin ingin membatalkan peminjaman ini?")) {
         dataManager.cancelRiwayat(id);
@@ -351,7 +470,7 @@ function initRiwayat() {
 
   // Submit
   document.querySelectorAll('.submit-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
+    btn.addEventListener('click', function () {
       const id = this.getAttribute('data-id');
       if (dataManager.submitRiwayat(id)) {
         alert("Data berhasil disubmit!");
@@ -366,29 +485,33 @@ function initRiwayat() {
 /* ------------------------------
    MODAL DETAIL
 --------------------------------*/
+/* ------------------------------
+   MODAL DETAIL (BOOTSTRAP)
+--------------------------------*/
 function attachModalListeners() {
   const detailButtons = document.querySelectorAll(".detail-btn");
-  const modalBg = document.getElementById("modalBg");
-  const detailContent = document.getElementById("detailContent");
 
-  if (!modalBg || !detailContent) return;
+  // We don't need custom modal logic anymore.
+  // We just need to update content before showing.
+  // Assuming Bootstrap JS handles the show/hide.
 
   detailButtons.forEach(btn => {
+    // Remove old listeners to avoid duplicates if called multiple times?
+    // Actually, init functions clear innerHTML so buttons are new.
+
     btn.addEventListener("click", function () {
-      detailContent.textContent = this.getAttribute("data-detail");
-      modalBg.style.display = "flex";
+      const content = this.getAttribute("data-detail");
+      const contentEl = document.getElementById("detailContent");
+      if (contentEl) contentEl.textContent = content;
+
+      // Show modal programmatically
+      const myModal = new bootstrap.Modal(document.getElementById('detailModal'));
+      myModal.show();
     });
   });
-
-  modalBg.addEventListener("click", function(e) {
-    if (e.target === modalBg) closeModal();
-  });
 }
 
-function closeModal() {
-  const modalBg = document.getElementById("modalBg");
-  modalBg.style.display = "none";
-}
+// closeModal is handled by Bootstrap data-bs-dismiss
 
 // Auto inisialisasi halaman
 document.addEventListener('DOMContentLoaded', () => {
