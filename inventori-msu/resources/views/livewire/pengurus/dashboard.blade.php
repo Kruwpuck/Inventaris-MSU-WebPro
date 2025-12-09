@@ -1,75 +1,116 @@
-<x-pengurus-layout>
+@extends('layouts.app')
 
-    {{-- JUDUL --}}
-    <div class="judul-bawah">
-        <h1>Dashboard Peminjaman</h1>
-    </div>
+@section('title','Dashboard Pengurus')
 
-    {{-- WRAPPER --}}
-    <div class="container">
+@section('content')
+<section class="hero">
+  <img src="{{ asset('Assets/gedung.png') }}">
+  <div class="hero-subtext">
+    <p>Satu langkah menuju <b>kemudahan beraktivitas</b> di MSU</p>
+  </div>
+</section>
 
-        {{-- SECTION 1 --}}
-        <h2 class="section-title">Sedang Berlangsung</h2>
-        <div class="table-responsive">
-            <table class="table1">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Nama</th>
-                        <th>Waktu Ambil</th>
-                        <th>Waktu Kembali</th>
-                        <th>Detail</th>
-                        <th>Sudah Ambil</th>
-                        <th>Sudah Terima</th>
-                    </tr>
-                </thead>
-                <tbody id="dashboardTable">
-                    {{-- Diisi oleh script.js / Livewire --}}
-                </tbody>
-            </table>
-        </div>
+<section class="judul-bawah"><h1>Peminjaman Hari ini</h1></section>
 
-        {{-- SECTION 2 --}}
-        <h2 class="section-title" style="margin-top:35px">Akan Dipinjam</h2>
-        <div class="table-responsive">
-            <table class="table2">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Nama</th>
-                        <th>Waktu Ambil</th>
-                        <th>Waktu Kembali</th>
-                        <th>Detail</th>
-                        <th>Sudah Ambil</th>
-                        <th>Sudah Kembali</th>
-                    </tr>
-                </thead>
-                <tbody id="pinjamFasilitasTable">
-                    {{-- Diisi oleh script.js / Livewire --}}
-                </tbody>
-            </table>
-        </div>
-    </div>
+<div class="container">
+  <table>
+    <thead>
+      <tr>
+        <th>No</th><th>Nama</th><th>Waktu Ambil</th><th>Waktu Kembali</th><th>Fasilitas</th><th>Ambil</th><th>Terima</th>
+      </tr>
+    </thead>
+    <tbody>
+      @forelse($data as $d)
+        <tr>
+          <td>{{ $loop->iteration }}</td>
+          <td>{{ $d->borrower_name }}</td>
+          {{-- Gunakan optional chaining atau cek relation --}}
+          <td>
+             {{ optional($d->loanRecord)->picked_up_at ? $d->loanRecord->picked_up_at->format('d M Y | H:i') : '-' }}
+          </td>
+          <td>
+             {{ optional($d->loanRecord)->returned_at ? $d->loanRecord->returned_at->format('d M Y | H:i') : '-' }}
+          </td>
+          {{-- Item details: join names --}}
+          <td>
+             <button class="detail-btn" data-detail="{{ $d->items->pluck('name')->join(', ') }}">Detail Peminjaman</button>
+          </td>
+          
+          {{-- Checkbox actions --}}
+          <td>
+             <input type="checkbox" class="toggle-status" data-id="{{ $d->id }}" data-type="ambil" 
+             {{ optional($d->loanRecord)->picked_up_at ? 'checked' : '' }}>
+          </td>
+          <td>
+             <input type="checkbox" class="toggle-status" data-id="{{ $d->id }}" data-type="kembali"
+             {{ optional($d->loanRecord)->returned_at ? 'checked' : '' }}>
+          </td>
+        </tr>
+      @empty
+        <tr><td colspan="7" class="text-center">Tidak ada peminjaman hari ini.</td></tr>
+      @endforelse
+    </tbody>
+  </table>
+</div>
 
-    {{-- MODAL DETAIL --}}
-    <div id="modalBg" class="modal-bg">
-        <div class="modal-dialog">
-            <div class="modal-content">
-
-                <div class="modal-header">
-                    <h5 class="modal-title">Detail Peminjaman</h5>
-                </div>
-
-                <div class="modal-body">
-                    <p id="detailContent">Detail di sini...</p>
-                </div>
-
-                <div class="modal-footer">
-                    <button class="close-btn" onclick="closeModal()">Tutup</button>
-                </div>
-
+<div class="modal-bg" id="modalBg">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detail Peminjaman</h5>
+            </div>
+            <div class="modal-body">
+                <p id="detailContent"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="close-btn" onclick="closeModal()">Tutup</button>
             </div>
         </div>
     </div>
+</div>
 
-</x-pengurus-layout>
+<script>
+    function closeModal() {
+        document.getElementById('modalBg').style.display = 'none';
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        // Modal logic
+        const modalBg = document.getElementById('modalBg');
+        document.querySelectorAll('.detail-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.getElementById('detailContent').textContent = this.getAttribute('data-detail');
+                modalBg.style.display = 'flex';
+            });
+        });
+
+        // Toggle logic
+        document.querySelectorAll('.toggle-status').forEach(cb => {
+            cb.addEventListener('change', function() {
+                const id = this.getAttribute('data-id');
+                const type = this.getAttribute('data-type');
+                
+                fetch('{{ route("pengurus.toggle") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ id: id, type: type })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.success) {
+                        alert('Status berhasil diperbarui');
+                        location.reload(); 
+                    } else {
+                        alert('Gagal memperbarui satus');
+                        this.checked = !this.checked; // revert
+                    }
+                })
+                .catch(err => console.error(err));
+            });
+        });
+    });
+</script>
+@endsection

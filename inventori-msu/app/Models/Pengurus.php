@@ -3,11 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 
 class Pengurus extends Model
 {
-    // Model ini tidak terkait langsung dengan tabel tertentu.
+    // Model helper, tidak punya tabel sendiri
     protected $table = null;
 
     /*
@@ -18,21 +17,43 @@ class Pengurus extends Model
 
     public static function getAllPeminjaman()
     {
-        return DB::table('peminjaman')->get();
+        return LoanRequest::with(['items', 'loanRecord'])->get();
     }
 
     public static function getPeminjamanByJenis($jenis)
     {
-        return DB::table('peminjaman')
-            ->where('jenis', $jenis)
+        return LoanRequest::whereHas('items', function ($q) use ($jenis) {
+                $q->where('category', $jenis);
+            })
+            ->with(['items', 'loanRecord'])
             ->get();
     }
 
-    public static function toggleStatus($id, $field)
+    /**
+     * Helper untuk mengubah status checkbox dashboard items
+     * $type: 'ambil' atau 'kembali'
+     */
+    public static function toggleStatus($loanRequestId, $type)
     {
-        return DB::table('peminjaman')
-            ->where('id', $id)
-            ->update([$field => 1]);
+        $loan = LoanRequest::find($loanRequestId);
+        if (!$loan) return false;
+
+        // Pastikan record ada
+        $record = LoanRecord::firstOrCreate(
+            ['loan_request_id' => $loanRequestId]
+        );
+
+        if ($type === 'ambil') {
+            $record->update(['picked_up_at' => now()]);
+            // Update status request
+            $loan->update(['status' => 'handed_over']);
+        } elseif ($type === 'kembali') {
+            $record->update(['returned_at' => now()]);
+            // Update status request
+            $loan->update(['status' => 'returned']);
+        }
+
+        return true;
     }
 
 
@@ -42,48 +63,48 @@ class Pengurus extends Model
     |--------------------------------------------------------------------------
     */
 
-    public static function insertRiwayat($peminjamanId)
+    /**
+     * Dipanggil saat kedua checkbox (ambil & kembali) sudah tercentang.
+     * Dalam implementasi baru, ini mungkin redundan karena toggleStatus sudah handle,
+     * tapi kita biarkan untuk kompatibilitas controller lama jika perlu.
+     */
+    public static function insertRiwayat($loanRequestId)
     {
-        return DB::table('riwayat')->insert([
-            'peminjaman_id'      => $peminjamanId,
-            'waktu_ambil_real'   => now()->format('d F Y H:i'),
-            'waktu_kembali_real' => now()->format('d F Y H:i'),
-            'is_submitted'       => false,
-            'created_at'         => now(),
-            'updated_at'         => now(),
-        ]);
+        // No-op karena updateOrCreate di toggleStatus sudah menghandle
+        return true;
     }
 
     public static function getAllRiwayat()
     {
-        return DB::table('riwayat')
-            ->join('peminjaman', 'riwayat.peminjaman_id', '=', 'peminjaman.id')
-            ->select('riwayat.*', 'peminjaman.nama', 'peminjaman.fasilitas', 'peminjaman.jenis')
+        // Riwayat adalah yang sudah kembali (completed)
+        return LoanRecord::whereNotNull('picked_up_at')
+            ->whereNotNull('returned_at')
+            ->with(['loanRequest.items']) // Eager load untuk akses detail
+            ->latest()
             ->get();
     }
 
-    public static function cancelRiwayat($id)
+    public static function cancelRiwayat($id) // $id adalah loan_record id
     {
-        $riwayat = DB::table('riwayat')->where('id', $id)->first();
+        $record = LoanRecord::find($id);
+        if (!$record) return false;
 
-        if (!$riwayat) return false;
+        $loanRequestId = $record->loan_request_id;
+        
+        // Hapus record riwayat
+        $record->delete();
 
-        // Reset status di tabel peminjaman
-        DB::table('peminjaman')
-            ->where('id', $riwayat->peminjaman_id)
-            ->update([
-                'status_ambil'    => 0,
-                'status_kembali'  => 0,
-            ]);
+        // Kembalikan status loan request ke 'approved' (siap diambil) 
+        // atau 'handed_over' (sedang dipinjam) tergantung maunya.
+        // Asumsi cancel riwayat berarti membatalkan penyelesaian, jadi reset total.
+        LoanRequest::where('id', $loanRequestId)->update(['status' => 'approved']);
 
-        // hapus riwayat
-        return DB::table('riwayat')->where('id', $id)->delete();
+        return true;
     }
 
     public static function submitRiwayat($id)
     {
-        return DB::table('riwayat')
-            ->where('id', $id)
+        return LoanRecord::where('id', $id)
             ->update(['is_submitted' => true]);
     }
 }

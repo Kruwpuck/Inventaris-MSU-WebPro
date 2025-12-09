@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class LoanRequest extends Model
 {
@@ -34,5 +35,10 @@ class LoanRequest extends Model
     public function loanItems()
     {
         return $this->hasMany(LoanItem::class);
+    }
+
+    public function loanRecord(): HasOne
+    {
+        return $this->hasOne(LoanRecord::class);
     }
 }
