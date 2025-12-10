@@ -60,7 +60,7 @@ Route::middleware(['auth'])->group(function () {
         ->middleware(
             when(
                 Features::canManageTwoFactorAuthentication()
-                    && Features::optionEnabled(Features::twoFactorAuthentication(), 'confirmPassword'),
+                && Features::optionEnabled(Features::twoFactorAuthentication(), 'confirmPassword'),
                 ['password.confirm'],
                 [],
             ),
@@ -87,6 +87,7 @@ Route::prefix('pengelola')->name('pengelola.')->group(function () {
 });
 
 
+/*
 Route::prefix('pengurus')->name('pengurus.')->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -114,5 +115,6 @@ Route::prefix('pengurus')->name('pengurus.')->group(function () {
     Route::post('/override',            [PengurusController::class, 'overrideRiwayat'])->name('override');
     Route::post('/submit',              [PengurusController::class, 'submitRiwayat'])->name('submit');
 });
+*/
 
 
