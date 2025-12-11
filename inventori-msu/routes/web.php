@@ -72,7 +72,7 @@ Route::middleware(['auth'])->group(function () {
 // =====================
 // PENGELOLA SECTION (ADMIN)
 // =====================
-Route::prefix('pengelola')->name('pengelola.')->group(function () {
+Route::prefix('pengelola')->name('pengelola.')->middleware(['auth'])->group(function () {
 
     Route::get('/beranda', Beranda::class)->name('beranda');
     Route::get('/laporan', Laporan::class)->name('laporan');
@@ -90,7 +90,7 @@ Route::prefix('pengelola')->name('pengelola.')->group(function () {
 // =====================
 // PENGURUS SECTION
 // =====================
-Route::prefix('pengurusinventoryMSU')->name('pengurus.')->group(function () {
+Route::prefix('pengurusinventoryMSU')->name('pengurus.')->middleware(['auth'])->group(function () {
 
     // Livewire Dashboard Pengurus
     Route::get('/dashboard', \App\Livewire\Pengurus\Dashboard::class)->name('dashboard');
