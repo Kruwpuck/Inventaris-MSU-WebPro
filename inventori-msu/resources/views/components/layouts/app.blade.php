@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="id">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -15,6 +16,7 @@
   @stack('styles')
   @livewireStyles
 </head>
+
 <body>
 
   <!-- NAVBAR -->
@@ -24,21 +26,26 @@
         <img src="{{ asset('assets/loogoo.png') }}" alt="Logo" class="logo">
       </a>
 
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain" aria-label="Toggle navigation">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain"
+        aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
 
       <div class="collapse navbar-collapse justify-content-end" id="navMain">
         <ul class="navbar-nav align-items-lg-center gap-lg-4">
-          <li class="nav-item"><a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}">Beranda</a></li>
-          <li class="nav-item"><a class="nav-link {{ request()->routeIs('catalogue.barang') ? 'active' : '' }}" href="{{ route('catalogue.barang') }}">Pinjam Barang</a></li>
-          <li class="nav-item"><a class="nav-link {{ request()->routeIs('catalogue.ruangan') ? 'active' : '' }}" href="{{ route('catalogue.ruangan') }}">Pinjam Fasilitas</a></li>
+          <li class="nav-item"><a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}"
+              href="{{ route('home') }}">Beranda</a></li>
+          <li class="nav-item"><a class="nav-link {{ request()->routeIs('catalogue.barang') ? 'active' : '' }}"
+              href="{{ route('catalogue.barang') }}">Pinjam Barang</a></li>
+          <li class="nav-item"><a class="nav-link {{ request()->routeIs('catalogue.ruangan') ? 'active' : '' }}"
+              href="{{ route('catalogue.ruangan') }}">Pinjam Fasilitas</a></li>
           <li class="nav-item">
-              <a class="nav-link position-relative {{ request()->routeIs('cart') ? 'active' : '' }}" href="{{ route('cart') }}">
-                  <i class="bi bi-cart"></i>
-                  <!-- Livewire Cart Counter preserved but we might want the JS badge too -->
-                  <livewire:borrower.cart-counter />
-              </a>
+            <a class="nav-link position-relative {{ request()->routeIs('cart') ? 'active' : '' }}"
+              href="{{ route('cart') }}">
+              <i class="bi bi-cart"></i>
+              <!-- Livewire Cart Counter preserved but we might want the JS badge too -->
+              <livewire:borrower.cart-counter />
+            </a>
           </li>
         </ul>
       </div>
@@ -87,16 +94,18 @@
 
   <!-- Toast Container -->
   <div id="toastStack" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 2000;">
-      @if (session()->has('success'))
-          <div class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
-              <div class="d-flex">
-                  <div class="toast-body">
-                      <i class="bi bi-check-circle me-2"></i> {{ session('success') }}
-                  </div>
-                  <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-              </div>
+    @if (session()->has('success'))
+      <div class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive"
+        aria-atomic="true">
+        <div class="d-flex">
+          <div class="toast-body">
+            <i class="bi bi-check-circle me-2"></i> {{ session('success') }}
           </div>
-      @endif
+          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+            aria-label="Close"></button>
+        </div>
+      </div>
+    @endif
   </div>
 
   <!-- FOOTER -->
@@ -109,7 +118,7 @@
             <strong>Masjid Syamsul Ulum</strong>
           </div>
           <div class="text-muted small">
-            Jl. Telekomunikasi No.1, Bandung • Jawa Barat, Indonesia<br/>
+            Jl. Telekomunikasi No.1, Bandung • Jawa Barat, Indonesia<br />
             Telp: 08xx-xxxx-xxxx • Email: msu@example.ac.id
           </div>
         </div>
@@ -128,6 +137,7 @@
   <script src="{{ asset('js/cart.js') }}"></script>
   <script src="{{ asset('js/main.js') }}?v=2"></script>
   @stack('scripts')
-  @livewireScriptss
+  @livewireScripts
 </body>
+
 </html>

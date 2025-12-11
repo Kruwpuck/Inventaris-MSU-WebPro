@@ -87,34 +87,13 @@ Route::prefix('pengelola')->name('pengelola.')->group(function () {
 });
 
 
-/*
-Route::prefix('pengurus')->name('pengurus.')->group(function () {
+// =====================
+// PENGURUS SECTION
+// =====================
+Route::prefix('pengurusinventoryMSU')->name('pengurus.')->group(function () {
 
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
-    Route::get('/peminjaman-fasilitas', [PeminjamanController::class, 'fasilitas'])->name('fasilitas');
-    Route::get('/peminjaman-barang', [PeminjamanController::class, 'barang'])->name('barang');
-
-    Route::post('/toggle-status', [PeminjamanController::class, 'toggleStatus'])->name('toggle');
-
-    Route::get('/riwayat', [RiwayatController::class, 'index'])->name('riwayat');
-    Route::post('/riwayat/cancel/{id}', [RiwayatController::class, 'cancel'])->name('cancel');
-    Route::post('/riwayat/submit/{id}', [RiwayatController::class, 'submit'])->name('submit');
+    // Livewire Dashboard Pengurus
+    Route::get('/dashboard', \App\Livewire\Pengurus\Dashboard::class)->name('dashboard');
+    Route::get('/peminjaman-fasilitas', \App\Livewire\Pengurus\PeminjamanFasilitas::class)->name('fasilitas');
+    Route::get('/riwayat', \App\Livewire\Pengurus\Riwayat::class)->name('riwayat');
 });
-
-
-Route::prefix('pengurus')->name('pengurus.')->group(function () {
-
-    Route::get('/dashboard',            [PengurusController::class, 'dashboard'])->name('dashboard');
-    Route::get('/peminjaman-fasilitas', [PengurusController::class, 'peminjamanFasilitas'])->name('fasilitas');
-    Route::get('/peminjaman-barang',    [PengurusController::class, 'peminjamanBarang'])->name('barang');
-    Route::get('/riwayat',              [PengurusController::class, 'riwayat'])->name('riwayat');
-
-    // Ajax routes
-    Route::post('/toggle-checklist',    [PengurusController::class, 'toggleChecklist'])->name('toggle');
-    Route::post('/override',            [PengurusController::class, 'overrideRiwayat'])->name('override');
-    Route::post('/submit',              [PengurusController::class, 'submitRiwayat'])->name('submit');
-});
-*/
-
-
