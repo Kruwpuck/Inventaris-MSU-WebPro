@@ -1,6 +1,9 @@
 # PHP-FPM 8.2/8.3/8.4, pilih yang cocok dengan proyekmu (di contoh ini 8.2)
 FROM php:8.2-fpm
 
+# Gunakan mirror Indonesia (Kartolo) untuk mempercepat apt-get
+RUN sed -i 's/deb.debian.org/kartolo.sby.datautama.net.id/g' /etc/apt/sources.list.d/debian.sources
+
 # Ekstensi yang umum untuk Laravel + MySQL
 RUN apt-get update && apt-get install -y \
     git zip unzip libpng-dev libonig-dev libxml2-dev libzip-dev \

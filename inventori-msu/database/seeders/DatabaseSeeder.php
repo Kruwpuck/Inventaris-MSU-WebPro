@@ -19,7 +19,25 @@ class DatabaseSeeder extends Seeder
             ['email' => 'test@example.com'],
             [
                 'name' => 'Test User',
-                'password' => bcrypt('password'), // Ensure password is set if created
+                'password' => bcrypt('password'),
+            ]
+        );
+
+        User::firstOrCreate(
+            ['email' => 'admin@gmail.com'],
+            [
+                'name' => 'Admin Pengelola',
+                'role' => 'pengelola',
+                'password' => bcrypt('password')
+            ]
+        );
+
+        User::firstOrCreate(
+            ['email' => 'pengurus@gmail.com'],
+            [
+                'name' => 'Staf Pengurus',
+                'role' => 'pengurus',
+                'password' => bcrypt('password')
             ]
         );
 

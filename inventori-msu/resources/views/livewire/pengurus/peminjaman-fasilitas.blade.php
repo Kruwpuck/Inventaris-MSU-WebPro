@@ -10,14 +10,12 @@
         <img src="{{ asset('aset/logo.png') }}" alt="Logo">
       </div>
 
-      <!-- NAV DESKTOP -->
       <nav class="nav-desktop">
-        <a href="{{ route('pengurus.dashboard') }}" class="active">Beranda</a>
-        <a href="{{ route('pengurus.fasilitas') }}">Peminjaman Fasilitas</a>
+        <a href="{{ route('pengurus.dashboard') }}">Beranda</a>
+        <a href="{{ route('pengurus.fasilitas') }}" class="active">Peminjaman Fasilitas</a>
         <a href="{{ route('pengurus.riwayat') }}">Riwayat Peminjaman</a>
       </nav>
 
-      <!-- USER DROPDOWN DESKTOP -->
       <div class="user-desktop" onclick="toggleUserDropdown()">
         <div class="user-info-box">
           <img src="{{ asset('aset/logo.png') }}" class="user-photo">
@@ -41,9 +39,9 @@
     <!-- MOBILE SIDEBAR -->
     <div id="mobileMenu" class="mobile-menu">
        <div class="mobile-logo"><img src="{{ asset('aset/logo.png') }}" alt="logo"></div>
-       <a href="#">Beranda</a>
-       <a href="#">Peminjaman Fasilitas</a>
-       <a href="#">Riwayat Peminjaman</a>
+       <a href="{{ route('pengurus.dashboard') }}">Beranda</a>
+       <a href="{{ route('pengurus.fasilitas') }}" class="active">Peminjaman Fasilitas</a>
+       <a href="{{ route('pengurus.riwayat') }}">Riwayat Peminjaman</a>
        <form method="POST" action="{{ route('logout') }}">
            @csrf
            <button type="submit" class="btn btn-link text-decoration-none fw-bold" style="color: #c4262e; padding: 12px 0;">Keluar</button>
@@ -51,34 +49,23 @@
     </div>
     <div id="overlay" class="overlay" onclick="toggleMenu()"></div>
 
-    <!-- HERO SECTION -->
-    <section class="hero">
-      <img src="{{ asset('aset/gedung.png') }}">
-      <div class="hero-subtext">
-        <p>
-          Satu langkah menuju <b>kemudahan beraktivitas</b> di MSU <br>
-          Semua urusan peminjaman dan perizinan kini bisa dilakukan secara online.
-        </p>
-      </div>
-    </section>
-
     <!-- CONTENT -->
     <div class="container-fluid px-4">
       <section class="judul-bawah my-4">
-        <h1>Peminjaman Hari ini</h1>
+        <h1>Peminjaman Fasilitas</h1>
       </section>
 
       <div class="table-responsive">
         <table class="table table-striped table-hover table-bordered">
-          <thead>
+          <thead class="table-success">
             <tr>
               <th>No</th>
               <th>Nama Peminjam</th>
               <th>Waktu Pengambilan</th>
               <th>Waktu Pengembalian</th>
-              <th>Detail</th>
-              <th>Ambil</th>
-              <th>Terima</th>
+              <th>Fasilitas</th>
+              <th>Sudah Ambil</th>
+              <th>Sudah Kembali</th>
             </tr>
           </thead>
           <tbody>
@@ -93,10 +80,7 @@
                    {{ optional($d->loanRecord)->returned_at ? $d->loanRecord->returned_at->format('d M Y | H:i') : '-' }}
                 </td>
                 <td>
-                   <button type="button" class="detail-btn" data-bs-toggle="modal" data-bs-target="#detailModal" 
-                           onclick="showDetail('{{ $d->items->pluck('name')->join(', ') }}')">
-                     Detail Peminjaman
-                   </button>
+                   {{ $d->items->pluck('name')->join(', ') }}
                 </td>
                 <td>
                    <input type="checkbox" 
@@ -110,31 +94,10 @@
                 </td>
               </tr>
             @empty
-              <tr><td colspan="7" class="text-center">Tidak ada peminjaman hari ini.</td></tr>
+              <tr><td colspan="7" class="text-center">Tidak ada peminjaman fasilitas saat ini.</td></tr>
             @endforelse
           </tbody>
         </table>
-      </div>
-      
-      <div class="lihat-link">
-        <a href="#" class="link-success text-decoration-none fw-bold">Lihat Selengkapnya &raquo;</a>
-      </div>
-    </div>
-
-    <!-- MODAL -->
-    <div class="modal fade" id="detailModal" tabindex="-1">
-      <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Detail Fasilitas</h5>
-          </div>
-          <div class="modal-body">
-            <p id="detailContent" class="fs-5">...</p>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="close-btn" data-bs-dismiss="modal">Tutup</button>
-          </div>
-        </div>
       </div>
     </div>
 
@@ -147,10 +110,6 @@
             document.getElementById("mobileMenu").classList.toggle("open");
             document.getElementById("overlay").classList.toggle("show");
         }
-        function showDetail(detailText) {
-            document.getElementById('detailContent').textContent = detailText;
-        }
-        // Close dropdown when clicking outside
         window.onclick = function(event) {
             if (!event.target.closest('.user-desktop')) {
                 var dropdowns = document.getElementsByClassName("user-dropdown");
