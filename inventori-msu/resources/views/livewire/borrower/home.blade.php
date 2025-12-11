@@ -1,6 +1,5 @@
 @push('styles')
-<link rel="stylesheet" href="{{ asset('css/styles.css') }}">
-<link rel="stylesheet" href="{{ asset('css/barang.css') }}">
+<link rel="stylesheet" href="{{ asset('css/styles.css') }}?v={{ time() }}">
 @endpush
 
 <div>

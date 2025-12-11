@@ -106,6 +106,9 @@ class Cart extends Component
             }
         });
 
+        // Clear Server Session Cart
+        session()->forget('cart'); 
+
         return redirect()->route('success')->with('success', 'Peminjaman berhasil diajukan! Silahkan tunggu persetujuan pengelola.');
     }
 

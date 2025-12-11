@@ -21,6 +21,13 @@ class CartCounter extends Component
         $this->count = count($cart);
     }
 
+    #[On('clear-cart')]
+    public function clearCart()
+    {
+        session()->forget('cart');
+        $this->count = 0;
+    }
+
     public function render()
     {
         return view('livewire.borrower.cart-counter');

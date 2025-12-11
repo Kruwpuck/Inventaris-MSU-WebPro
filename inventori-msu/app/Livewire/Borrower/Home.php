@@ -14,7 +14,7 @@ class Home extends Component
     public function mount()
     {
         $this->items = \App\Models\Inventory::where('category', 'barang')->take(4)->get();
-        $this->facilities = \App\Models\Inventory::where('category', 'fasilitas')->take(4)->get();
+        $this->facilities = \App\Models\Inventory::where('category', 'ruangan')->take(4)->get();
     }
 
     public function render()
