@@ -18,7 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
             if (!$user) {
                 return route('login');
             }
-            return match ($user->role) {
+            return match (strtolower($user->role)) {
                 'pengelola' => route('pengelola.beranda'),
                 'pengurus' => route('pengurus.dashboard'),
                 default => route('home'),

@@ -15,7 +15,7 @@ class LoginResponse implements LoginResponseContract
      */
     public function toResponse($request)
     {
-        $role = Auth::user()->role;
+        $role = strtolower(Auth::user()->role);
 
         if ($role === 'pengelola') {
             return redirect()->route('pengelola.beranda');
