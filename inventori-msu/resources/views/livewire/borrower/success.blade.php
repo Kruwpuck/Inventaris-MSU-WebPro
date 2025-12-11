@@ -1,4 +1,16 @@
-<div>
+<div x-data x-init="
+    localStorage.removeItem('msu_cart_v1');    // Fix key name
+    localStorage.removeItem('msu_booking_meta');
+    
+    // Use the official helper if available
+    if (window.MSUCart) {
+        window.MSUCart.clear();
+        window.MSUCart.renderBadge();
+    }
+    
+    window.dispatchEvent(new CustomEvent('msu:cart-updated'));
+    Livewire.dispatch('clear-cart');
+">
     {{-- Main content --}}
     <main class="container py-5">
         <section class="success-wrap d-grid text-center gap-3">

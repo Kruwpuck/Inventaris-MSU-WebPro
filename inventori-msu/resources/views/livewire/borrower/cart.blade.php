@@ -92,13 +92,7 @@
               <label class="form-label">Program Studi / Unit</label>
               <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-mortarboard"></i></span>
-                <select class="form-select" id="studyProgram" wire:model="borrower_prodi" required>
-                  <option value="" selected disabled>Pilih</option>
-                  <option>Sistem Informasi</option>
-                  <option>Informatika</option>
-                  <option>Teknologi Informasi</option>
-                  <option>Unit / Organisasi</option>
-                </select>
+                <input type="text" class="form-control" id="studyProgram" wire:model="borrower_prodi" placeholder="Contoh: Informatika / Organisasi BEM" required />
                 @error('borrower_prodi') <div class="text-danger small">{{ $message }}</div> @enderror
               </div>
             </div>
