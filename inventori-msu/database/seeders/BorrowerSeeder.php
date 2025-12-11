@@ -121,7 +121,7 @@ class BorrowerSeeder extends Seeder
             [
                 'name' => 'Aula Utama',
                 'description' => 'Aula utama masjid dengan kapasitas besar.',
-                'category' => 'fasilitas',
+                'category' => 'ruangan',
                 'capacity' => 200,
                 'image_path' => 'plaza.jpeg',
                 'created_at' => date('Y-m-d H:i:s'),
@@ -130,7 +130,7 @@ class BorrowerSeeder extends Seeder
             [
                 'name' => 'Ruang Rapat A',
                 'description' => 'Ruang rapat kecil ber-AC.',
-                'category' => 'fasilitas',
+                'category' => 'ruangan',
                 'capacity' => 15,
                 'image_path' => 'plaza.jpeg',
                 'created_at' => date('Y-m-d H:i:s'),
@@ -139,7 +139,7 @@ class BorrowerSeeder extends Seeder
             [
                 'name' => 'Ruang Rapat B',
                 'description' => 'Ruang rapat sedang dengan proyektor.',
-                'category' => 'fasilitas',
+                'category' => 'ruangan',
                 'capacity' => 25,
                 'image_path' => 'plaza.jpeg',
                 'created_at' => date('Y-m-d H:i:s'),
@@ -148,7 +148,7 @@ class BorrowerSeeder extends Seeder
             [
                 'name' => 'Ruang Kajian',
                 'description' => 'Ruang khusus untuk kajian intensif.',
-                'category' => 'fasilitas',
+                'category' => 'ruangan',
                 'capacity' => 50,
                 'image_path' => 'plaza.jpeg',
                 'created_at' => date('Y-m-d H:i:s'),
@@ -157,7 +157,7 @@ class BorrowerSeeder extends Seeder
             [
                 'name' => 'Ruang Tamu',
                 'description' => 'Ruang tunggu tamu VIP.',
-                'category' => 'fasilitas',
+                'category' => 'ruangan',
                 'capacity' => 10,
                 'image_path' => 'plaza.jpeg',
                 'created_at' => date('Y-m-d H:i:s'),
@@ -166,7 +166,7 @@ class BorrowerSeeder extends Seeder
             [
                 'name' => 'Kelas 1',
                 'description' => 'Ruang kelas untuk TPA/Madrasah.',
-                'category' => 'fasilitas',
+                'category' => 'ruangan',
                 'capacity' => 30,
                 'image_path' => 'plaza.jpeg',
                 'created_at' => date('Y-m-d H:i:s'),
@@ -175,7 +175,7 @@ class BorrowerSeeder extends Seeder
             [
                 'name' => 'Kelas 2',
                 'description' => 'Ruang kelas untuk TPA/Madrasah.',
-                'category' => 'fasilitas',
+                'category' => 'ruangan',
                 'capacity' => 30,
                 'image_path' => 'plaza.jpeg',
                 'created_at' => date('Y-m-d H:i:s'),
@@ -184,7 +184,7 @@ class BorrowerSeeder extends Seeder
             [
                 'name' => 'Kelas 3',
                 'description' => 'Ruang kelas untuk TPA/Madrasah.',
-                'category' => 'fasilitas',
+                'category' => 'ruangan',
                 'capacity' => 30,
                 'image_path' => 'plaza.jpeg',
                 'created_at' => date('Y-m-d H:i:s'),
@@ -193,7 +193,7 @@ class BorrowerSeeder extends Seeder
             [
                 'name' => 'Kelas 4',
                 'description' => 'Ruang kelas untuk TPA/Madrasah.',
-                'category' => 'fasilitas',
+                'category' => 'ruangan',
                 'capacity' => 30,
                 'image_path' => 'plaza.jpeg',
                 'created_at' => date('Y-m-d H:i:s'),
@@ -202,7 +202,7 @@ class BorrowerSeeder extends Seeder
             [
                 'name' => 'Perpustakaan',
                 'description' => 'Perpustakaan masjid dengan koleksi buku lengkap.',
-                'category' => 'fasilitas',
+                'category' => 'ruangan',
                 'capacity' => 20,
                 'image_path' => 'plaza.jpeg',
                 'created_at' => date('Y-m-d H:i:s'),

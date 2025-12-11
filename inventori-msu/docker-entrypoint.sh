@@ -16,12 +16,13 @@ until php artisan db:monitor > /dev/null 2>&1; do
 done
 
 # Run migrations
-echo "Running migrations..."
-php artisan migrate --force
+# Run migrations and seed
+echo "Running migrations fresh with seed..."
+php artisan migrate:fresh --seed --force
 
-# Run seeders
-echo "Running seeders..."
-php artisan db:seed --force
+# Run seeders (already included in migrate:fresh --seed)
+# echo "Running seeders..."
+# php artisan db:seed --force
 
 # Link storage directory
 echo "Linking storage directory..."
