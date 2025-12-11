@@ -13,6 +13,10 @@ export default defineConfig({
         tailwindcss(),
     ],
     server: {
+        host: '0.0.0.0', // Listen on all network interfaces
+        hmr: {
+            host: 'localhost', // The host that the browser should verify against
+        },
         cors: true,
     },
 });
