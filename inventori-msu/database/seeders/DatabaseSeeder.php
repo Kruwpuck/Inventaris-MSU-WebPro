@@ -15,11 +15,32 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
+        // Create Admin / Pengelola
+        User::firstOrCreate(
+            ['email' => 'pengelola@msu.com'],
+            [
+                'name' => 'Pengelola',
+                'password' => bcrypt('password'),
+                'role' => 'pengelola',
+            ]
+        );
+
+        // Create Pengurus
+        User::firstOrCreate(
+            ['email' => 'pengurus@msu.com'],
+            [
+                'name' => 'Pengurus',
+                'password' => bcrypt('password'),
+                'role' => 'pengurus',
+            ]
+        );
+
+        // Default Test User (No Role)
         User::firstOrCreate(
             ['email' => 'test@example.com'],
             [
                 'name' => 'Test User',
-                'password' => bcrypt('password'), // Ensure password is set if created
+                'password' => bcrypt('password'),
             ]
         );
 

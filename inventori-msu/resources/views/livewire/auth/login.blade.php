@@ -106,7 +106,9 @@
 
     <div class="min-vh-100 d-flex align-items-center justify-content-center py-5" x-data="{ 
         role: 'pengelola', 
+        isLoading: false,
         toggleRole() { 
+            if (this.isLoading) return;
             this.role = (this.role === 'pengelola' ? 'pengurus' : 'pengelola'); 
         } 
     }">
@@ -129,7 +131,7 @@
                         </p>
                     </div>
 
-                    <form method="POST" action="{{ route('login.store') }}">
+                    <form method="POST" action="{{ route('login.store') }}" @submit="isLoading = true">
                         @csrf
                         <input type="hidden" name="role_context" x-model="role">
 
@@ -137,24 +139,28 @@
                             <label class="form-label small fw-bold text-secondary text-uppercase ls-1">Email
                                 Address</label>
                             <input type="email" name="email" class="form-control form-control-lg bg-light border-0"
-                                placeholder="name@example.com" required autofocus>
+                                placeholder="name@example.com" required autofocus :readonly="isLoading">
                         </div>
 
                         <div class="mb-4">
                             <label class="form-label small fw-bold text-secondary text-uppercase ls-1">Password</label>
                             <input type="password" name="password"
                                 class="form-control form-control-lg bg-light border-0" placeholder="Enter password"
-                                required>
+                                required :readonly="isLoading">
                         </div>
 
                         <div class="d-flex align-items-center justify-content-between mt-5">
-                            <div class="d-flex align-items-center gap-2 switch-role-btn" @click="toggleRole()">
+                            <div class="d-flex align-items-center gap-2 switch-role-btn" 
+                                 @click="toggleRole()"
+                                 :class="{ 'opacity-50': isLoading }"
+                                 :style="isLoading ? 'cursor: not-allowed;' : ''">
                                 <i class="bi bi-arrow-repeat fs-5"></i>
                                 <span class="small fw-semibold">Ganti Role</span>
                             </div>
 
-                            <button type="submit" class="btn btn-dark btn-lg px-5 rounded-pill shadow-sm">
-                                Masuk
+                            <button type="submit" class="btn btn-dark btn-lg px-5 rounded-pill shadow-sm" :disabled="isLoading">
+                                <span x-show="!isLoading">Masuk</span>
+                                <span x-show="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                             </button>
                         </div>
                     </form>
@@ -179,11 +185,17 @@
 
                     <!-- Navigation Arrows -->
                     <button class="nav-btn position-absolute top-50 start-0 translate-middle-y ms-4"
-                        @click="role = 'pengelola'" x-show="role === 'pengurus'">
+                        @click="if(!isLoading) role = 'pengelola'" 
+                        x-show="role === 'pengurus'"
+                        :disabled="isLoading"
+                        :style="isLoading ? 'opacity: 0.5; cursor: not-allowed;' : ''">
                         <i class="bi bi-chevron-left"></i>
                     </button>
                     <button class="nav-btn position-absolute top-50 end-0 translate-middle-y me-4"
-                        @click="role = 'pengurus'" x-show="role === 'pengelola'">
+                        @click="if(!isLoading) role = 'pengurus'" 
+                        x-show="role === 'pengelola'"
+                        :disabled="isLoading"
+                        :style="isLoading ? 'opacity: 0.5; cursor: not-allowed;' : ''">
                         <i class="bi bi-chevron-right"></i>
                     </button>
 
