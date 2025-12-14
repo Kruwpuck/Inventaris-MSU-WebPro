@@ -438,11 +438,11 @@ function initPanels() {
             if (isRoom) limit = 1;
 
             if (limit !== null && limit !== undefined) {
-                const currentQty = Number(qtyBox.textContent.trim() || '0');
-                // Only block if we are INCREASING and exceeding limit
-                if (clean > limit && clean > currentQty) {
-                    alert('Mencapai batas stok tersedia (' + limit + ')');
-                    return;
+                limit = Number(limit);
+                // Clamp directly
+                if (clean > limit) {
+                    clean = limit;
+                    // Optional: showToast('Mencapai batas stok tersedia');
                 }
             }
 
@@ -469,9 +469,12 @@ function initPanels() {
             renderCartList();
 
             // Disable plus button if max reached
-            if (limit !== null && limit !== undefined) {
-                // Check against limit
-                if (plus) plus.disabled = (clean >= limit);
+            if (plus) {
+                if (limit !== null && limit !== undefined) {
+                    plus.disabled = (clean >= limit);
+                } else {
+                    plus.disabled = false;
+                }
             }
 
             // Jika qty=0 → rebuild tabs biar panel menghilang

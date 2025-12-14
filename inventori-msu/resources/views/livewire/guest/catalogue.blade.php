@@ -35,7 +35,7 @@
   <main class="container py-4">
 
     <!-- HERO -->
-    <section class="hero mb-4 reveal-up">
+    <section class="hero mb-4">
         <img src="{{ asset('assets/plaza1.png') }}" 
              alt="{{ $category == 'barang' ? 'Plaza Masjid' : 'Aula' }}"
              class="hero-img-click"
@@ -43,14 +43,14 @@
              style="cursor: pointer;">
         <div class="caption">
           <div>
-            <h1 class="mb-2 drop-in">{{ $category == 'barang' ? 'Peminjaman Barang' : 'Peminjaman Ruang' }}</h1>
+            <h1 class="mb-2">{{ $category == 'barang' ? 'Peminjaman Barang' : 'Peminjaman Ruang' }}</h1>
             <p class="m-0">Semua urusan peminjaman dan perizinan kini bisa dilakukan secara online.</p>
           </div>
         </div>
     </section>
   
     <!-- SEARCH -->
-    <section class="mb-3 reveal-up search-section-overlap">
+    <section class="mb-3 search-section-overlap">
       <div class="search-wrap">
         <i class="bi bi-search" onclick="document.getElementById('searchInput').focus()" style="cursor: pointer;"></i>
         <!-- Bind Livewire search -->
@@ -59,14 +59,14 @@
                placeholder="Cari {{ $category == 'barang' ? 'barang' : 'ruangan' }}… (mis. {{ $category == 'barang' ? 'proyektor, sound system' : 'aula, rapat' }})"
                autocomplete="off">
         <button id="clearSearch" class="btn btn-clear" type="button" aria-label="Bersihkan pencarian" wire:click="$set('search', '')">
-          <i class="bi bi-x-lg"></i>
+           @if(!empty($search)) <i class="bi bi-x-lg"></i> @endif
         </button>
       </div>
       <small class="text-muted">Ketik untuk memfilter daftar di bawah secara langsung.</small>
     </section>
 
     <!-- DATEBAR -->
-    <section class="datebar-v2 mb-4 reveal-up" id="bookingMetaBar">
+    <section class="datebar-v2 mb-4" id="bookingMetaBar">
         <h3 class="section-title mb-4 d-flex align-items-center gap-2" style="font-size:1.25rem; padding-left: 4px;">
           <i class="bi bi-clock-history"></i> Waktu Peminjaman
         </h3>
@@ -99,30 +99,49 @@
         </div>
     </section>
     
-    <h3 class="section-title mb-3 reveal-up">Daftar {{ $category == 'barang' ? 'Barang' : 'Ruangan' }}</h3>
+    <h3 class="section-title mb-3">Daftar {{ $category == 'barang' ? 'Barang' : 'Ruangan' }}</h3>
   
     <!-- GRID -->
-    <section class="items-grid" id="itemsGrid">
+    <div class="row g-4 align-items-stretch items-grid" id="itemsGrid">
         @forelse($items as $item)
-        <div class="col reveal-up">
-            <article class="item-card tap-anim" data-type="{{ $category == 'barang' ? 'barang' : 'ruang' }}" data-max="{{ $item->stock }}">
+        @php
+            $cart = session('cart', []);
+            $inCart = $cart[$item->id]['quantity'] ?? 0;
+            $invData = \App\Models\Inventory::find($item->id); 
+            $max = $invData ? $invData->stock : 0;
+            if ($category != 'barang') $max = 1;
+            $sisa = max(0, $max - $inCart);
+        @endphp
+        <div class="col-6 col-md-4 col-lg-2-4">
+            <article class="item-card tap-anim h-100" data-type="{{ $category == 'barang' ? 'barang' : 'ruang' }}">
                 <div class="item-thumb">
                     <img src="{{ asset('assets/' . $item->image_path) }}" 
                          onerror="this.onerror=null; this.src='{{ asset('assets/placeholder.jpg') }}';"
                          alt="{{ $item->name }}">
-                    <span class="badge-status">Active</span>
+                    
+                    @if($sisa == 0)
+                        <span class="badge-status" style="background: #a94442;">Habis</span>
+                    @else
+                        <span class="badge-status">Active</span>
+                    @endif
+
                     <div class="qty-actions">
-                        <button class="qty-btn" data-action="inc" aria-label="Tambah sisa">−</button>
-                        <button class="qty-btn" data-action="dec" aria-label="Tambahkan ke keranjang">＋</button>
+                        <button class="qty-btn" wire:click="decrement({{ $item->id }})" 
+                                @if($inCart <= 0) disabled @endif
+                                aria-label="Kurangi dari keranjang">−</button>
+                        <button class="qty-btn" wire:click="addToCart({{ $item->id }})" 
+                                @if($sisa <= 0) disabled @endif
+                                wire:loading.attr="disabled"
+                                aria-label="Tambahkan ke keranjang">＋</button>
                     </div>
                 </div>
                 <div class="item-body">
                     <div class="item-title">{{ $item->name }}</div>
                     <div class="item-meta">
                         @if($category == 'barang')
-                          Sisa : <span class="sisa">{{ $item->stock }}</span>
+                          Sisa : <span class="sisa">{{ $sisa }}</span>
                         @else
-                          Tersedia : <span class="sisa">1</span>
+                          Tersedia : <span class="sisa">{{ $sisa }}</span>
                         @endif
                     </div>
                 </div>
@@ -130,19 +149,14 @@
         </div>
         @empty
         <div class="col-12 text-center">
-            <p class="text-muted">Tidak ada item ditemukan.</p>
+            <p class="text-muted py-5">
+              <i class="bi bi-emoji-frown display-4 d-block mb-3"></i>
+              Tidak ada item ditemukan.
+            </p>
         </div>
         @endforelse
     </section>
   
     <p id="emptyState" class="text-center text-muted d-none mt-4">Tidak ada barang yang cocok dengan pencarian.</p>
   </main>
-  @push('scripts')
-  <!-- Logic specific to room/item interaction -->
-  @if($category == 'ruangan')
-    <script src="{{ asset('js/ruangan.js') }}?v={{ time() }}"></script>
-  @else
-    <script src="{{ asset('js/barang.js') }}?v={{ time() }}"></script>
-  @endif
-  @endpush
 </div>
