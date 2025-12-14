@@ -8,9 +8,11 @@ use Livewire\Attributes\On;
 class CartCounter extends Component
 {
     public $count = 0;
+    public $type = 'navbar';
 
-    public function mount()
+    public function mount($type = 'navbar')
     {
+        $this->type = $type;
         $this->updateCount();
     }
 

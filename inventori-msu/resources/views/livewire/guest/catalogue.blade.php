@@ -112,7 +112,7 @@
             if ($category != 'barang') $max = 1;
             $sisa = max(0, $max - $inCart);
         @endphp
-        <div class="col-6 col-md-4 col-lg-2-4">
+        <div class="col-6 col-md-4 col-lg-2-4" wire:key="item-{{ $item->id }}">
             <article class="item-card tap-anim h-100" data-type="{{ $category == 'barang' ? 'barang' : 'ruang' }}">
                 <div class="item-thumb">
                     <img src="{{ asset('assets/' . $item->image_path) }}" 
@@ -128,10 +128,13 @@
                     <div class="qty-actions">
                         <button class="qty-btn" wire:click="decrement({{ $item->id }})" 
                                 @if($inCart <= 0) disabled @endif
+                                wire:loading.attr="disabled"
+                                wire:target="decrement({{ $item->id }})"
                                 aria-label="Kurangi dari keranjang">−</button>
                         <button class="qty-btn" wire:click="addToCart({{ $item->id }})" 
                                 @if($sisa <= 0) disabled @endif
                                 wire:loading.attr="disabled"
+                                wire:target="addToCart({{ $item->id }})"
                                 aria-label="Tambahkan ke keranjang">＋</button>
                     </div>
                 </div>
@@ -155,7 +158,7 @@
             </p>
         </div>
         @endforelse
-    </section>
+    </div>
   
     <p id="emptyState" class="text-center text-muted d-none mt-4">Tidak ada barang yang cocok dengan pencarian.</p>
   </main>
