@@ -428,7 +428,32 @@ function initPanels() {
         const qtyText = pane.querySelector('.qty-display-text');
 
         function setQty(newQty) {
-            const clean = Math.max(0, Number(newQty || 0));
+            let clean = Math.max(0, Number(newQty || 0));
+            // Cek limit dari cart
+            const currentItem = (window.MSUCart && MSUCart.get().find(it => it.name === name));
+            let limit = currentItem ? currentItem.limit : null;
+
+            // Override limit for ruangan if missing (absolute 1)
+            const isRoom = pane.innerHTML.includes('Ruang') || (currentItem && currentItem.type === 'ruang');
+            if (isRoom) limit = 1;
+
+            if (limit !== null && limit !== undefined) {
+                const currentQty = Number(qtyBox.textContent.trim() || '0');
+                // Only block if we are INCREASING and exceeding limit
+                if (clean > limit && clean > currentQty) {
+                    alert('Mencapai batas stok tersedia (' + limit + ')');
+                    return;
+                }
+            }
+
+            // Update cart (pass limit back to keep it)
+            // upsertItem now returns the actual saved qty (clamped)
+            const savedQty = MSUCart?.upsertItem({ type: isRoom ? 'ruang' : 'barang', name: name, qty: clean, thumb: '', limit: limit });
+
+            if (typeof savedQty === 'number') {
+                clean = savedQty;
+            }
+
             qtyBox.textContent = String(clean);
             qtyText.textContent = String(clean);
 
@@ -440,10 +465,14 @@ function initPanels() {
                 if (badge) badge.textContent = `${clean}x`;
             }
 
-            // Update cart
-            MSUCart?.upsertItem({ type: 'barang', name: name, qty: clean, thumb: '' });
             MSUCart?.renderBadge();
             renderCartList();
+
+            // Disable plus button if max reached
+            if (limit !== null && limit !== undefined) {
+                // Check against limit
+                if (plus) plus.disabled = (clean >= limit);
+            }
 
             // Jika qty=0 → rebuild tabs biar panel menghilang
             if (clean === 0) {
@@ -459,6 +488,16 @@ function initPanels() {
             const cur = Number(qtyBox.textContent.trim() || '0');
             setQty(cur + 1);
         });
+
+        // Init state of buttons
+        const currentQty = Number(qtyBox.textContent.trim() || '0');
+        const currentItemInit = (window.MSUCart && MSUCart.get().find(it => it.name === name));
+        let initLimit = currentItemInit ? currentItemInit.limit : null;
+        if ((!currentItemInit) && (pane.innerHTML.includes('Ruang'))) initLimit = 1;
+
+        if (initLimit !== null && initLimit !== undefined) {
+            if (plus) plus.disabled = (currentQty >= initLimit);
+        }
     });
 
     // Saat ganti tab → sinkron blok tanggal sesuai item aktif
