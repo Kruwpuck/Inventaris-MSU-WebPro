@@ -41,6 +41,25 @@ class Cart extends Component
         'document_file' => 'required|file|max:10240', // 10MB
     ];
 
+    public function messages()
+    {
+        return [
+            'borrower_name.required' => 'Nama penanggung jawab wajib diisi.',
+            'borrower_email.required' => 'Email wajib diisi.',
+            'borrower_email.email' => 'Format email tidak valid.',
+            'borrower_phone.required' => 'Nomor telepon wajib diisi.',
+            'borrower_reason.required' => 'Keperluan wajib diisi.',
+            'loan_date_start.required' => 'Tanggal peminjaman wajib diisi.',
+            'borrower_nim.required' => 'NIM/NIP wajib diisi.',
+            'borrower_prodi.required' => 'Program studi / Unit wajib diisi.',
+            'loan_time_start.required' => 'Jam mulai wajib diisi.',
+            'loan_duration.required' => 'Durasi wajib diisi.',
+            'document_file.required' => 'Dokumen persyaratan wajib diunggah.',
+            'document_file.max' => 'Ukuran file maksimal 10MB.',
+            'borrower_description.required' => 'Deskripsi keperluan wajib diisi.',
+        ];
+    }
+
     public function submit()
     {
         $this->validate();
