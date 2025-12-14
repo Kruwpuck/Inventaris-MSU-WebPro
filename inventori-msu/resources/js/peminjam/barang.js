@@ -86,26 +86,49 @@ function initCards() {
   document.querySelectorAll('.item-card').forEach(card => {
     const sisaEl = card.querySelector('.sisa');
     if (!sisaEl) return;
-    const initial = Number(sisaEl.textContent.trim() || '0');
-    card.dataset.max = Number.isNaN(initial) ? 0 : initial;
-    sisaEl.textContent = String(initial);
-    updateBadgeAndButtons(card, initial);
+
+    const max = Number(card.dataset.max || '0');
+    // Calculate Sisa based on Cart
+    const name = card.querySelector('.item-title')?.textContent?.trim() || '';
+    let inCart = 0;
+    if (window.MSUCart) {
+      const item = window.MSUCart.get().find(it => it.name === name);
+      if (item) inCart = Number(item.qty || 0);
+    }
+
+    const available = Math.max(0, max - inCart);
+
+    // Note: If you want to show "Available Stock" in the UI:
+    sisaEl.textContent = String(available);
+
+    // Pass CURRENT available to update buttons
+    updateBadgeAndButtons(card, available);
   });
 }
 initCards();
 
-function updateBadgeAndButtons(card, sisa) {
+function updateBadgeAndButtons(card, currentAvailable) {
   const max = Number(card.dataset.max || 0);
   const badge = card.querySelector('.badge-status');
-  const minusBtn = card.querySelector('.qty-btn[data-action="inc"]'); // − kembalikan sisa
-  const plusBtn = card.querySelector('.qty-btn[data-action="dec"]'); // ＋ pilih (tambah ke cart)
+  const minusBtn = card.querySelector('.qty-btn[data-action="inc"]'); // − (batal/kurangi)
+  const plusBtn = card.querySelector('.qty-btn[data-action="dec"]'); // ＋ (tambah)
+
+  // Recalculate if not passed
+  if (typeof currentAvailable === 'undefined') {
+    const sisaEl = card.querySelector('.sisa');
+    currentAvailable = Number(sisaEl?.textContent || 0);
+  }
 
   if (badge) {
-    if (sisa === 0) { badge.textContent = 'Habis'; badge.style.background = '#a94442'; }
+    if (currentAvailable === 0) { badge.textContent = 'Habis'; badge.style.background = '#a94442'; }
     else { badge.textContent = 'Active'; badge.style.background = '#167c73'; }
   }
-  if (minusBtn) minusBtn.disabled = (sisa >= max);
-  if (plusBtn) plusBtn.disabled = (sisa <= 0);
+
+  // Logic:
+  // (-) Disabled if Available == Max (means 0 in cart)
+  // (+) Disabled if Available == 0 (means Max in cart)
+  if (minusBtn) minusBtn.disabled = (currentAvailable >= max);
+  if (plusBtn) plusBtn.disabled = (currentAvailable <= 0);
 }
 
 // ==== Search realtime ====
@@ -232,10 +255,23 @@ document.addEventListener('click', (e) => {
     return;
   }
 
-  // − : kembalikan stok di tampilan (simulasi)
-  sisa = Math.min(max, sisa + 1);
-  sisaEl.textContent = String(sisa);
-  updateBadgeAndButtons(card, sisa);
+  // − : Kurangi dari cart
+  const name = card.querySelector('.item-title')?.textContent?.trim() || 'Item';
+  let newCartQty = 0;
+
+  if (window.MSUCart) {
+    const item = MSUCart.get().find(it => it.name === name);
+    if (item) {
+      newCartQty = Math.max(0, Number(item.qty || 0) - 1);
+      MSUCart.upsertItem({ type: 'barang', name: name, qty: newCartQty });
+      MSUCart.renderBadge();
+    }
+  }
+
+  // Update visual stok (Available = Max - Cart)
+  const available = Math.max(0, max - newCartQty);
+  if (sisaEl) sisaEl.textContent = String(available);
+  updateBadgeAndButtons(card, available);
 });
 
 // Expand visual saat klik kartu (kecuali tombol qty)

@@ -22,7 +22,7 @@
   <!-- NAVBAR -->
   <nav class="navbar navbar-expand-lg navbar-masjid sticky-top">
     <div class="container">
-      <a class="navbar-brand d-flex align-items-center gap-2" href="{{ route('home') }}">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="{{ route('guest.home') }}">
         <img src="{{ asset('assets/loogoo.png') }}" alt="Logo" class="logo">
       </a>
 
@@ -33,15 +33,15 @@
 
       <div class="collapse navbar-collapse justify-content-end" id="navMain">
         <ul class="navbar-nav align-items-lg-center gap-lg-4">
-          <li class="nav-item"><a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}"
-              href="{{ route('home') }}">Beranda</a></li>
-          <li class="nav-item"><a class="nav-link {{ request()->routeIs('catalogue.barang') ? 'active' : '' }}"
-              href="{{ route('catalogue.barang') }}">Pinjam Barang</a></li>
-          <li class="nav-item"><a class="nav-link {{ request()->routeIs('catalogue.ruangan') ? 'active' : '' }}"
-              href="{{ route('catalogue.ruangan') }}">Pinjam Fasilitas</a></li>
-          <li class="nav-item">
-            <a class="nav-link position-relative {{ request()->routeIs('cart') ? 'active' : '' }}"
-              href="{{ route('cart') }}">
+          <li class="nav-item"><a class="nav-link {{ request()->routeIs('guest.home') ? 'active' : '' }}"
+              href="{{ route('guest.home') }}">Beranda</a></li>
+          <li class="nav-item"><a class="nav-link {{ request()->routeIs('guest.catalogue.barang') ? 'active' : '' }}"
+              href="{{ route('guest.catalogue.barang') }}">Pinjam Barang</a></li>
+          <li class="nav-item"><a class="nav-link {{ request()->routeIs('guest.catalogue.ruangan') ? 'active' : '' }}"
+              href="{{ route('guest.catalogue.ruangan') }}">Pinjam Fasilitas</a></li>
+          <li class="nav-item msu-cart-entry">
+            <a class="nav-link position-relative {{ request()->routeIs('guest.cart') ? 'active' : '' }}"
+              href="{{ route('guest.cart') }}">
               <i class="bi bi-cart"></i>
               <!-- Livewire Cart Counter preserved but we might want the JS badge too -->
               <livewire:borrower.cart-counter />
