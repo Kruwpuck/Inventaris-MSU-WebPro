@@ -53,8 +53,8 @@
               <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-receipt-cutoff"></i></span>
                 <input type="text" class="form-control" id="loanNumber" wire:model="borrower_phone" placeholder="Contoh: 08123456789" required />
-                @error('borrower_phone') <div class="text-danger small">{{ $message }}</div> @enderror
               </div>
+              @error('borrower_phone') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
             </div>
 
             <!-- Penanggung Jawab (Name) -->
@@ -63,8 +63,8 @@
               <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
                 <input type="text" class="form-control" id="pjName" wire:model="borrower_name" placeholder="Nama lengkap" required />
-                @error('borrower_name') <div class="text-danger small">{{ $message }}</div> @enderror
               </div>
+              @error('borrower_name') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
             </div>
 
             <!-- NIM/NIP -->
@@ -73,8 +73,8 @@
               <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-hash"></i></span>
                 <input type="text" class="form-control" id="idNumber" wire:model="borrower_nim" placeholder="Contoh: 21573xxxxx" required />
-                @error('borrower_nim') <div class="text-danger small">{{ $message }}</div> @enderror
               </div>
+              @error('borrower_nim') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
             </div>
 
             <!-- Email -->
@@ -83,8 +83,8 @@
               <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-envelope"></i></span>
                 <input type="email" class="form-control" id="email" wire:model="borrower_email" placeholder="nama@contoh.ac.id" required />
-                @error('borrower_email') <div class="text-danger small">{{ $message }}</div> @enderror
               </div>
+              @error('borrower_email') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
             </div>
 
             <!-- Prodi -->
@@ -93,8 +93,8 @@
               <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-mortarboard"></i></span>
                 <input type="text" class="form-control" id="studyProgram" wire:model="borrower_prodi" placeholder="Contoh: Informatika / Organisasi BEM" required />
-                @error('borrower_prodi') <div class="text-danger small">{{ $message }}</div> @enderror
               </div>
+              @error('borrower_prodi') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
             </div>
 
             <!-- Keperluan -->
@@ -103,8 +103,8 @@
               <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-clipboard-check"></i></span>
                 <input type="text" class="form-control" id="purpose" wire:model="borrower_reason" placeholder="Contoh: Kuliah tamu / kegiatan..." required />
-                @error('borrower_reason') <div class="text-danger small">{{ $message }}</div> @enderror
               </div>
+              @error('borrower_reason') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
             </div>
 
             <!-- Tanggal -->
@@ -113,8 +113,8 @@
               <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
                 <input type="date" class="form-control" id="loanDate" wire:model.change="loan_date_start" required />
-                @error('loan_date_start') <div class="text-danger small">{{ $message }}</div> @enderror
               </div>
+              @error('loan_date_start') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
             </div>
 
             <!-- Jam Mulai -->
@@ -123,8 +123,8 @@
               <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-clock"></i></span>
                 <input type="time" class="form-control" id="startTime" wire:model.change="loan_time_start" required />
-                @error('loan_time_start') <div class="text-danger small">{{ $message }}</div> @enderror
               </div>
+              @error('loan_time_start') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
             </div>
 
             <!-- Durasi -->
@@ -140,8 +140,8 @@
                   <option value="4">4 jam</option>
                   <option value="8">Seharian</option>
                 </select>
-                @error('loan_duration') <div class="text-danger small">{{ $message }}</div> @enderror
               </div>
+              @error('loan_duration') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
             </div>
 
             <!-- Upload -->
