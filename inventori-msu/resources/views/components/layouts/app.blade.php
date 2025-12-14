@@ -134,7 +134,8 @@
   <!-- We need cart.js for the MSUCart logic defined in main.js to work properly if it relies on it, or main.js has everything? 
        In the viewer, main.js has references to MSUCart but doesn't define it. cart.js defines it. 
        I need to copy cart.js to public/js/cart.js and include it. -->
-  <script src="{{ asset('js/cart.js') }}"></script>
+  <!-- cart.js removed as per request for full PHP session -->
+  <!-- <script src="{{ asset('js/cart.js') }}"></script> -->
   <script src="{{ asset('js/main.js') }}?v=2"></script>
   @stack('scripts')
   @livewireScripts

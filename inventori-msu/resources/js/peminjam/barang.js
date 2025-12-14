@@ -263,7 +263,8 @@ document.addEventListener('click', (e) => {
     const item = MSUCart.get().find(it => it.name === name);
     if (item) {
       newCartQty = Math.max(0, Number(item.qty || 0) - 1);
-      MSUCart.upsertItem({ type: 'barang', name: name, qty: newCartQty });
+      // Pass max/limit to persist it
+      MSUCart.upsertItem({ type: 'barang', name: name, qty: newCartQty, limit: max });
       MSUCart.renderBadge();
     }
   }
@@ -295,11 +296,17 @@ document.getElementById('fabCheckout')?.addEventListener('click', () => {
 
   const c = (window.MSUCart ? MSUCart.count() : 0);
   if (c <= 0) return;
-  window.location.href = 'bookingbarang.html?from=fab';
+  window.location.href = '/booking-barang?from=fab';
 });
 
 // Inisialisasi badge saat load & filter awal
 window.addEventListener('load', () => {
   if (window.MSUCart) MSUCart.renderBadge();
   applyFilter();
+});
+
+// Re-init on back navigation (BFCache)
+window.addEventListener('pageshow', () => {
+  if (window.MSUCart) MSUCart.renderBadge();
+  initCards();
 });

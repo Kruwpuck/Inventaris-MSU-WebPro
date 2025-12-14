@@ -4,14 +4,14 @@ namespace App\Livewire\Guest;
 
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use App\Livewire\Borrower\HandlesCart;
 
 class Cart extends Component
 {
-    use WithFileUploads;
-
-    public $cart_json; 
+    use WithFileUploads, HandlesCart;
 
     // Borrower Details
+    public $activeItemId; // For Tabs UI
     public $borrower_name;
     public $borrower_phone;
     public $borrower_email;
@@ -27,6 +27,13 @@ class Cart extends Component
     
     public $donation_amount;
     public $document_file; 
+
+    protected $listeners = ['cart-updated' => '$refresh'];
+    
+    public function setActiveItem($id)
+    {
+        $this->activeItemId = $id;
+    }
 
     protected $rules = [
         'borrower_name' => 'required',
@@ -64,10 +71,25 @@ class Cart extends Component
     {
         $this->validate();
 
-        // Parse Cart JSON
-        $items = json_decode($this->cart_json, true);
-        if (!$items || count($items) === 0) {
-            $items = []; 
+        $cart = $this->getCart();
+        if (!$cart || count($cart) === 0) {
+            session()->flash('error', 'Keranjang kosong.');
+            return;
+        }
+
+        // Validate Stock Availability
+        foreach ($cart as $cartItem) {
+            $inv = \App\Models\Inventory::find($cartItem['id']);
+            if (!$inv) {
+                 session()->flash('error', "Item tidak ditemukan dalam database.");
+                 return;
+            }
+
+            // Check stock limit
+            if ($inv->category == 'barang' && $cartItem['quantity'] > $inv->stock) {
+                 session()->flash('error', "Stok untuk '{$inv->name}' tidak mencukupi (Tersedia: {$inv->stock}, Diminta: {$cartItem['quantity']}).");
+                 return;
+            }
         }
 
         // Save File
@@ -89,7 +111,7 @@ class Cart extends Component
         }
 
         // Using DB transaction
-        \Illuminate\Support\Facades\DB::transaction(function() use ($items, $path, $startDateTime, $endDateTime, $fullReason) {
+        \Illuminate\Support\Facades\DB::transaction(function() use ($cart, $path, $startDateTime, $endDateTime, $fullReason) {
             
             $loan = \App\Models\LoanRequest::create([
                 'borrower_name' => $this->borrower_name,
@@ -102,35 +124,29 @@ class Cart extends Component
                 // 'document_path' => $path, 
             ]);
 
-            foreach($items as $cartItem) {
-                // Find inventory by name 
-                $inv = \App\Models\Inventory::where('name', $cartItem['name'])->first();
-                
-                if ($inv) {
-                     // Check if item already added (unique constraint)
-                    $exists = \App\Models\LoanItem::where('loan_request_id', $loan->id)
-                                ->where('inventory_id', $inv->id)
-                                ->exists();
-                    
-                    if (!$exists) {
-                        \App\Models\LoanItem::create([
-                            'loan_request_id' => $loan->id,
-                            'inventory_id' => $inv->id,
-                            'quantity' => (int)($cartItem['qty'] ?? 1)
-                        ]);
-                    }
-                }
+            foreach($cart as $cartItem) {
+                \App\Models\LoanItem::create([
+                    'loan_request_id' => $loan->id,
+                    'inventory_id' => $cartItem['id'],
+                    'quantity' => (int)$cartItem['quantity']
+                ]);
             }
         });
 
-        // Clear Server Session Cart
-        session()->forget('cart'); 
+        $this->clearCart();
 
         return redirect()->route('guest.success')->with('success', 'Peminjaman berhasil diajukan! Silahkan tunggu persetujuan pengelola.');
     }
 
     public function render()
     {
-        return view('livewire.guest.cart');
+        $cart = $this->getCart();
+        
+        // Auto-select tab logic
+        if ($this->activeItemId === null || !isset($cart[$this->activeItemId])) {
+            $this->activeItemId = !empty($cart) ? array_key_first($cart) : null;
+        }
+
+        return view('livewire.guest.cart', ['cart' => $cart]);
     }
 }
