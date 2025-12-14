@@ -55,10 +55,10 @@
   {{ $slot }}
 
   <!-- FAB Checkout (Global) -->
-  <button id="fabCheckout" class="fab-checkout" type="button" aria-label="Checkout">
+  <a href="{{ route('guest.cart') }}" class="fab-checkout" aria-label="Checkout" style="text-decoration: none;">
     <i class="bi bi-bag-check"></i>
-    <span id="fabCount" class="fab-count">0</span>
-  </button>
+    <livewire:borrower.cart-counter type="fab" />
+  </a>
 
   <!-- Modal Konfirmasi (Global) -->
   <div class="modal fade" id="confirmAddModal" tabindex="-1" aria-hidden="true">
