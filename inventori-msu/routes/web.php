@@ -23,23 +23,23 @@ use App\Http\Controllers\PengurusController;
 use App\Http\Controllers\Pengelola\LaporanExportController;
 
 // =====================
-// LIVEWIRE BORROWER / GUEST
+// LIVEWIRE GUEST (Baru)
 // =====================
-use App\Livewire\Borrower\Home;
-use App\Livewire\Borrower\Catalogue;
-use App\Livewire\Borrower\Cart;
-use App\Livewire\Borrower\Success;
+use App\Livewire\Guest\Home;
+use App\Livewire\Guest\Catalogue;
+use App\Livewire\Guest\Cart;
+use App\Livewire\Guest\Success;
 
 
 // =====================
-// PUBLIC / BORROWER
+// PUBLIC
 // =====================
-Route::get('/', Home::class)->name('home');
-Route::get('/barang', Catalogue::class)->name('catalogue.barang');
-Route::get('/ruangan', Catalogue::class)->name('catalogue.ruangan');
-Route::get('/booking-barang', Cart::class)->name('cart');
+Route::get('/', Home::class)->name('guest.home');
+Route::get('/barang', Catalogue::class)->name('guest.catalogue.barang');
+Route::get('/ruangan', Catalogue::class)->name('guest.catalogue.ruangan');
+Route::get('/booking-barang', Cart::class)->name('guest.cart');
 Route::redirect('/cart', '/booking-barang');
-Route::get('/success', Success::class)->name('success');
+Route::get('/success', Success::class)->name('guest.success');
 
 
 // =====================
