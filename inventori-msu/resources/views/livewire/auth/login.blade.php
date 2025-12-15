@@ -1,4 +1,4 @@
-<x-layouts.app>
+<x-layouts.auth>
 
     @push('styles')
         <style>
@@ -150,17 +150,17 @@
                         </div>
 
                         <div class="d-flex align-items-center justify-content-between mt-5">
-                            <div class="d-flex align-items-center gap-2 switch-role-btn" 
-                                 @click="toggleRole()"
-                                 :class="{ 'opacity-50': isLoading }"
-                                 :style="isLoading ? 'cursor: not-allowed;' : ''">
+                            <div class="d-flex align-items-center gap-2 switch-role-btn" @click="toggleRole()"
+                                :class="{ 'opacity-50': isLoading }" :style="isLoading ? 'cursor: not-allowed;' : ''">
                                 <i class="bi bi-arrow-repeat fs-5"></i>
                                 <span class="small fw-semibold">Ganti Role</span>
                             </div>
 
-                            <button type="submit" class="btn btn-dark btn-lg px-5 rounded-pill shadow-sm" :disabled="isLoading">
+                            <button type="submit" class="btn btn-dark btn-lg px-5 rounded-pill shadow-sm"
+                                :disabled="isLoading">
                                 <span x-show="!isLoading">Masuk</span>
-                                <span x-show="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                <span x-show="isLoading" class="spinner-border spinner-border-sm" role="status"
+                                    aria-hidden="true"></span>
                             </button>
                         </div>
                     </form>
@@ -185,16 +185,12 @@
 
                     <!-- Navigation Arrows -->
                     <button class="nav-btn position-absolute top-50 start-0 translate-middle-y ms-4"
-                        @click="if(!isLoading) role = 'pengelola'" 
-                        x-show="role === 'pengurus'"
-                        :disabled="isLoading"
+                        @click="if(!isLoading) role = 'pengelola'" x-show="role === 'pengurus'" :disabled="isLoading"
                         :style="isLoading ? 'opacity: 0.5; cursor: not-allowed;' : ''">
                         <i class="bi bi-chevron-left"></i>
                     </button>
                     <button class="nav-btn position-absolute top-50 end-0 translate-middle-y me-4"
-                        @click="if(!isLoading) role = 'pengurus'" 
-                        x-show="role === 'pengelola'"
-                        :disabled="isLoading"
+                        @click="if(!isLoading) role = 'pengurus'" x-show="role === 'pengelola'" :disabled="isLoading"
                         :style="isLoading ? 'opacity: 0.5; cursor: not-allowed;' : ''">
                         <i class="bi bi-chevron-right"></i>
                     </button>
@@ -213,4 +209,4 @@
             </div>
         </div>
     </div>
-</x-layouts.app>
+</x-layouts.auth>

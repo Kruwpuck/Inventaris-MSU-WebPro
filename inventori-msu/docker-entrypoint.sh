@@ -16,9 +16,9 @@ until php artisan db:monitor > /dev/null 2>&1; do
 done
 
 # Run migrations
-# Run migrations and seed
-echo "Running migrations fresh with seed..."
-php artisan migrate:fresh --seed --force
+# Run migrations (only new ones)
+echo "Running migrations..."
+php artisan migrate --force
 
 # Run seeders (already included in migrate:fresh --seed)
 # echo "Running seeders..."
