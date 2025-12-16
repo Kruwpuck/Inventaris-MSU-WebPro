@@ -8,16 +8,13 @@ class Riwayat extends Component
 {
     public function render()
     {
-        // Riwayat shows items where both pickup and return are completed.
-        // OR items that were manually moved there? JS logic says "Move to Riwayat" when both checked.
-
         $data = \App\Models\LoanRequest::query()
-            ->where('status', 'approved')
+            ->whereIn('status', ['approved', 'handed_over', 'returned', 'completed'])
             ->whereHas('loanRecord', function ($q) {
+                // Show in Riwayat if AT LEAST ONE timestamp is set
                 $q->whereNotNull('picked_up_at')
-                    ->whereNotNull('returned_at');
+                    ->orWhereNotNull('returned_at');
             })
-            ->orWhere('status', 'completed') // Future proofing
             ->with(['items', 'loanRecord'])
             ->latest('created_at')
             ->get();
@@ -29,26 +26,40 @@ class Riwayat extends Component
 
     public function cancel($id)
     {
-        // "Cancel" in JS resets the status so it goes back to the main list.
         $request = \App\Models\LoanRequest::find($id);
         if ($request && $request->loanRecord) {
-            // Reset one or both to make it appear in the other list again
-            // JS Logic: "Anda yakin ingin membatalkan peminjaman ini?" -> resets status.
-            // We can just set returned_at to null, so it goes back to "Active Peminjaman"
             $request->loanRecord->update([
                 'returned_at' => null,
-                'picked_up_at' => null // Optional: fully reset? JS resets 'sudahAmbil' and 'sudahKembali'
+                'picked_up_at' => null,
+                'is_submitted' => false
             ]);
+
+            // Revert status to approved so it shows up in Dashboard again
+            $request->update(['status' => 'approved']);
+
+            session()->flash('success', 'Peminjaman dibatalkan.');
         }
     }
 
     public function submit($id)
     {
-        // "Submit" in JS sets isSubmitted = true.
-        // We can mark status as 'completed' or 'archived'.
         $request = \App\Models\LoanRequest::find($id);
         if ($request) {
-            $request->update(['status' => 'completed']);
+            // Check if status 'completed' is valid or use 'returned' + is_submitted
+            // Assuming 'completed' is NOT in migration, we use 'returned' + is_submitted flag
+            // But if user meant "Finish workflow", we might need a status that hides it?
+            // Since migration only has 'returned', we stick to 'returned'.
+            // But if we want it to stay in Riwayat (which uses 'returned'), it's fine.
+            
+            // Or if user really wants 'completed' and added it manually:
+            // For safety with strictly 'handed_over'/'returned':
+            $request->update(['status' => 'returned']);
+            
+            if ($request->loanRecord) {
+                $request->loanRecord->update(['is_submitted' => true]);
+            }
+
+            session()->flash('success', 'Peminjaman diselesaikan.');
         }
     }
 }
