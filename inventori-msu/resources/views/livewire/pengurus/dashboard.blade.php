@@ -112,25 +112,22 @@
               <th>Waktu Pengembalian</th>
               <th>Fasilitas</th>
               <th>Sudah Ambil</th>
-              <th>Sudah Terima</th>
+              <th>Sudah Kembali</th>
             </tr>
           </thead>
           <tbody>
             @forelse($data as $d)
-              <tr>
+              <tr wire:key="{{ $d->id }}">
                 <td>{{ $loop->iteration }}</td>
                 <td>{{ $d->borrower_name }}</td>
                 <td>
-                   {{ optional($d->loanRecord)->picked_up_at ? $d->loanRecord->picked_up_at->format('d M Y | H:i') : '-' }}
+                   {{ $d->loan_date_start ? $d->loan_date_start->format('d M Y | H:i') : '-' }}
                 </td>
                 <td>
-                   {{ optional($d->loanRecord)->returned_at ? $d->loanRecord->returned_at->format('d M Y | H:i') : '-' }}
+                   {{ $d->loan_date_end ? $d->loan_date_end->format('d M Y | H:i') : '-' }}
                 </td>
                 <td>
-                   <button type="button" class="detail-btn" data-bs-toggle="modal" data-bs-target="#detailModal" 
-                           onclick="showDetail('{{ $d->items->pluck('name')->join(', ') }}')">
-                     Detail Peminjaman
-                   </button>
+                   {{ $d->items->pluck('name')->join(', ') }}
                 </td>
                 <td>
                    <input type="checkbox" 
@@ -140,6 +137,7 @@
                 <td>
                    <input type="checkbox" 
                           wire:click="toggleStatus({{ $d->id }}, 'kembali')"
+                          wire:confirm="Apakah fasilitasnya sudah kembali?"
                           {{ optional($d->loanRecord)->returned_at ? 'checked' : '' }}>
                 </td>
               </tr>
@@ -155,29 +153,7 @@
       </div>
     </div>
 
-    <!-- MODAL -->
-    <div class="modal fade" id="detailModal" tabindex="-1">
-      <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Detail Fasilitas</h5>
-          </div>
-          <div class="modal-body">
-            <p id="detailContent" class="fs-5">...</p>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="close-btn" data-bs-dismiss="modal">Tutup</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
     @push('scripts')
-    <script>
-        function showDetail(detailText) {
-            document.getElementById('detailContent').textContent = detailText;
-        }
-    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     @endpush
 </div>
