@@ -1,61 +1,66 @@
 {{-- resources/views/livewire/pengelola/beranda.blade.php --}}
 
 @push('head')
-<style>
-    /* ===== tombol titik 3 (hapus) ===== */
-    .btn-menu-3dot{
-        background: transparent !important;
-        border: none !important;
-        padding: 2px 4px !important;
-        width: auto;
-        height: auto;
-        box-shadow: none !important;
-        color: #111 !important;      /* titik 3 hitam */
-        opacity: .85;
-        transition: all .2s ease;
-        line-height: 1;
-        z-index: 5;                 /* biar di atas gambar */
-        border-radius: 8px;
-    }
-    .btn-menu-3dot:hover{
-        opacity: 1;
-        transform: scale(1.08);
-        background: rgba(255,255,255,0.35); /* hover tipis aja biar kebaca */
-        backdrop-filter: blur(2px);
-    }
+    <style>
+        /* ===== tombol titik 3 (hapus) ===== */
+        .btn-menu-3dot {
+            background: transparent !important;
+            border: none !important;
+            padding: 2px 4px !important;
+            width: auto;
+            height: auto;
+            box-shadow: none !important;
+            color: #111 !important;
+            /* titik 3 hitam */
+            opacity: .85;
+            transition: all .2s ease;
+            line-height: 1;
+            z-index: 5;
+            /* biar di atas gambar */
+            border-radius: 8px;
+        }
 
-    /* ===== tombol edit biar hover+klik ga ilang ===== */
-    .btn-edit-msu{
-        background: #0b492c !important;
-        border-color: #0b492c !important;
-        color: #fff !important;
-        transition: all .2s ease;
-        box-shadow: none !important;
-    }
-    .btn-edit-msu:hover{
-        filter: brightness(0.93);
-        transform: translateY(-1px);
-    }
-    .btn-edit-msu:active{
-        transform: translateY(0);
-        filter: brightness(0.88);
-    }
-    .btn-edit-msu:focus,
-    .btn-edit-msu:focus-visible{
-        outline: none !important;
-        box-shadow: 0 0 0 .2rem rgba(11,73,44,.25) !important;
-    }
-</style>
+        .btn-menu-3dot:hover {
+            opacity: 1;
+            transform: scale(1.08);
+            background: rgba(255, 255, 255, 0.35);
+            /* hover tipis aja biar kebaca */
+            backdrop-filter: blur(2px);
+        }
+
+        /* ===== tombol edit biar hover+klik ga ilang ===== */
+        .btn-edit-msu {
+            background: #0b492c !important;
+            border-color: #0b492c !important;
+            color: #fff !important;
+            transition: all .2s ease;
+            box-shadow: none !important;
+        }
+
+        .btn-edit-msu:hover {
+            filter: brightness(0.93);
+            transform: translateY(-1px);
+        }
+
+        .btn-edit-msu:active {
+            transform: translateY(0);
+            filter: brightness(0.88);
+        }
+
+        .btn-edit-msu:focus,
+        .btn-edit-msu:focus-visible {
+            outline: none !important;
+            box-shadow: 0 0 0 .2rem rgba(11, 73, 44, .25) !important;
+        }
+    </style>
 @endpush
 
 
 <div>
     {{-- HERO --}}
-    <section class="d-flex justify-content-center align-items-start position-relative w-100"
-        style="padding-top:55px;height:70vh;background-image:url('{{ asset('aset/ramadhan.png') }}');
+    <section class="d-flex justify-content-center align-items-start position-relative w-100" style="padding-top:55px;height:70vh;background-image:url('{{ asset('aset/ramadhan.png') }}');
         background-size:contain;background-position:center;background-repeat:no-repeat;">
-        <img src="{{ asset('aset/MSU.png') }}" alt="Syamsul Ulum"
-            class="img-fluid shadow-strong rounded-3 mt-5"
+        <img src="{{ asset('aset/MSU.png') }}" alt="Syamsul Ulum" class="img-fluid shadow-strong rounded-3 mt-5"
             style="height:230px;width:1100px;z-index:2" />
     </section>
 
@@ -72,10 +77,7 @@
         <form wire:submit.prevent class="row align-items-center justify-content-center gx-2 gy-2">
             <div class="col-12 col-md-6 col-lg-5">
                 <div class="input-group">
-                    <input
-                        wire:model.debounce.500ms="q"
-                        type="text"
-                        class="form-control rounded-start-pill py-2"
+                    <input wire:model.debounce.500ms="q" type="text" class="form-control rounded-start-pill py-2"
                         placeholder="Cari barang atau fasilitas..." />
                     <button class="btn btn-success rounded-end-pill px-4" type="button">
                         <i class="bi bi-search me-1"></i>Cari
@@ -95,10 +97,8 @@
 
             <div class="text-start">
                 <div class="dropdown d-inline-block">
-                    <button id="kategoriBtn"
-                        class="btn btn-success dropdown-toggle rounded-pill px-4 py-2"
-                        type="button" data-bs-toggle="dropdown"
-                        style="background-color:#0b492c;border-color:#0b492c">
+                    <button id="kategoriBtn" class="btn btn-success dropdown-toggle rounded-pill px-4 py-2"
+                        type="button" data-bs-toggle="dropdown" style="background-color:#0b492c;border-color:#0b492c">
                         Barang
                     </button>
                     <ul class="dropdown-menu">
@@ -118,18 +118,22 @@
                             style="max-width:16rem">
 
                             {{-- titik 3 hapus --}}
-                            <button
-                                class="btn-menu-3dot position-absolute top-0 end-0 m-2"
-                                type="button"
-                                wire:click.stop="confirmDelete({{ $b->id }})"
-                                title="Hapus">
+                            <button class="btn-menu-3dot position-absolute top-0 end-0 m-2" type="button"
+                                wire:click.stop="confirmDelete({{ $b->id }})" title="Hapus">
                                 <i class="bi bi-three-dots-vertical fs-5"></i>
                             </button>
 
-                            <img
-                                src="{{ $b->image_path ? asset('storage/'.$b->image_path) : asset('aset/default.png') }}"
-                                class="card-img-top"
-                                alt="{{ $b->name }}"
+                            @php
+                                $imgSrc = asset('aset/default.png');
+                                if ($b->image_path) {
+                                    if (file_exists(public_path('aset/' . $b->image_path))) {
+                                        $imgSrc = asset('aset/' . $b->image_path);
+                                    } else {
+                                        $imgSrc = asset('storage/' . $b->image_path);
+                                    }
+                                }
+                            @endphp
+                            <img src="{{ $imgSrc }}" class="card-img-top" alt="{{ $b->name }}"
                                 style="height:160px;object-fit:cover" />
 
                             <div class="card-body py-3 px-3">
@@ -139,8 +143,7 @@
                                     Stok: <b>{{ $b->stock }} unit</b>
                                 </p>
 
-                                <button
-                                    class="btn btn-sm rounded-pill px-3 py-1 btn-edit-msu"
+                                <button class="btn btn-sm rounded-pill px-3 py-1 btn-edit-msu"
                                     wire:click="openEdit({{ $b->id }})">
                                     Edit
                                 </button>
@@ -162,18 +165,22 @@
                             style="max-width:16rem">
 
                             {{-- titik 3 hapus --}}
-                            <button
-                                class="btn-menu-3dot position-absolute top-0 end-0 m-2"
-                                type="button"
-                                wire:click.stop="confirmDelete({{ $f->id }})"
-                                title="Hapus">
+                            <button class="btn-menu-3dot position-absolute top-0 end-0 m-2" type="button"
+                                wire:click.stop="confirmDelete({{ $f->id }})" title="Hapus">
                                 <i class="bi bi-three-dots-vertical fs-5"></i>
                             </button>
 
-                            <img
-                                src="{{ $f->image_path ? asset('storage/'.$f->image_path) : asset('aset/default.png') }}"
-                                class="card-img-top"
-                                alt="{{ $f->name }}"
+                            @php
+                                $imgSrc = asset('aset/default.png');
+                                if ($f->image_path) {
+                                    if (file_exists(public_path('aset/' . $f->image_path))) {
+                                        $imgSrc = asset('aset/' . $f->image_path);
+                                    } else {
+                                        $imgSrc = asset('storage/' . $f->image_path);
+                                    }
+                                }
+                            @endphp
+                            <img src="{{ $imgSrc }}" class="card-img-top" alt="{{ $f->name }}"
                                 style="height:160px;object-fit:cover" />
 
                             <div class="card-body py-3 px-3">
@@ -183,8 +190,7 @@
                                     Kapasitas: <b>{{ $f->capacity }} orang</b>
                                 </p>
 
-                                <button
-                                    class="btn btn-sm rounded-pill px-3 py-1 btn-edit-msu"
+                                <button class="btn btn-sm rounded-pill px-3 py-1 btn-edit-msu"
                                     wire:click="openEdit({{ $f->id }})">
                                     Edit
                                 </button>
@@ -218,7 +224,8 @@
 
                         <div class="mb-3">
                             <label class="form-label">Deskripsi</label>
-                            <textarea class="form-control" wire:model.defer="editDescription" rows="3" required></textarea>
+                            <textarea class="form-control" wire:model.defer="editDescription" rows="3"
+                                required></textarea>
                         </div>
 
                         {{-- kalau barang tampil stok --}}
@@ -230,7 +237,8 @@
                         @else
                             <div class="mb-3">
                                 <label class="form-label">Kapasitas (orang)</label>
-                                <input type="number" class="form-control" wire:model.defer="editCapacity" min="0" required />
+                                <input type="number" class="form-control" wire:model.defer="editCapacity" min="0"
+                                    required />
                             </div>
                         @endif
                     </div>
@@ -272,53 +280,53 @@
 
 
 @push('scripts')
-<script>
-document.addEventListener('livewire:init', () => {
-    Livewire.on('open-edit-modal', () => {
-        const modal = new bootstrap.Modal(document.getElementById('editModal'));
-        modal.show();
-    });
+    <script>
+        document.addEventListener('livewire:init', () => {
+            Livewire.on('open-edit-modal', () => {
+                const modal = new bootstrap.Modal(document.getElementById('editModal'));
+                modal.show();
+            });
 
-    Livewire.on('close-edit-modal', () => {
-        const el = document.getElementById('editModal');
-        const modal = bootstrap.Modal.getInstance(el);
-        modal?.hide();
-    });
+            Livewire.on('close-edit-modal', () => {
+                const el = document.getElementById('editModal');
+                const modal = bootstrap.Modal.getInstance(el);
+                modal?.hide();
+            });
 
-    Livewire.on('open-delete-modal', () => {
-        const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
-        modal.show();
-    });
+            Livewire.on('open-delete-modal', () => {
+                const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+                modal.show();
+            });
 
-    Livewire.on('close-delete-modal', () => {
-        const el = document.getElementById('deleteModal');
-        const modal = bootstrap.Modal.getInstance(el);
-        modal?.hide();
-    });
-});
+            Livewire.on('close-delete-modal', () => {
+                const el = document.getElementById('deleteModal');
+                const modal = bootstrap.Modal.getInstance(el);
+                modal?.hide();
+            });
+        });
 
-// dropdown switch (barang/ruangan)
-document.addEventListener('DOMContentLoaded', function () {
-  document.body.addEventListener('click', function(e){
-    const item = e.target.closest('[data-switch]');
-    if(!item) return;
-    e.preventDefault();
+        // dropdown switch (barang/ruangan)
+        document.addEventListener('DOMContentLoaded', function () {
+            document.body.addEventListener('click', function (e) {
+                const item = e.target.closest('[data-switch]');
+                if (!item) return;
+                e.preventDefault();
 
-    const tipe = item.getAttribute('data-switch');
-    const gridBarang = document.getElementById('gridBarang');
-    const gridRuangan = document.getElementById('gridRuangan');
-    const kategoriBtn = document.getElementById('kategoriBtn');
+                const tipe = item.getAttribute('data-switch');
+                const gridBarang = document.getElementById('gridBarang');
+                const gridRuangan = document.getElementById('gridRuangan');
+                const kategoriBtn = document.getElementById('kategoriBtn');
 
-    if(tipe === 'barang'){
-      gridBarang.classList.remove('d-none');
-      gridRuangan.classList.add('d-none');
-      kategoriBtn.textContent = 'Barang';
-    } else {
-      gridBarang.classList.add('d-none');
-      gridRuangan.classList.remove('d-none');
-      kategoriBtn.textContent = 'Ruangan';
-    }
-  });
-});
-</script>
+                if (tipe === 'barang') {
+                    gridBarang.classList.remove('d-none');
+                    gridRuangan.classList.add('d-none');
+                    kategoriBtn.textContent = 'Barang';
+                } else {
+                    gridBarang.classList.add('d-none');
+                    gridRuangan.classList.remove('d-none');
+                    kategoriBtn.textContent = 'Ruangan';
+                }
+            });
+        });
+    </script>
 @endpush
