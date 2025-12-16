@@ -20,11 +20,19 @@ class PeminjamanFasilitas extends Component
             $record->picked_up_at = $record->picked_up_at ? null : now();
         } elseif ($type === 'kembali') {
             $record->returned_at = $record->returned_at ? null : now();
+            
+            // Auto-check 'ambil' if 'kembali' is checked
+            if ($record->returned_at && !$record->picked_up_at) {
+                $record->picked_up_at = $record->returned_at;
+            }
         }
 
         $record->save();
 
+<<<<<<< HEAD
         // Sync Status
+=======
+>>>>>>> 485abd5ca0e092fcd41540a7589f5eb19fad224c
         if ($record->returned_at) {
             $request->status = 'returned';
         } elseif ($record->picked_up_at) {
@@ -33,6 +41,11 @@ class PeminjamanFasilitas extends Component
             $request->status = 'approved';
         }
         $request->save();
+<<<<<<< HEAD
+=======
+
+        session()->flash('success', 'Status berhasil diperbarui!');
+>>>>>>> 485abd5ca0e092fcd41540a7589f5eb19fad224c
     }
 
     public function render()

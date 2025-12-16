@@ -15,10 +15,10 @@ class LaporanExportController extends Controller
     public function export(Request $request, string $format)
     {
         // ambil filter dari query string (dikirim JS)
-        $periode  = $request->query('periode', '1m');
+        $periode = $request->query('periode', '1m');
         $kategori = $request->query('kategori', 'all');
-        $status   = $request->query('status', 'all');
-        $q        = $request->query('q', '');
+        $status = $request->query('status', 'all');
+        $q = $request->query('q', '');
 
         $requests = LoanRequest::with(['items'])
             ->orderByDesc('id')
@@ -30,36 +30,36 @@ class LaporanExportController extends Controller
         $rows = $requests->flatMap(function ($lr) use ($today) {
             return $lr->items->map(function ($inv) use ($lr, $today) {
 
-                $tglPinjam  = Carbon::parse($lr->loan_date_start);
+                $tglPinjam = Carbon::parse($lr->loan_date_start);
                 $jatuhTempo = Carbon::parse($lr->loan_date_end);
 
                 // map backend -> UI status
                 if ($lr->status === 'returned') {
                     if ($lr->loanRecord && $lr->loanRecord->is_submitted) {
-                        $statusUi = 'Selesai';
+                        $statusUi = 'Sudah Kembali';
                     } else {
                         $statusUi = 'Menunggu Submit';
                     }
                     $tglKembali = $jatuhTempo->format('m/d/Y');
                 } else {
-                    $statusUi   = $today->gt($jatuhTempo) ? 'Terlambat' : 'Sedang Dipinjam';
+                    $statusUi = $today->gt($jatuhTempo) ? 'Terlambat' : 'Sedang Dipinjam';
                     $tglKembali = '-';
                 }
 
                 $kategoriUi = $inv->category === 'ruangan' ? 'Ruangan' : 'Barang';
 
                 return [
-                    'nama_item'   => $inv->name,
-                    'kategori'    => $kategoriUi,
-                    'peminjam'    => $lr->borrower_name,
+                    'nama_item' => $inv->name,
+                    'kategori' => $kategoriUi,
+                    'peminjam' => $lr->borrower_name,
 
                     // simpan Carbon dulu biar bisa difilter periode
-                    'tgl_pinjam'  => $tglPinjam,
+                    'tgl_pinjam' => $tglPinjam,
                     'jatuh_tempo' => $jatuhTempo,
 
                     'tgl_kembali' => $tglKembali,
-                    'jumlah'      => (int) ($inv->pivot->quantity ?? 1),
-                    'status'      => $statusUi,
+                    'jumlah' => (int) ($inv->pivot->quantity ?? 1),
+                    'status' => $statusUi,
                 ];
             });
         })->values();

@@ -11,9 +11,9 @@ class Laporan extends Component
     public $q = '';
 
     // filter state (tetap dipakai JS di blade)
-    public $vPeriode  = '1m';   // 2w | 1m | prev1m | all
+    public $vPeriode = 'all';   // 2w | 1m | prev1m | all
     public $vKategori = 'all';  // all | Barang | Ruangan
-    public $vStatus   = 'all';  // all | Sedang Dipinjam | Sudah Kembali | Terlambat
+    public $vStatus = 'all';  // all | Sedang Dipinjam | Sudah Kembali | Terlambat
 
     public function render()
     {
@@ -28,7 +28,7 @@ class Laporan extends Component
         $laporans = $requests->flatMap(function ($lr) use ($today) {
             return $lr->items->map(function ($inv) use ($lr, $today) {
 
-                $tglPinjam  = Carbon::parse($lr->loan_date_start);
+                $tglPinjam = Carbon::parse($lr->loan_date_start);
                 $jatuhTempo = Carbon::parse($lr->loan_date_end);
 
                 // ===== map status backend -> UI =====
@@ -39,11 +39,11 @@ class Laporan extends Component
                     case 'returned':
                         // Cek status sumbission
                         if ($lr->loanRecord && $lr->loanRecord->is_submitted) {
-                            $statusUi = 'Selesai';
+                            $statusUi = 'Sudah Kembali';
                         } else {
                             $statusUi = 'Menunggu Submit';
                         }
-                        
+
                         // Coba ambil dari loanRecord kalau ada loaded
                         if ($lr->loanRecord && $lr->loanRecord->returned_at) {
                             $tglKembali = Carbon::parse($lr->loanRecord->returned_at)->format('m/d/Y');
@@ -51,7 +51,7 @@ class Laporan extends Component
                             $tglKembali = $jatuhTempo->format('m/d/Y');
                         }
                         break;
-                    
+
                     case 'handed_over':
                         if ($today->gt($jatuhTempo)) {
                             $statusUi = 'Terlambat';
@@ -71,7 +71,7 @@ class Laporan extends Component
                     case 'rejected':
                         $statusUi = 'Ditolak';
                         break;
-                        
+
                     default:
                         // Fallback logic lama jika status null / lain
                         if ($today->gt($jatuhTempo)) {
@@ -84,14 +84,14 @@ class Laporan extends Component
                 $kategoriUi = $inv->category === 'ruangan' ? 'Ruangan' : 'Barang';
 
                 return (object) [
-                    'nama_item'   => $inv->name,
-                    'kategori'    => $kategoriUi,
-                    'peminjam'    => $lr->borrower_name,
-                    'tgl_pinjam'  => $tglPinjam->format('m/d/Y'),
+                    'nama_item' => $inv->name,
+                    'kategori' => $kategoriUi,
+                    'peminjam' => $lr->borrower_name,
+                    'tgl_pinjam' => $tglPinjam->format('m/d/Y'),
                     'jatuh_tempo' => $jatuhTempo->format('m/d/Y'),
                     'tgl_kembali' => $tglKembali,
-                    'jumlah'      => (int) ($inv->pivot->quantity ?? 1),
-                    'status'      => $statusUi,
+                    'jumlah' => (int) ($inv->pivot->quantity ?? 1),
+                    'status' => $statusUi,
                 ];
             });
         });

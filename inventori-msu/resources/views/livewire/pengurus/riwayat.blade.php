@@ -119,16 +119,30 @@
                             </td>
                             <!-- Placeholder Buttons for 'Cancel' and 'Submit' based on screenshot/html -->
                             <td>
+<<<<<<< HEAD
                                 <button class="btn btn-danger btn-sm" 
                                         wire:click="cancel({{ $d->id }})"
                                         wire:confirm="Anda yakin ingin membatalkan? Data akan kembali ke Dashboard.">
+=======
+                                <button class="btn btn-danger btn-sm"
+                                        wire:click="cancel({{ $d->id }})"
+                                        wire:confirm="Anda yakin ingin membatalkan? Data akan kembali ke Dashboard."
+                                        {{ optional($d->loanRecord)->is_submitted ? 'disabled' : '' }}>
+>>>>>>> 485abd5ca0e092fcd41540a7589f5eb19fad224c
                                     Cancel
                                 </button>
                             </td>
                             <td>
+<<<<<<< HEAD
                                 <button class="btn btn-success btn-sm" 
                                         wire:click="submit({{ $d->id }})"
                                         wire:confirm="Anda yakin ingin menyelesaikan? Data akan disimpan permanen.">
+=======
+                                <button class="btn btn-success btn-sm"
+                                        wire:click="submit({{ $d->id }})"
+                                        wire:confirm="Anda yakin ingin menyelesaikan? Data akan disimpan permanen."
+                                        {{ optional($d->loanRecord)->is_submitted ? 'disabled' : '' }}>
+>>>>>>> 485abd5ca0e092fcd41540a7589f5eb19fad224c
                                     Submit
                                 </button>
                             </td>
