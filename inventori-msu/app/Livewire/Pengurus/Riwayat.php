@@ -8,16 +8,14 @@ class Riwayat extends Component
 {
     public function render()
     {
-        // Riwayat shows items where both pickup and return are completed.
-        // OR items that were manually moved there? JS logic says "Move to Riwayat" when both checked.
-
+        // View items with at least one action taken (picked up or returned)
+        // Also include statuses that imply activity: handed_over, returned, completed
         $data = \App\Models\LoanRequest::query()
-            ->where('status', 'approved')
+            ->whereIn('status', ['approved', 'handed_over', 'returned', 'completed'])
             ->whereHas('loanRecord', function ($q) {
                 $q->whereNotNull('picked_up_at')
-                    ->whereNotNull('returned_at');
+                    ->orWhereNotNull('returned_at');
             })
-            ->orWhere('status', 'completed') // Future proofing
             ->with(['items', 'loanRecord'])
             ->latest('created_at')
             ->get();
@@ -29,26 +27,39 @@ class Riwayat extends Component
 
     public function cancel($id)
     {
-        // "Cancel" in JS resets the status so it goes back to the main list.
-        $request = \App\Models\LoanRequest::find($id);
         if ($request && $request->loanRecord) {
-            // Reset one or both to make it appear in the other list again
-            // JS Logic: "Anda yakin ingin membatalkan peminjaman ini?" -> resets status.
-            // We can just set returned_at to null, so it goes back to "Active Peminjaman"
+            // Prevent cancel if already submitted
+            if ($request->loanRecord->is_submitted) {
+                return;
+            }
+
             $request->loanRecord->update([
                 'returned_at' => null,
-                'picked_up_at' => null // Optional: fully reset? JS resets 'sudahAmbil' and 'sudahKembali'
+                'picked_up_at' => null,
+                'is_submitted' => false
             ]);
+
+            // Revert status to approved so it shows up in Dashboard again
+            $request->update(['status' => 'approved']);
+            
+            session()->flash('success', 'Peminjaman dibatalkan.');
         }
     }
 
     public function submit($id)
     {
-        // "Submit" in JS sets isSubmitted = true.
-        // We can mark status as 'completed' or 'archived'.
         $request = \App\Models\LoanRequest::find($id);
         if ($request) {
-            $request->update(['status' => 'completed']);
+            // "Submit" typically means finalizing the process.
+            // If status 'complated' exists, use it. Otherwise 'returned' + is_submitted.
+            // Assuming 'returned' is the final status in enum.
+            $request->update(['status' => 'returned']);
+            
+            if ($request->loanRecord) {
+                $request->loanRecord->update(['is_submitted' => true]);
+            }
+            
+            session()->flash('success', 'Peminjaman diselesaikan.');
         }
     }
 }
