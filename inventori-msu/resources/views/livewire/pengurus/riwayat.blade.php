@@ -119,10 +119,20 @@
                             </td>
                             <!-- Placeholder Buttons for 'Cancel' and 'Submit' based on screenshot/html -->
                             <td>
-                                <button class="cancel-btn">Cancel</button>
+                                <button class="btn btn-danger btn-sm"
+                                        wire:click="cancel({{ $d->id }})"
+                                        wire:confirm="Anda yakin ingin membatalkan? Data akan kembali ke Dashboard."
+                                        {{ optional($d->loanRecord)->is_submitted ? 'disabled' : '' }}>
+                                    Cancel
+                                </button>
                             </td>
                             <td>
-                                <button class="submit-btn">Submit</button>
+                                <button class="btn btn-success btn-sm"
+                                        wire:click="submit({{ $d->id }})"
+                                        wire:confirm="Anda yakin ingin menyelesaikan? Data akan disimpan permanen."
+                                        {{ optional($d->loanRecord)->is_submitted ? 'disabled' : '' }}>
+                                    Submit
+                                </button>
                             </td>
                         </tr>
                     @empty

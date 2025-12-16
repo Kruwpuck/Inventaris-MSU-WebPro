@@ -121,10 +121,10 @@
                 <td>{{ $loop->iteration }}</td>
                 <td>{{ $d->borrower_name }}</td>
                 <td>
-                   {{ optional($d->loanRecord)->picked_up_at ? $d->loanRecord->picked_up_at->format('d M Y | H:i') : '-' }}
+                   {{ $d->loan_date_start ? $d->loan_date_start->format('d M Y | H:i') : '-' }}
                 </td>
                 <td>
-                   {{ optional($d->loanRecord)->returned_at ? $d->loanRecord->returned_at->format('d M Y | H:i') : '-' }}
+                   {{ $d->loan_date_end ? $d->loan_date_end->format('d M Y | H:i') : '-' }}
                 </td>
                 <td>
                    <button type="button" class="detail-btn" data-bs-toggle="modal" data-bs-target="#detailModal" 
@@ -140,6 +140,7 @@
                 <td>
                    <input type="checkbox" 
                           wire:click="toggleStatus({{ $d->id }}, 'kembali')"
+                          wire:confirm="Apakah fasilitasnya sudah kembali?"
                           {{ optional($d->loanRecord)->returned_at ? 'checked' : '' }}>
                 </td>
               </tr>
