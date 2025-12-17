@@ -11,8 +11,12 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('loan_requests', function (Blueprint $table) {
-            $table->time('start_time')->nullable()->after('loan_date_end');
-            $table->integer('duration')->nullable()->after('start_time'); // dalam jam
+            if (!Schema::hasColumn('loan_requests', 'start_time')) {
+                $table->time('start_time')->nullable()->after('loan_date_end');
+            }
+            if (!Schema::hasColumn('loan_requests', 'duration')) {
+                $table->integer('duration')->nullable()->after('start_time'); // dalam jam
+            }
         });
     }
 
