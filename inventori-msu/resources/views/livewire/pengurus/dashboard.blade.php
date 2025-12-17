@@ -1,159 +1,275 @@
 <div>
-    @push('styles')
-      <link rel="stylesheet" href="{{ asset('css/pengurus.css') }}">
-      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    @endpush
-
-    <!-- HEADER FULLSCREEN -->
-     <header class="d-flex justify-content-between align-items-center fixed-top px-4 py-2" 
-            style="background-color: #d8f2d0; border-bottom: 2px solid #a8d5a2; z-index: 1000;">
-      <div class="logo d-flex align-items-center gap-2" style="cursor: pointer;">
-        <img src="{{ asset('aset/logo.png') }}" alt="Logo" style="width: 120px;">
-      </div>
-
-      <!-- NAV DESKTOP -->
-      <nav class="nav-desktop d-none d-lg-flex">
-        <a href="{{ route('pengurus.dashboard') }}" class="active">Beranda</a>
-        <a href="{{ route('pengurus.fasilitas') }}">Peminjaman Fasilitas</a>
-        <a href="{{ route('pengurus.riwayat') }}">Riwayat Peminjaman</a>
-      </nav>
-
-      <!-- USER DROPDOWN DESKTOP -->
-      <!-- USER DROPDOWN DESKTOP (BOOTSTRAP) -->
-      <div class="user-desktop d-none d-lg-flex align-items-center dropdown ms-3">
-        <div class="user-info-box d-flex align-items-center gap-2 px-3 py-2 rounded-pill text-white dropdown-toggle" 
-             role="button" data-bs-toggle="dropdown" aria-expanded="false" 
-             style="background: #5e6a72; cursor: pointer;">
-          <img src="{{ asset('aset/logo.png') }}" class="rounded-circle" style="width: 40px; height: 40px;">
-          <div class="lh-1 text-start me-2">
-             <strong style="font-size: 0.9rem;">Pengurus</strong><br>
-             <span style="font-size: 0.75rem;">Pengurus Side</span>
-          </div>
-        </div>
-        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2" style="width: 180px;">
-           <li>
-             <form method="POST" action="{{ route('logout') }}">
-               @csrf
-               <button type="submit" class="dropdown-item text-danger fw-bold py-2">Keluar</button>
-             </form>
-           </li>
-        </ul>
-      </div>
-
-      <!-- HAMBURGER BUTTON (OFFCANVAS TRIGGER) -->
-      <button class="d-lg-none border-0 bg-transparent fs-2 cursor-pointer" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" aria-controls="mobileMenu">
-        ☰
-      </button>
-    </header>
-
-    <!-- MOBILE SIDEBAR (BOOTSTRAP OFFCANVAS) -->
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileMenu" aria-labelledby="mobileMenuLabel" style="width: 280px;">
-      <div class="offcanvas-header">
-        <div class="offcanvas-title" id="mobileMenuLabel">
-          <img src="{{ asset('aset/logo.png') }}" alt="logo" style="width: 120px;">
-        </div>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-      </div>
-      <div class="offcanvas-body d-flex flex-column">
+    <!-- Styles (Directly Included to ensure loading) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="{{ asset('css/pengurus.css') }}">
+    
+    <style>
+        /* Exact Match Styling based on Screenshot */
+        body { 
+            background-color: #f8f9fa; 
+            font-family: "Inter", sans-serif; 
+            padding-top: 80px; 
+            color: #333;
+        }
         
-       <div class="d-flex flex-column gap-3 mb-4">
-         <a href="{{ route('pengurus.dashboard') }}" 
-            class="text-decoration-none fs-5 {{ Route::is('pengurus.dashboard') ? 'fw-bold text-success' : 'text-dark' }}"
-            style="border-bottom: 1px solid #f0f0f0; padding-bottom: 10px;">Beranda</a>
-            
-         <a href="{{ route('pengurus.fasilitas') }}" 
-            class="text-decoration-none fs-5 {{ Route::is('pengurus.fasilitas') ? 'fw-bold text-success' : 'text-dark' }}"
-            style="border-bottom: 1px solid #f0f0f0; padding-bottom: 10px;">Peminjaman Fasilitas</a>
-            
-         <a href="{{ route('pengurus.riwayat') }}" 
-            class="text-decoration-none fs-5 {{ Route::is('pengurus.riwayat') ? 'fw-bold text-success' : 'text-dark' }}"
-            style="border-bottom: 1px solid #f0f0f0; padding-bottom: 10px;">Riwayat Peminjaman</a>
-       </div>
+        /* Navbar */
+        .navbar { 
+            background: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); 
+            padding-top: 0.8rem;
+            padding-bottom: 0.8rem;
+        }
+        .navbar-brand img {
+            height: 50px; /* Slightly larger as per screenshot */
+        }
+        .nav-link {
+            color: #198754; /* Green text */
+            font-weight: 600;
+            margin: 0 12px;
+            font-size: 0.95rem;
+        }
+        .nav-link:hover {
+            color: #0f5132;
+        }
+        .nav-link.active {
+            color: #0f5132 !important;
+            font-weight: 700;
+        }
+        
+        /* Hero */
+        .hero-section { 
+            background: white; 
+            border-radius: 20px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03); 
+            padding: 3.5rem 3rem;
+        }
+        .hero-title {
+            font-weight: 800;
+            color: #212529;
+            font-size: 2.8rem;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+        }
+        .hero-subtitle {
+            font-size: 1.15rem;
+            color: #495057;
+            max-width: 90%;
+        }
+        .highlight {
+            color: #198754;
+            font-weight: 700;
+        }
+        
+        /* Section Title */
+        .section-title {
+            font-weight: 700;
+            color:#064e3b;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 3px solid #198754;
+            display: inline-block;
+            padding-bottom: 0.5rem;
+        }
 
-       <form method="POST" action="{{ route('logout') }}">
-           @csrf
-           <button type="submit" class="btn btn-link text-decoration-none fw-bold text-danger p-0 text-start w-100 fs-5">Keluar</button>
-       </form>
+        /* Empty State Card */
+        .empty-state-card {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 16px;
+            padding: 4rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        }
+        
+        /* User Dropdown Profile */
+        .user-profile-btn {
+            border: none;
+            background: transparent;
+            padding: 6px 16px; /* Increased padding for pill shape */
+            border-radius: 50px; /* Pill shape */
+            transition: all 0.2s;
+        }
+        .user-profile-btn:hover {
+            background-color: #6c757d; /* Gray background on hover */
+            color: white !important;
+        }
+        .user-profile-btn:hover .text-dark {
+            color: white !important;
+        }
+        .user-profile-btn:hover .text-muted {
+            color: rgba(255,255,255, 0.8) !important;
+        }
+        .user-profile-btn:hover i {
+            color: white !important;
+        }
+    </style>
 
-       <div class="mt-auto p-3 rounded d-flex align-items-center gap-3" style="background-color: #f0f0f0;">
-           <img src="{{ asset('aset/logo.png') }}" alt="User" class="rounded-circle" style="width: 40px; height: 40px;">
-           <div class="lh-1">
-               <strong style="font-size: 0.9rem;">Pengurus</strong><br>
-               <span class="text-muted" style="font-size: 0.8rem;">Pengurus Side</span>
-           </div>
-       </div>
-      </div>
-    </div>
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <!-- Logo -->
+            <a class="navbar-brand" href="{{ route('pengurus.dashboard') }}">
+                <img src="{{ asset('aset/logo.png') }}" alt="Logo">
+            </a>
 
-    <!-- HERO SECTION -->
-    <section class="hero">
-      <img src="{{ asset('aset/gedung.png') }}">
-      <div class="hero-subtext">
-        <p>
-          Satu langkah menuju <b>kemudahan beraktivitas</b> di MSU <br>
-          Semua urusan peminjaman dan perizinan kini bisa dilakukan secara online.
-        </p>
-      </div>
-    </section>
+            <!-- Toggle for Mobile -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navmenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-    <!-- CONTENT -->
-    <div class="container-fluid px-4">
-      <section class="judul-bawah my-4">
-        <h1>Peminjaman Hari ini</h1>
-      </section>
+            <div class="collapse navbar-collapse" id="navmenu">
+                <!-- Center/Right Links -->
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link {{ Route::is('pengurus.dashboard') ? 'active' : '' }}" href="{{ route('pengurus.dashboard') }}">Beranda</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ Route::is('pengurus.fasilitas') ? 'active' : '' }}" href="{{ route('pengurus.fasilitas') }}">Peminjaman Fasilitas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ Route::is('pengurus.riwayat') ? 'active' : '' }}" href="{{ route('pengurus.riwayat') }}">Riwayat Peminjaman</a>
+                    </li>
+                
+                    <!-- Separation for User Config -->
+                    <li class="nav-item ms-lg-4 d-flex align-items-center">
+                        <div class="dropdown">
+                            <!-- User Button with Full Image Fix -->
+                            <button class="user-profile-btn d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img src="{{ asset('aset/logo.png') }}" alt="User" style="max-height: 40px; width: auto;">
+                                <div class="text-start lh-1">
+                                    <div class="fw-bold text-dark" style="font-size: 0.9rem;">Pengurus</div>
+                                    <small class="text-muted" style="font-size: 0.75rem;">Pengurus Side</small>
+                                </div>
+                                <i class="bi bi-chevron-down ms-1 text-muted small"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-4 mt-2 p-2" style="min-width: 220px;">
+                                <li>
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item text-danger fw-bold py-2 fs-6 rounded-3 d-flex align-items-center justify-content-center gap-2">
+                                            <i class="bi bi-box-arrow-right fs-5"></i>
+                                            Keluar
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-      <div class="table-responsive">
-        <table class="table table-striped table-hover table-bordered">
-          <thead>
-            <tr>
-              <th>No</th>
-              <th>Nama Peminjam</th>
-              <th>Waktu Pengambilan</th>
-              <th>Waktu Pengembalian</th>
-              <th>Fasilitas</th>
-              <th>Sudah Ambil</th>
-              <th>Sudah Kembali</th>
-            </tr>
-          </thead>
-          <tbody>
-            @forelse($data as $d)
-              <tr wire:key="{{ $d->id }}">
-                <td>{{ $loop->iteration }}</td>
-                <td>{{ $d->borrower_name }}</td>
-                <td>
-                   {{ $d->loan_date_start ? $d->loan_date_start->format('d M Y | H:i') : '-' }}
-                </td>
-                <td>
-                   {{ $d->loan_date_end ? $d->loan_date_end->format('d M Y | H:i') : '-' }}
-                </td>
-                <td>
-                   {{ $d->items->pluck('name')->join(', ') }}
-                </td>
-                <td>
-                   <input type="checkbox" 
-                          wire:click="toggleStatus({{ $d->id }}, 'ambil')"
-                          {{ optional($d->loanRecord)->picked_up_at ? 'checked' : '' }}>
-                </td>
-                <td>
-                   <input type="checkbox" 
-                          wire:click="toggleStatus({{ $d->id }}, 'kembali')"
-                          wire:confirm="Apakah fasilitasnya sudah kembali?"
-                          {{ optional($d->loanRecord)->returned_at ? 'checked' : '' }}>
-                </td>
-              </tr>
-            @empty
-              <tr><td colspan="7" class="text-center">Tidak ada peminjaman hari ini.</td></tr>
-            @endforelse
-          </tbody>
-        </table>
-      </div>
-      
-      <div class="lihat-link">
-        <a href="{{ route('pengurus.fasilitas') }}" class="link-success text-decoration-none fw-bold">Lihat Selengkapnya &raquo;</a>
-      </div>
+    <!-- CONTENT CONTAINER -->
+    <div class="container pb-5">
+        <!-- HERO SECTION -->
+        <style>
+            .hero-section-bg {
+                /* Gradient from top (transparent) to bottom (white) to reveal image top and make text readable at bottom */
+                background-image: url("{{ asset('aset/gedung.png') }}");
+                background-size: cover;
+                background-position: center -80px; /* Shifts image up to move 'Syamsul Ulum' higher */
+                border-radius: 20px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+                padding: 4rem 3rem;
+                min-height: 380px; 
+                display: flex;
+                align-items: flex-end; /* Align text to bottom */
+                justify-content: center; /* Center text horizontally */
+                margin-bottom: 2rem;
+                text-align: center;
+            }
+        </style>
+
+        <section class="hero-section-bg mb-5 mt-4">
+            <div class="col-lg-8">
+                <p class="hero-subtitle mb-0 fw-medium mx-auto" style="font-size: 1.25rem; color: #333;">
+                    Satu langkah menuju <span class="highlight">kemudahan beraktivitas</span> di MSU.<br>
+                    Semua urusan peminjaman dan perizinan kini bisa dilakukan secara online.
+                </p>
+            </div>
+        </section>
+
+        <!-- DATA SECTION -->
+        <section>
+            <h3 class="section-title">Peminjaman Hari Ini</h3>
+
+            @if($data->isEmpty())
+                <!-- EMPTY STATE (Exact Match) -->
+                <div class="empty-state-card text-center">
+                    <div class="mb-3">
+                        <i class="bi bi-calendar-event text-success" style="font-size: 4rem; opacity: 0.6;"></i>
+                    </div>
+                    <h5 class="text-secondary fw-normal mb-1">Data peminjaman hari ini akan muncul di sini.</h5>
+                    <p class="text-muted small mb-4">Silakan cek menu Peminjaman Fasilitas untuk detail lengkap.</p>
+                    
+                    <a href="{{ route('pengurus.fasilitas') }}" class="btn btn-success rounded-pill px-4 py-2 fw-semibold shadow-sm">
+                        Lihat Semua Peminjaman
+                    </a>
+                </div>
+            @else
+                <!-- TABLE WITH DATA (Preserved) -->
+                <div class="table-scroll-container">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="text-center">
+                        <tr>
+                            <th>NO</th>
+                            <th class="text-center">NAMA PEMINJAM</th>
+                            <th>WAKTU AMBIL</th>
+                            <th>WAKTU KEMBALI</th>
+                            <th>FASILITAS</th>
+                            <th>SUDAH AMBIL</th>
+                            <th>SUDAH KEMBALI</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach($data as $d)
+                            <tr wire:key="{{ $d->id }}">
+                                <td class="text-center text-muted">{{ $loop->iteration }}</td>
+                                <td class="fw-semibold text-center">{{ $d->borrower_name }}</td>
+                                <td class="text-center text-secondary">
+                                    {{ $d->loan_date_start ? $d->loan_date_start->format('d M Y | H:i') : '-' }}
+                                </td>
+                                <td class="text-center text-secondary">
+                                    {{ $d->loan_date_end ? $d->loan_date_end->format('d M Y | H:i') : '-' }}
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-light text-dark border fw-normal">
+                                        {{ $d->items->pluck('name')->join(', ') }}
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <div class="d-flex justify-content-center">
+                                        <input class="form-check-input" type="checkbox" style="width: 1.2em; height: 1.2em;"
+                                               wire:click="toggleStatus({{ $d->id }}, 'ambil')"
+                                            {{ optional($d->loanRecord)->picked_up_at ? 'checked' : '' }}>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <div class="d-flex justify-content-center">
+                                        <input class="form-check-input" type="checkbox" style="width: 1.2em; height: 1.2em;"
+                                               wire:click="toggleStatus({{ $d->id }}, 'kembali')"
+                                               wire:confirm="Apakah fasilitasnya sudah kembali?"
+                                            {{ optional($d->loanRecord)->returned_at ? 'checked' : '' }}>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="mt-4 text-center">
+                    <a href="{{ route('pengurus.fasilitas') }}" class="btn btn-outline-success rounded-pill px-4">
+                        Lihat Selengkapnya <i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            @endif
+        </section>
     </div>
 
     @push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     @endpush
 </div>
