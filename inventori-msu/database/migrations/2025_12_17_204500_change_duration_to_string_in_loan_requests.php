@@ -11,11 +11,14 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('loan_requests', function (Blueprint $table) {
-            if (!Schema::hasColumn('loan_requests', 'start_time')) {
-                $table->time('start_time')->nullable()->after('loan_date_end');
+            // Drop description as it is replaced/merged into duration
+            if (Schema::hasColumn('loan_requests', 'description')) {
+                $table->dropColumn('description');
             }
-            if (!Schema::hasColumn('loan_requests', 'duration')) {
-                $table->integer('duration')->nullable()->after('start_time'); // dalam jam
+            
+            // Change duration to string to hold text like "Pagi (06.00 - 12.00)"
+            if (Schema::hasColumn('loan_requests', 'duration')) {
+                $table->string('duration')->change();
             }
         });
     }
@@ -26,7 +29,8 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::table('loan_requests', function (Blueprint $table) {
-            $table->dropColumn(['start_time', 'duration']);
+            $table->text('description')->nullable();
+            $table->integer('duration')->change();
         });
     }
 };

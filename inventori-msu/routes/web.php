@@ -97,3 +97,22 @@ Route::prefix('pengurusinventoryMSU')->name('pengurus.')->middleware(['auth'])->
     Route::get('/peminjaman-fasilitas', \App\Livewire\Pengurus\PeminjamanFasilitas::class)->name('fasilitas');
     Route::get('/riwayat', \App\Livewire\Pengurus\Riwayat::class)->name('riwayat');
 });
+
+// =====================
+// API CART (SESSION BASED FOR FE GUEST)
+// =====================
+Route::prefix('api/cart')->group(function() {
+    Route::get('/', [\App\Http\Controllers\Api\CartController::class, 'index']);
+    Route::post('/add', [\App\Http\Controllers\Api\CartController::class, 'add']);
+    Route::post('/update', [\App\Http\Controllers\Api\CartController::class, 'update']);
+    Route::post('/clear', [\App\Http\Controllers\Api\CartController::class, 'clear']);
+});
+
+// =====================
+// API BOOKING (SESSION BASED FOR FE GUEST)
+// =====================
+Route::prefix('api/peminjaman')->group(function() {
+    Route::get('/', [\App\Http\Controllers\Api\LoanController::class, 'index']);
+    Route::post('/', [\App\Http\Controllers\Api\LoanController::class, 'store']);
+    Route::get('/check', [\App\Http\Controllers\Api\LoanController::class, 'check']);
+});
