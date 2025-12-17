@@ -11,12 +11,10 @@
             height: auto;
             box-shadow: none !important;
             color: #111 !important;
-            /* titik 3 hitam */
             opacity: .85;
             transition: all .2s ease;
             line-height: 1;
             z-index: 5;
-            /* biar di atas gambar */
             border-radius: 8px;
         }
 
@@ -24,7 +22,6 @@
             opacity: 1;
             transform: scale(1.08);
             background: rgba(255, 255, 255, 0.35);
-            /* hover tipis aja biar kebaca */
             backdrop-filter: blur(2px);
         }
 
@@ -55,10 +52,10 @@
     </style>
 @endpush
 
-
 <div>
     {{-- HERO --}}
-    <section class="d-flex justify-content-center align-items-start position-relative w-100" style="padding-top:55px;height:70vh;background-image:url('{{ asset('aset/ramadhan.png') }}');
+    <section class="d-flex justify-content-center align-items-start position-relative w-100"
+        style="padding-top:55px;height:70vh;background-image:url('{{ asset('aset/ramadhan.png') }}');
         background-size:contain;background-position:center;background-repeat:no-repeat;">
         <img src="{{ asset('aset/MSU.png') }}" alt="Syamsul Ulum" class="img-fluid shadow-strong rounded-3 mt-5"
             style="height:230px;width:1100px;z-index:2" />
@@ -73,16 +70,20 @@
             </div>
         @endif
 
-        {{-- SEARCH --}}
-        <form wire:submit.prevent class="row align-items-center justify-content-center gx-2 gy-2">
+        {{-- SEARCH (tanpa tombol X; kalau input dikosongkan, otomatis balik normal) --}}
+        <form wire:submit.prevent="search" class="row align-items-center justify-content-center gx-2 gy-2">
             <div class="col-12 col-md-6 col-lg-5">
                 <div class="input-group">
-                    <input wire:model.debounce.500ms="q" type="text" class="form-control rounded-start-pill py-2"
+                    <input wire:model.debounce.500ms="q" type="text" class="form-control rounded-pill py-2"
                         placeholder="Cari barang atau fasilitas..." />
-                    <button class="btn btn-success rounded-end-pill px-4" type="button">
+
+                    <button class="btn btn-success rounded-pill px-4 ms-2" type="submit"
+                        style="background-color:#0b492c;border-color:#0b492c">
                         <i class="bi bi-search me-1"></i>Cari
                     </button>
                 </div>
+
+
             </div>
         </form>
 
@@ -151,7 +152,9 @@
                         </div>
                     </div>
                 @empty
-                    <p class="text-center text-muted mt-4">Belum ada data barang.</p>
+                    <p class="text-center text-muted mt-4">
+                        {{ $q ? 'Tidak ada barang yang cocok dengan pencarian.' : 'Belum ada data barang.' }}
+                    </p>
                 @endforelse
             </div>
         </section>
@@ -198,7 +201,9 @@
                         </div>
                     </div>
                 @empty
-                    <p class="text-center text-muted mt-4">Belum ada data fasilitas/ruangan.</p>
+                    <p class="text-center text-muted mt-4">
+                        {{ $q ? 'Tidak ada ruangan/fasilitas yang cocok dengan pencarian.' : 'Belum ada data fasilitas/ruangan.' }}
+                    </p>
                 @endforelse
             </div>
         </section>
@@ -224,8 +229,7 @@
 
                         <div class="mb-3">
                             <label class="form-label">Deskripsi</label>
-                            <textarea class="form-control" wire:model.defer="editDescription" rows="3"
-                                required></textarea>
+                            <textarea class="form-control" wire:model.defer="editDescription" rows="3" required></textarea>
                         </div>
 
                         {{-- kalau barang tampil stok --}}
@@ -237,8 +241,7 @@
                         @else
                             <div class="mb-3">
                                 <label class="form-label">Kapasitas (orang)</label>
-                                <input type="number" class="form-control" wire:model.defer="editCapacity" min="0"
-                                    required />
+                                <input type="number" class="form-control" wire:model.defer="editCapacity" min="0" required />
                             </div>
                         @endif
                     </div>
@@ -277,7 +280,6 @@
         </div>
     </div>
 </div>
-
 
 @push('scripts')
     <script>
