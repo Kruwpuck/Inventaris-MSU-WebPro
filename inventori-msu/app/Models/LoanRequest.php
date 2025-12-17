@@ -15,21 +15,23 @@ class LoanRequest extends Model
         'proposal_path',          // ✅ tambah ini
         'loan_date_start',
         'loan_date_end',
+        'start_time', // Jam Mulai
+        'duration',   // Durasi (integer)
         'status',
         'rejection_reason',
     ];
 
     protected $casts = [
         'loan_date_start' => 'datetime',
-        'loan_date_end'   => 'datetime',
+        'loan_date_end' => 'datetime',
     ];
 
     // daftar inventory yang dipinjam + qty di pivot
     public function items()
     {
         return $this->belongsToMany(Inventory::class, 'loan_items')
-                    ->withPivot('quantity')
-                    ->withTimestamps();
+            ->withPivot('quantity')
+            ->withTimestamps();
     }
 
     // akses pivot loan_items langsung (lebih fleksibel)
