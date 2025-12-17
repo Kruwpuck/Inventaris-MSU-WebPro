@@ -12,6 +12,8 @@ class Dashboard extends Component
         if (!$request)
             return;
 
+        $oldStatus = $request->status;
+
         $record = $request->loanRecord()->firstOrCreate([
             'loan_request_id' => $request->id
         ]);
@@ -39,6 +41,16 @@ class Dashboard extends Component
             $request->status = 'approved';
         }
         $request->save();
+
+        // Send Email if Approved (and wasn't before)
+        // We consider 'handed_over' as approved too if it jumped straight to it
+        if (in_array($request->status, ['approved', 'handed_over']) && !in_array($oldStatus, ['approved', 'handed_over'])) {
+             try {
+                \Illuminate\Support\Facades\Mail::to($request->borrower_email)->send(new \App\Mail\LoanApproved($request));
+             } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('Email approval gagal: ' . $e->getMessage());
+             }
+        }
 
         session()->flash('success', 'Status berhasil diperbarui!');
     }
