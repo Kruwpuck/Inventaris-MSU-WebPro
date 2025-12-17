@@ -113,7 +113,7 @@ class Cart extends Component
         }
 
         // Using DB transaction
-        \Illuminate\Support\Facades\DB::transaction(function () use ($cart, $path, $startDateTime, $endDateTime, $fullReason) {
+        $loan = \Illuminate\Support\Facades\DB::transaction(function () use ($cart, $path, $startDateTime, $endDateTime, $fullReason) {
 
             $loan = \App\Models\LoanRequest::create([
                 'borrower_name' => $this->borrower_name,
@@ -135,7 +135,17 @@ class Cart extends Component
                     'quantity' => (int) $cartItem['quantity']
                 ]);
             }
+
+            return $loan;
         });
+
+        // Send Email
+        try {
+            \Illuminate\Support\Facades\Mail::to($this->borrower_email)->send(new \App\Mail\LoanSubmitted($loan));
+        } catch (\Exception $e) {
+            // Log error but allow flow to continue
+            \Illuminate\Support\Facades\Log::error('Email gagal dikirim: ' . $e->getMessage());
+        }
 
         $this->clearCart();
 
