@@ -233,9 +233,13 @@
                                         {{ $d->loan_date_end ? $d->loan_date_end->format('d M Y | H:i') : '-' }}
                                     </td>
                                     <td>
-                                        <span class="badge bg-light text-dark border fw-normal">
-                                            {{ $d->items->pluck('name')->join(', ') }}
-                                        </span>
+                                        <div class="d-flex flex-column gap-1">
+                                            @foreach($d->items as $item)
+                                                <span class="text-secondary small fw-medium" style="font-size: 0.9rem;">
+                                                    &bull; {{ $item->name }} <span class="text-muted">(x{{ $item->pivot->quantity ?? 1 }})</span>
+                                                </span>
+                                            @endforeach
+                                        </div>
                                     </td>
                                     <td class="text-center">
                                         <input class="form-check-input" type="checkbox" style="width: 1.2em; height: 1.2em; border-color: #dee2e6;"
