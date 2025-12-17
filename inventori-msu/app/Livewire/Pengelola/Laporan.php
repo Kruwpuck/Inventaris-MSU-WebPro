@@ -13,7 +13,7 @@ class Laporan extends Component
     // filter state (tetap dipakai JS di blade)
     public $vPeriode = 'all';   // 2w | 1m | prev1m | all
     public $vKategori = 'all';  // all | Barang | Ruangan
-    public $vStatus = 'all';  // all | Sedang Dipinjam | Sudah Kembali | Terlambat
+    public $vStatus = 'all';    // all | Sedang Dipinjam | Sudah Kembali | Terlambat | Siap Diambil
 
     public function render()
     {
@@ -37,14 +37,15 @@ class Laporan extends Component
 
                 switch ($lr->status) {
                     case 'returned':
-                        // Cek status sumbission
+                        // (NOTE) di laporan kamu sebelumnya ada "Menunggu Submit".
+                        // Karena dropdown kamu TIDAK punya itu, biarkan tetap mapping,
+                        // nanti akan ter-filter dan tidak akan tampil.
                         if ($lr->loanRecord && $lr->loanRecord->is_submitted) {
                             $statusUi = 'Sudah Kembali';
                         } else {
                             $statusUi = 'Menunggu Submit';
                         }
 
-                        // Coba ambil dari loanRecord kalau ada loaded
                         if ($lr->loanRecord && $lr->loanRecord->returned_at) {
                             $tglKembali = Carbon::parse($lr->loanRecord->returned_at)->format('m/d/Y');
                         } else {
@@ -53,11 +54,7 @@ class Laporan extends Component
                         break;
 
                     case 'handed_over':
-                        if ($today->gt($jatuhTempo)) {
-                            $statusUi = 'Terlambat';
-                        } else {
-                            $statusUi = 'Sedang Dipinjam';
-                        }
+                        $statusUi = $today->gt($jatuhTempo) ? 'Terlambat' : 'Sedang Dipinjam';
                         break;
 
                     case 'approved':
@@ -73,28 +70,28 @@ class Laporan extends Component
                         break;
 
                     default:
-                        // Fallback logic lama jika status null / lain
-                        if ($today->gt($jatuhTempo)) {
-                            $statusUi = 'Terlambat';
-                        } else {
-                            $statusUi = 'Sedang Dipinjam';
-                        }
+                        $statusUi = $today->gt($jatuhTempo) ? 'Terlambat' : 'Sedang Dipinjam';
+                        break;
                 }
 
                 $kategoriUi = $inv->category === 'ruangan' ? 'Ruangan' : 'Barang';
 
                 return (object) [
-                    'nama_item' => $inv->name,
-                    'kategori' => $kategoriUi,
-                    'peminjam' => $lr->borrower_name,
-                    'tgl_pinjam' => $tglPinjam->format('m/d/Y'),
+                    'nama_item'   => $inv->name,
+                    'kategori'    => $kategoriUi,
+                    'peminjam'    => $lr->borrower_name,
+                    'tgl_pinjam'  => $tglPinjam->format('m/d/Y'),
                     'jatuh_tempo' => $jatuhTempo->format('m/d/Y'),
                     'tgl_kembali' => $tglKembali,
-                    'jumlah' => (int) ($inv->pivot->quantity ?? 1),
-                    'status' => $statusUi,
+                    'jumlah'      => (int) ($inv->pivot->quantity ?? 1),
+                    'status'      => $statusUi,
                 ];
             });
         });
+
+        // ✅ FILTER: hanya status yang ada di dropdown laporan
+        $allowedStatuses = ['Sedang Dipinjam', 'Sudah Kembali', 'Terlambat', 'Siap Diambil'];
+        $laporans = $laporans->filter(fn ($r) => in_array($r->status, $allowedStatuses, true))->values();
 
         // optional: search backend biar list gak terlalu banyak
         if ($this->q) {
