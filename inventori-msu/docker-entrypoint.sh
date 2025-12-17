@@ -26,6 +26,18 @@ php artisan migrate:fresh --seed --force
 # echo "Running seeders..."
 # php artisan db:seed --force
 
+# Fix permissions for storage and cache (Root Cause Fix)
+echo "Fixing permissions..."
+# Ensure directories exist
+mkdir -p /var/www/storage/framework/views
+mkdir -p /var/www/storage/framework/sessions
+mkdir -p /var/www/storage/framework/cache
+mkdir -p /var/www/bootstrap/cache
+
+# Set ownership and permissions
+chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache || true
+chmod -R 775 /var/www/storage /var/www/bootstrap/cache || true
+
 # Link storage directory
 echo "Linking storage directory..."
 php artisan storage:link
