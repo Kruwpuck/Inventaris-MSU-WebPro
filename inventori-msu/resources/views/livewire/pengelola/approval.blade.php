@@ -119,9 +119,10 @@
           <thead>
             <tr>
               <th>ID</th>
+              <th class="text-center">Profil</th>
               <th>Peminjam</th>
               <th>Barang/Fasilitas</th>
-              <th>Tgl Pinjam</th>
+              <th>Jadwal Peminjaman</th>
               <th>Status</th>
               <th>Aksi</th>
               <th>Proposal</th>
@@ -130,13 +131,23 @@
           <tbody>
             @forelse($pendingRequests as $req)
               @php
-                $start = optional($req->loan_date_start)->format('Y-m-d') ?? '-';
+                $start = optional($req->loan_date_start)->format('d M Y') ?? '-';
+                $end   = optional($req->loan_date_end)->format('d M Y') ?? '-';
                 $proposalLink = $req->proposal_path ? asset('storage/' . $req->proposal_path) : '#';
               @endphp
 
               <tr wire:key="pending-{{ $req->id }}">
                 <td><strong>P{{ str_pad($req->id, 3, '0', STR_PAD_LEFT) }}</strong></td>
-                <td>{{ $req->borrower_name }}</td>
+                <td class="text-center">
+                    <button class="btn btn-sm btn-light border btn-icon mx-auto shadow-sm" style="width:32px;height:32px;" 
+                            wire:click="showBorrowerDetails({{ $req->id }})" title="Lihat Profil Peminjam">
+                        <i class="bi bi-person-lines-fill text-primary"></i>
+                    </button>
+                </td>
+                <td>
+                    <div class="fw-bold">{{ $req->borrower_name }}</div>
+                    <div class="small text-muted">{{ $req->department ?? 'Umum' }}</div>
+                </td>
                 <td>
                   <ul class="items-list">
                     @foreach($req->items as $item)
@@ -144,7 +155,13 @@
                     @endforeach
                   </ul>
                 </td>
-                <td>{{ $start }}</td>
+                <td>
+                    <div class="d-flex flex-column" style="font-size: 0.85rem;">
+                        <span class="fw-semibold text-dark">{{ $start }} <span class="text-muted small">({{ $req->start_time }})</span></span>
+                        <span class="text-muted small my-0" style="line-height:1;">s/d</span>
+                        <span class="fw-semibold text-dark">{{ $end }} <span class="text-muted small">({{ $req->end_time }})</span></span>
+                    </div>
+                </td>
                 <td><span class="badge-box badge-pending">Pending</span></td>
                 <td>
                   <div class="d-flex flex-wrap gap-2">
@@ -167,7 +184,7 @@
                 </td>
               </tr>
             @empty
-              <tr><td colspan="7" class="p-5 text-center text-muted">Tidak ada pengajuan pending.</td></tr>
+              <tr><td colspan="8" class="p-5 text-center text-muted">Tidak ada pengajuan pending.</td></tr>
             @endforelse
           </tbody>
         </table>
@@ -188,8 +205,10 @@
           <thead>
             <tr>
               <th>ID</th>
+              <th class="text-center">Profil</th>
               <th>Peminjam</th>
               <th>Item</th>
+              <th>Jadwal</th>
               <th>Status</th>
               <th>Catatan</th>
               <th class="text-center">Cetak</th>
@@ -199,6 +218,12 @@
             @forelse($historyRequests as $hist)
               <tr wire:key="hist-{{ $hist->id }}">
                 <td><strong>P{{ str_pad($hist->id, 3, '0', STR_PAD_LEFT) }}</strong></td>
+                <td class="text-center">
+                    <button class="btn btn-sm btn-light border btn-icon mx-auto shadow-sm" style="width:32px;height:32px;" 
+                            wire:click="showBorrowerDetails({{ $hist->id }})" title="Lihat Profil Peminjam">
+                        <i class="bi bi-person-lines-fill text-primary"></i>
+                    </button>
+                </td>
                 <td>{{ $hist->borrower_name }}</td>
                 <td>
                   <ul class="items-list">
@@ -206,6 +231,17 @@
                       <li>- {{ $item->name }} (x{{ $item->pivot->quantity ?? 1 }})</li>
                     @endforeach
                   </ul>
+                </td>
+                <td>
+                    @php
+                        $hStart = optional($hist->loan_date_start)->format('d M Y') ?? '-';
+                        $hEnd   = optional($hist->loan_date_end)->format('d M Y') ?? '-';
+                    @endphp
+                    <div class="d-flex flex-column" style="font-size: 0.85rem;">
+                        <span class="fw-semibold text-dark">{{ $hStart }} <span class="text-muted small">({{ $hist->start_time }})</span></span>
+                        <span class="text-muted small my-0" style="line-height:1;">s/d</span>
+                        <span class="fw-semibold text-dark">{{ $hEnd }} <span class="text-muted small">({{ $hist->end_time }})</span></span>
+                    </div>
                 </td>
                 <td>
                   @if($hist->status == 'approved')
@@ -222,7 +258,7 @@
                 </td>
               </tr>
             @empty
-              <tr><td colspan="6" class="p-5 text-center text-muted">Belum ada riwayat.</td></tr>
+              <tr><td colspan="8" class="p-5 text-center text-muted">Belum ada riwayat.</td></tr>
             @endforelse
           </tbody>
         </table>
@@ -423,6 +459,83 @@
     </div>
   </div>
 
+  {{-- MODAL DETAIL PEMINJAM --}}
+  <div class="modal fade" id="borrowerModal" tabindex="-1" wire:ignore.self>
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg" style="border-radius:16px; overflow:hidden;">
+        @if($selectedBorrower)
+        <div class="modal-header border-0 bg-primary text-white">
+          <h5 class="modal-title fw-bold">Detail Peminjam</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-4">
+            <div class="text-center mb-4">
+                @if($selectedBorrower->ktp_path)
+                    <div class="mb-3">
+                        <img src="{{ asset('storage/'.$selectedBorrower->ktp_path) }}" alt="Foto KTP" 
+                             class="img-fluid rounded shadow-sm border" 
+                             style="max-height: 200px; object-fit: cover;">
+                        <div class="small text-muted mt-1 fst-italic">Foto Identitas (KTP)</div>
+                    </div>
+                @else
+                    <div class="bg-light rounded d-flex align-items-center justify-content-center mx-auto mb-3 text-muted border" style="width:100%; height:150px;">
+                        <i class="bi bi-person-badge fs-1"></i>
+                        <span class="ms-2">Tidak ada foto KTP</span>
+                    </div>
+                @endif
+            </div>
+
+            <div class="d-grid gap-3">
+                <div class="bg-light p-3 rounded border">
+                    <label class="small text-muted text-uppercase fw-bold mb-1" style="font-size:0.7rem;">Nama Lengkap (Penanggung Jawab)</label>
+                    <div class="fw-bold text-dark fs-5">{{ $selectedBorrower->borrower_name }}</div>
+                </div>
+
+                <div class="row g-2">
+                    <div class="col-6">
+                        <div class="bg-light p-3 rounded border h-100">
+                            <label class="small text-muted text-uppercase fw-bold mb-1" style="font-size:0.7rem;">NIM / NIP</label>
+                            <div class="fw-semibold text-dark">{{ $selectedBorrower->nim_nip ?? '-' }}</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                         <div class="bg-light p-3 rounded border h-100">
+                            <label class="small text-muted text-uppercase fw-bold mb-1" style="font-size:0.7rem;">Unit / Departemen</label>
+                            <div class="fw-semibold text-dark">{{ $selectedBorrower->department ?? '-' }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-light p-3 rounded border">
+                    <label class="small text-muted text-uppercase fw-bold mb-1" style="font-size:0.7rem;">Kontak</label>
+                    <div class="d-flex flex-column gap-2">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-envelope me-2 text-secondary"></i>
+                            <span>{{ $selectedBorrower->borrower_email }}</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-whatsapp me-2 text-success"></i>
+                            <span>{{ $selectedBorrower->borrower_phone }}</span>
+                            <a href="https://wa.me/{{ preg_replace('/^0/', '62', $selectedBorrower->borrower_phone) }}" target="_blank" class="btn btn-sm btn-outline-success py-0 px-2 ms-auto rounded-pill" style="font-size:0.75rem;">Chat</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="modal-footer border-0 pt-0">
+          <button type="button" class="btn btn-secondary w-100 rounded-pill" data-bs-dismiss="modal">Tutup</button>
+        </div>
+        @else
+        <div class="modal-body text-center py-5">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2 text-muted">Memuat...</p>
+        </div>
+        @endif
+      </div>
+    </div>
+  </div>
+
 </div>
 
 @push('scripts')
@@ -440,6 +553,10 @@
     const printEl = document.getElementById('modalCetak');
     const printModal = printEl ? new bootstrap.Modal(printEl) : null;
 
+    // Borrower Modal
+    const borrowerEl = document.getElementById('borrowerModal');
+    const borrowerModal = borrowerEl ? new bootstrap.Modal(borrowerEl) : null;
+
     // Events
     Livewire.on('open-approve-modal', () => approveModal && approveModal.show());
     Livewire.on('close-approve-modal', () => approveModal && approveModal.hide());
@@ -448,6 +565,8 @@
     Livewire.on('close-reject-modal', () => rejectionModal && rejectionModal.hide());
 
     Livewire.on('open-print-modal', () => printModal && printModal.show());
+
+    Livewire.on('open-borrower-modal', () => borrowerModal && borrowerModal.show());
   });
 </script>
 @endpush
