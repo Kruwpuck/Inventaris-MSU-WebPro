@@ -4,15 +4,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>{{ $title ?? 'Masjid Syamsul Ulum' }}</title>
+  <link rel="icon" href="{{ asset('fe-guest/loogoo.png') }}" type="image/x-icon">
 
-  <!-- Bootstrap 5 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Bootstrap Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-  <!-- Inter font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
-  <!-- Custom CSS -->
   @stack('styles')
   @livewireStyles
 </head>
@@ -23,7 +21,7 @@
   <nav class="navbar navbar-expand-lg navbar-masjid sticky-top">
     <div class="container">
       <a class="navbar-brand d-flex align-items-center gap-2" href="{{ route('guest.home') }}">
-        <img src="{{ asset('assets/loogoo.png') }}" alt="Logo" class="logo">
+        <img src="{{ asset('fe-guest/loogoo.png') }}" alt="Logo" class="logo">
       </a>
 
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain"
@@ -33,18 +31,13 @@
 
       <div class="collapse navbar-collapse justify-content-end" id="navMain">
         <ul class="navbar-nav align-items-lg-center gap-lg-4">
-          <li class="nav-item"><a class="nav-link {{ request()->routeIs('guest.home') ? 'active' : '' }}"
-              href="{{ route('guest.home') }}">Beranda</a></li>
-          <li class="nav-item"><a class="nav-link {{ request()->routeIs('guest.catalogue.barang') ? 'active' : '' }}"
-              href="{{ route('guest.catalogue.barang') }}">Pinjam Barang</a></li>
-          <li class="nav-item"><a class="nav-link {{ request()->routeIs('guest.catalogue.ruangan') ? 'active' : '' }}"
-              href="{{ route('guest.catalogue.ruangan') }}">Pinjam Fasilitas</a></li>
-          <li class="nav-item msu-cart-entry">
-            <a class="nav-link position-relative {{ request()->routeIs('guest.cart') ? 'active' : '' }}"
-              href="{{ route('guest.cart') }}">
-              <i class="bi bi-cart"></i>
-              <!-- Livewire Cart Counter preserved but we might want the JS badge too -->
-              <livewire:borrower.cart-counter />
+          <li class="nav-item"><a class="nav-link {{ request()->routeIs('guest.home') ? 'active' : '' }}" href="{{ route('guest.home') }}">Beranda</a></li>
+          <li class="nav-item"><a class="nav-link {{ request()->routeIs('guest.catalogue.barang') ? 'active' : '' }}" href="{{ route('guest.catalogue.barang') }}">Pinjam Barang</a></li>
+          <li class="nav-item"><a class="nav-link {{ request()->routeIs('guest.catalogue.ruangan') ? 'active' : '' }}" href="{{ route('guest.catalogue.ruangan') }}">Pinjam Fasilitas</a></li>
+          <li class="nav-item d-flex align-items-center msu-cart-entry">
+            <a class="nav-link position-relative" href="{{ route('guest.cart') }}" aria-label="Buka keranjang">
+              <i class="bi bi-bag-check"></i>
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger msu-cart-badge">0</span>
             </a>
           </li>
         </ul>
@@ -54,13 +47,15 @@
 
   {{ $slot }}
 
-  <!-- FAB Checkout (Global) -->
-  <a href="{{ route('guest.cart') }}" class="fab-checkout" aria-label="Checkout" style="text-decoration: none;">
+  <!-- FAB Checkout -->
+  @unless(request()->routeIs('guest.cart') || request()->routeIs('guest.success'))
+  <a href="{{ route('guest.cart') }}" id="fabCheckout" class="fab-checkout" aria-label="Checkout" style="text-decoration:none">
     <i class="bi bi-bag-check"></i>
-    <livewire:borrower.cart-counter type="fab" />
+    <span id="fabCount" class="fab-count">0</span>
   </a>
+  @endunless
 
-  <!-- Modal Konfirmasi (Global) -->
+  <!-- Modal Konfirmasi -->
   <div class="modal fade" id="confirmAddModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content rounded-4">
@@ -92,21 +87,15 @@
     </div>
   </div>
 
-  <!-- Toast Container -->
-  <div id="toastStack" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 2000;">
-    @if (session()->has('success'))
-      <div class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive"
-        aria-atomic="true">
-        <div class="d-flex">
-          <div class="toast-body">
-            <i class="bi bi-check-circle me-2"></i> {{ session('success') }}
-          </div>
-          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
-            aria-label="Close"></button>
-        </div>
-      </div>
-    @endif
-  </div>
+  <!-- FLOATING CONTACT (WA) -->
+  @unless(request()->routeIs('guest.success'))
+  <a href="https://wa.me/6288279829071" target="_blank" id="fabContact" class="fab-contact" aria-label="Hubungi Admin">
+    <i class="bi bi-whatsapp"></i>
+  </a>
+  @endunless
+
+  <!-- Toast -->
+  <div id="toastStack" class="toast-container position-fixed top-0 end-0 p-3" style="z-index:2000"></div>
 
   <!-- FOOTER -->
   <footer class="site-footer mt-5">
@@ -114,12 +103,12 @@
       <div class="row g-4 align-items-start">
         <div class="col-md-6">
           <div class="d-flex align-items-center gap-2 mb-2">
-            <img src="{{ asset('assets/loogoo.png') }}" alt="Logo MSU" class="logo footer-logo">
+            <img src="{{ asset('fe-guest/loogoo.png') }}" alt="Logo MSU" class="logo footer-logo">
             <strong>Masjid Syamsul Ulum</strong>
           </div>
           <div class="text-muted small">
             Jl. Telekomunikasi No.1, Bandung • Jawa Barat, Indonesia<br />
-            Telp: 08xx-xxxx-xxxx • Email: msu@example.ac.id
+            Telp: +62 882-7982-9071 • Email: msu.telyu@gmail.com
           </div>
         </div>
         <div class="col-md-6 text-md-end">
@@ -129,14 +118,9 @@
     </div>
   </footer>
 
-  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- We need cart.js for the MSUCart logic defined in main.js to work properly if it relies on it, or main.js has everything? 
-       In the viewer, main.js has references to MSUCart but doesn't define it. cart.js defines it. 
-       I need to copy cart.js to public/js/cart.js and include it. -->
-  <!-- cart.js removed as per request for full PHP session -->
-  <!-- <script src="{{ asset('js/cart.js') }}"></script> -->
-  <script src="{{ asset('js/main.js') }}?v=2"></script>
+  <script src="{{ asset('fe-guest/cart.js') }}?v={{ time() }}"></script>
+  <script src="{{ asset('fe-guest/main.js') }}?v={{ time() }}"></script>
   @stack('scripts')
   @livewireScripts
 </body>
