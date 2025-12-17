@@ -32,25 +32,35 @@ class Laporan extends Component
                 $jatuhTempo = Carbon::parse($lr->loan_date_end);
 
                 // ===== map status backend -> UI =====
+                $startTime = $lr->start_time ?? '00:00:00';
+                $endTime   = $lr->end_time ?? '00:00:00';
+
+                // Format: Date | Time
+                // Tgl Pinjam = loan_date_start + start_time
+                $waktuPinjamStr = $tglPinjam->format('m/d/Y') . ' | ' . \Carbon\Carbon::parse($startTime)->format('H:i');
+                
+                // Jatuh Tempo = loan_date_end + end_time
+                $jatuhTempoStr = $jatuhTempo->format('m/d/Y') . ' | ' . \Carbon\Carbon::parse($endTime)->format('H:i');
+
+                // ===== map status backend -> UI =====
                 $statusUi = 'Unknown';
-                $tglKembali = '-';
+                $waktuKembaliStr = '-';
 
                 switch ($lr->status) {
                     case 'returned':
-                        $tglKembali = '-';
+                        $waktuKembaliStr = '-';
                         $actualReturn = null;
 
                         if ($lr->loanRecord && $lr->loanRecord->returned_at) {
                             $actualReturn = Carbon::parse($lr->loanRecord->returned_at);
-                            $tglKembali = $actualReturn->format('m/d/Y');
+                            // Format: Date | Time
+                            $waktuKembaliStr = $actualReturn->format('m/d/Y | H:i');
                         } else {
-                            $tglKembali = $jatuhTempo->format('m/d/Y');
+                            // Fallback if returned but no timestamp (unlikely)
+                            $waktuKembaliStr = $jatuhTempo->format('m/d/Y | H:i'); 
                         }
-
-                        // Logic Refined:
-                        // 1. Not Submitted -> "Sudah Kembali" (ALWAYS)
-                        // 2. Submitted -> Check Late vs On Time
                         
+                        // Status logic remains same
                         if ($lr->loanRecord && $lr->loanRecord->is_submitted) {
                             if ($actualReturn && $actualReturn->gt($jatuhTempo)) {
                                 $statusUi = 'Terlambat';
@@ -61,7 +71,8 @@ class Laporan extends Component
                              $statusUi = 'Sudah Kembali';
                         }
                         break;
-
+                    
+                    // ... other cases (handed_over, etc) - logic unchanged for statusUi mapping ...
                     case 'handed_over':
                         $statusUi = $today->gt($jatuhTempo) ? 'Terlambat' : 'Sedang Dipinjam';
                         break;
@@ -86,14 +97,15 @@ class Laporan extends Component
                 $kategoriUi = $inv->category === 'ruangan' ? 'Ruangan' : 'Barang';
 
                 return (object) [
-                    'nama_item'   => $inv->name,
-                    'kategori'    => $kategoriUi,
-                    'peminjam'    => $lr->borrower_name,
-                    'tgl_pinjam'  => $tglPinjam->format('m/d/Y'),
-                    'jatuh_tempo' => $jatuhTempo->format('m/d/Y'),
-                    'tgl_kembali' => $tglKembali,
-                    'jumlah'      => (int) ($inv->pivot->quantity ?? 1),
-                    'status'      => $statusUi,
+                    'nama_item'    => $inv->name,
+                    'kategori'     => $kategoriUi,
+                    'peminjam'     => $lr->borrower_name,
+                    'waktu_pinjam' => $waktuPinjamStr,
+                    'jatuh_tempo'  => $jatuhTempoStr,
+                    'waktu_kembali'=> $waktuKembaliStr,
+                    'jumlah'       => (int) ($inv->pivot->quantity ?? 1),
+                    'status'       => $statusUi,
+                    'keterangan'   => optional($lr->loanRecord)->notes ?? '-'
                 ];
             });
         });

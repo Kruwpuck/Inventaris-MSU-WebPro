@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="id">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -10,12 +11,13 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
   <link rel="stylesheet" href="ruangan.css">
 </head>
+
 <body>
   <!-- NAVBAR (sama index) -->
   <nav class="navbar navbar-expand-lg navbar-masjid sticky-top">
     <div class="container">
       <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
-        <img src="loogoo.png" alt="Logo" class="logo">
+        <img src="loogoo.png" alt="Logo" class="logo" style="height: 56px;">
       </a>
 
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
@@ -26,7 +28,7 @@
         <ul class="navbar-nav align-items-lg-center gap-lg-4">
           <li class="nav-item"><a class="nav-link" href="index.html#beranda">Beranda</a></li>
           <li class="nav-item"><a class="nav-link" href="barang.html">Pinjam Barang</a></li>
-          <li class="nav-item"><a class="nav-link active" href="ruangan.html">Pinjam Fasilitas</a></li>
+          <li class="nav-item"><a class="nav-link active" href="ruangan.html">Pinjam Ruangan</a></li>
           <!-- Ikon cart disuntik otomatis oleh cart.js -->
         </ul>
       </div>
@@ -50,7 +52,7 @@
       <div class="search-wrap">
         <i class="bi bi-search"></i>
         <input id="searchInput" type="text" class="form-control search-input"
-               placeholder="Cari ruang… (mis. aula, rapat, kelas)">
+          placeholder="Cari ruang… (mis. aula, rapat, kelas)">
         <button id="clearSearch" class="btn btn-clear" type="button" aria-label="Bersihkan">
           <i class="bi bi-x-lg"></i>
         </button>
@@ -81,51 +83,132 @@
       </div>
 
       <!-- 9 ruang lain -->
-      <div class="col reveal-up"><article class="item-card tap-anim"><div class="item-thumb">
-        <img src="plaza.jpeg" alt="Ruang Rapat A"><span class="badge-status">Active</span>
-        <div class="qty-actions"><button class="qty-btn" data-action="inc">−</button><button class="qty-btn" data-action="dec">＋</button></div>
-      </div><div class="item-body"><div class="item-title">Ruang Rapat A</div><div class="item-meta">Tersedia : <span class="sisa">1</span></div></div></article></div>
+      <div class="col reveal-up">
+        <article class="item-card tap-anim">
+          <div class="item-thumb">
+            <img src="plaza.jpeg" alt="Ruang Rapat A"><span class="badge-status">Active</span>
+            <div class="qty-actions"><button class="qty-btn" data-action="inc">−</button><button class="qty-btn"
+                data-action="dec">＋</button></div>
+          </div>
+          <div class="item-body">
+            <div class="item-title">Ruang Rapat A</div>
+            <div class="item-meta">Tersedia : <span class="sisa">1</span></div>
+          </div>
+        </article>
+      </div>
 
-      <div class="col reveal-up"><article class="item-card tap-anim"><div class="item-thumb">
-        <img src="plaza.jpeg" alt="Ruang Rapat B"><span class="badge-status">Active</span>
-        <div class="qty-actions"><button class="qty-btn" data-action="inc">−</button><button class="qty-btn" data-action="dec">＋</button></div>
-      </div><div class="item-body"><div class="item-title">Ruang Rapat B</div><div class="item-meta">Tersedia : <span class="sisa">1</span></div></div></article></div>
+      <div class="col reveal-up">
+        <article class="item-card tap-anim">
+          <div class="item-thumb">
+            <img src="plaza.jpeg" alt="Ruang Rapat B"><span class="badge-status">Active</span>
+            <div class="qty-actions"><button class="qty-btn" data-action="inc">−</button><button class="qty-btn"
+                data-action="dec">＋</button></div>
+          </div>
+          <div class="item-body">
+            <div class="item-title">Ruang Rapat B</div>
+            <div class="item-meta">Tersedia : <span class="sisa">1</span></div>
+          </div>
+        </article>
+      </div>
 
-      <div class="col reveal-up"><article class="item-card tap-anim"><div class="item-thumb">
-        <img src="plaza.jpeg" alt="Ruang Kajian"><span class="badge-status">Active</span>
-        <div class="qty-actions"><button class="qty-btn" data-action="inc">−</button><button class="qty-btn" data-action="dec">＋</button></div>
-      </div><div class="item-body"><div class="item-title">Ruang Kajian</div><div class="item-meta">Tersedia : <span class="sisa">1</span></div></div></article></div>
+      <div class="col reveal-up">
+        <article class="item-card tap-anim">
+          <div class="item-thumb">
+            <img src="plaza.jpeg" alt="Ruang Kajian"><span class="badge-status">Active</span>
+            <div class="qty-actions"><button class="qty-btn" data-action="inc">−</button><button class="qty-btn"
+                data-action="dec">＋</button></div>
+          </div>
+          <div class="item-body">
+            <div class="item-title">Ruang Kajian</div>
+            <div class="item-meta">Tersedia : <span class="sisa">1</span></div>
+          </div>
+        </article>
+      </div>
 
-      <div class="col reveal-up"><article class="item-card tap-anim"><div class="item-thumb">
-        <img src="plaza.jpeg" alt="Ruang Tamu"><span class="badge-status">Active</span>
-        <div class="qty-actions"><button class="qty-btn" data-action="inc">−</button><button class="qty-btn" data-action="dec">＋</button></div>
-      </div><div class="item-body"><div class="item-title">Ruang Tamu</div><div class="item-meta">Tersedia : <span class="sisa">1</span></div></div></article></div>
+      <div class="col reveal-up">
+        <article class="item-card tap-anim">
+          <div class="item-thumb">
+            <img src="plaza.jpeg" alt="Ruang Tamu"><span class="badge-status">Active</span>
+            <div class="qty-actions"><button class="qty-btn" data-action="inc">−</button><button class="qty-btn"
+                data-action="dec">＋</button></div>
+          </div>
+          <div class="item-body">
+            <div class="item-title">Ruang Tamu</div>
+            <div class="item-meta">Tersedia : <span class="sisa">1</span></div>
+          </div>
+        </article>
+      </div>
 
       <!-- baris 2 -->
-      <div class="col reveal-up"><article class="item-card tap-anim"><div class="item-thumb">
-        <img src="plaza.jpeg" alt="Kelas 1"><span class="badge-status">Active</span>
-        <div class="qty-actions"><button class="qty-btn" data-action="inc">−</button><button class="qty-btn" data-action="dec">＋</button></div>
-      </div><div class="item-body"><div class="item-title">Kelas 1</div><div class="item-meta">Tersedia : <span class="sisa">1</span></div></div></article></div>
+      <div class="col reveal-up">
+        <article class="item-card tap-anim">
+          <div class="item-thumb">
+            <img src="plaza.jpeg" alt="Kelas 1"><span class="badge-status">Active</span>
+            <div class="qty-actions"><button class="qty-btn" data-action="inc">−</button><button class="qty-btn"
+                data-action="dec">＋</button></div>
+          </div>
+          <div class="item-body">
+            <div class="item-title">Kelas 1</div>
+            <div class="item-meta">Tersedia : <span class="sisa">1</span></div>
+          </div>
+        </article>
+      </div>
 
-      <div class="col reveal-up"><article class="item-card tap-anim"><div class="item-thumb">
-        <img src="plaza.jpeg" alt="Kelas 2"><span class="badge-status">Active</span>
-        <div class="qty-actions"><button class="qty-btn" data-action="inc">−</button><button class="qty-btn" data-action="dec">＋</button></div>
-      </div><div class="item-body"><div class="item-title">Kelas 2</div><div class="item-meta">Tersedia : <span class="sisa">1</span></div></div></article></div>
+      <div class="col reveal-up">
+        <article class="item-card tap-anim">
+          <div class="item-thumb">
+            <img src="plaza.jpeg" alt="Kelas 2"><span class="badge-status">Active</span>
+            <div class="qty-actions"><button class="qty-btn" data-action="inc">−</button><button class="qty-btn"
+                data-action="dec">＋</button></div>
+          </div>
+          <div class="item-body">
+            <div class="item-title">Kelas 2</div>
+            <div class="item-meta">Tersedia : <span class="sisa">1</span></div>
+          </div>
+        </article>
+      </div>
 
-      <div class="col reveal-up"><article class="item-card tap-anim"><div class="item-thumb">
-        <img src="plaza.jpeg" alt="Kelas 3"><span class="badge-status">Active</span>
-        <div class="qty-actions"><button class="qty-btn" data-action="inc">−</button><button class="qty-btn" data-action="dec">＋</button></div>
-      </div><div class="item-body"><div class="item-title">Kelas 3</div><div class="item-meta">Tersedia : <span class="sisa">1</span></div></div></article></div>
+      <div class="col reveal-up">
+        <article class="item-card tap-anim">
+          <div class="item-thumb">
+            <img src="plaza.jpeg" alt="Kelas 3"><span class="badge-status">Active</span>
+            <div class="qty-actions"><button class="qty-btn" data-action="inc">−</button><button class="qty-btn"
+                data-action="dec">＋</button></div>
+          </div>
+          <div class="item-body">
+            <div class="item-title">Kelas 3</div>
+            <div class="item-meta">Tersedia : <span class="sisa">1</span></div>
+          </div>
+        </article>
+      </div>
 
-      <div class="col reveal-up"><article class="item-card tap-anim"><div class="item-thumb">
-        <img src="plaza.jpeg" alt="Kelas 4"><span class="badge-status">Active</span>
-        <div class="qty-actions"><button class="qty-btn" data-action="inc">−</button><button class="qty-btn" data-action="dec">＋</button></div>
-      </div><div class="item-body"><div class="item-title">Kelas 4</div><div class="item-meta">Tersedia : <span class="sisa">1</span></div></div></article></div>
+      <div class="col reveal-up">
+        <article class="item-card tap-anim">
+          <div class="item-thumb">
+            <img src="plaza.jpeg" alt="Kelas 4"><span class="badge-status">Active</span>
+            <div class="qty-actions"><button class="qty-btn" data-action="inc">−</button><button class="qty-btn"
+                data-action="dec">＋</button></div>
+          </div>
+          <div class="item-body">
+            <div class="item-title">Kelas 4</div>
+            <div class="item-meta">Tersedia : <span class="sisa">1</span></div>
+          </div>
+        </article>
+      </div>
 
-      <div class="col reveal-up"><article class="item-card tap-anim"><div class="item-thumb">
-        <img src="plaza.jpeg" alt="Perpustakaan"><span class="badge-status">Active</span>
-        <div class="qty-actions"><button class="qty-btn" data-action="inc">−</button><button class="qty-btn" data-action="dec">＋</button></div>
-      </div><div class="item-body"><div class="item-title">Perpustakaan</div><div class="item-meta">Tersedia : <span class="sisa">1</span></div></div></article></div>
+      <div class="col reveal-up">
+        <article class="item-card tap-anim">
+          <div class="item-thumb">
+            <img src="plaza.jpeg" alt="Perpustakaan"><span class="badge-status">Active</span>
+            <div class="qty-actions"><button class="qty-btn" data-action="inc">−</button><button class="qty-btn"
+                data-action="dec">＋</button></div>
+          </div>
+          <div class="item-body">
+            <div class="item-title">Perpustakaan</div>
+            <div class="item-meta">Tersedia : <span class="sisa">1</span></div>
+          </div>
+        </article>
+      </div>
     </section>
 
     <p id="emptyState" class="text-center text-muted d-none mt-4">Tidak ada ruang yang cocok.</p>
@@ -182,7 +265,7 @@
             <strong>Masjid Syamsul Ulum</strong>
           </div>
           <div class="text-muted small">
-            Jl. Telekomunikasi No.1, Bandung • Jawa Barat, Indonesia<br/>
+            Jl. Telekomunikasi No.1, Bandung • Jawa Barat, Indonesia<br />
             Telp: 08xx-xxxx-xxxx • Email: msu@example.ac.id
           </div>
         </div>
@@ -198,4 +281,5 @@
   <script src="ruangan.js"></script>
   <script>document.getElementById('yearNow').textContent = new Date().getFullYear();</script>
 </body>
+
 </html>

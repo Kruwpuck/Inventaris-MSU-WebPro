@@ -175,9 +175,9 @@
     <!-- Group 1: Actions & Filters -->
     <div class="d-flex flex-column flex-md-row gap-3 flex-grow-1">
       <div class="btn-group w-100 w-md-auto">
-        <button type="button" class="btn btn-outline-success px-4" style="border-color:#0b492c;color:#0b492c"
+        <button type="button" class="btn btn-outline-success px-4 d-flex align-items-center" style="border-color:#0b492c;color:#0b492c"
           onclick="downloadLaporan('xlsx')">
-          <i class="bi bi-download me-2"></i>Unduh
+          <i class="bi bi-download me-2"></i><span>Unduh</span>
         </button>
         <button type="button" class="btn btn-outline-success dropdown-toggle dropdown-toggle-split"
           data-bs-toggle="dropdown" style="border-color:#0b492c;color:#0b492c">
@@ -260,11 +260,12 @@
             <th>Nama</th>
             <th>Kategori</th>
             <th>Peminjam</th>
-            <th>Tgl Pinjam</th>
+            <th>Waktu Pinjam</th>
             <th>Jatuh Tempo</th>
-            <th>Tgl Kembali</th>
+            <th>Waktu Kembali</th>
             <th class="text-center">Jumlah</th>
             <th class="text-center">Status</th>
+            <th>Keterangan</th>
           </tr>
         </thead>
 
@@ -288,13 +289,14 @@
               <td class="td-nama">{{ $r->nama_item }}</td>
               <td>{{ $r->kategori }}</td>
               <td>{{ $r->peminjam }}</td>
-              <td>{{ $r->tgl_pinjam }}</td>
+              <td>{{ $r->waktu_pinjam }}</td>
               <td>{{ $r->jatuh_tempo }}</td>
-              <td>{{ $r->tgl_kembali }}</td>
+              <td>{{ $r->waktu_kembali }}</td>
               <td class="text-center td-jumlah">{{ $r->jumlah }}</td>
               <td class="text-center">
                 <span class="badge-status {{ $statusClass }}">{{ $r->status }}</span>
               </td>
+               <td>{{ $r->keterangan }}</td>
             </tr>
           @endforeach
         </tbody>

@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="id">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -10,22 +11,24 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
   <link rel="stylesheet" href="booking-barang.css" />
 </head>
+
 <body>
 
   <!-- NAVBAR (konsisten dengan index/barang/ruangan) -->
   <nav class="navbar navbar-expand-lg navbar-masjid sticky-top">
     <div class="container">
       <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
-        <img src="loogoo.png" alt="Logo" class="logo" />
+        <img src="loogoo.png" alt="Logo" class="logo" style="height: 56px;" />
       </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain" aria-label="Toggle navigation">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain"
+        aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse justify-content-end" id="navMain">
         <ul class="navbar-nav align-items-lg-center gap-lg-4" id="navItems">
           <li class="nav-item"><a class="nav-link" href="index.html#beranda">Beranda</a></li>
           <li class="nav-item"><a class="nav-link" href="barang.html">Pinjam Barang</a></li>
-          <li class="nav-item"><a class="nav-link" href="ruangan.html">Pinjam Fasilitas</a></li>
+          <li class="nav-item"><a class="nav-link" href="ruangan.html">Pinjam Ruangan</a></li>
           <!-- Cart icon disuntik otomatis dari cart.js -->
         </ul>
       </div>
@@ -126,7 +129,8 @@
               <label class="form-label">Keperluan</label>
               <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-clipboard-check"></i></span>
-                <input type="text" class="form-control" id="purpose" placeholder="Contoh: Kuliah tamu / kegiatan..." required />
+                <input type="text" class="form-control" id="purpose" placeholder="Contoh: Kuliah tamu / kegiatan..."
+                  required />
                 <div class="invalid-feedback">Wajib diisi.</div>
               </div>
             </div>
@@ -178,7 +182,8 @@
 
             <div class="col-12">
               <label class="form-label">Deskripsi Keperluan</label>
-              <textarea id="longPurpose" class="form-control" rows="4" placeholder="Tuliskan detail singkat keperluan…" required></textarea>
+              <textarea id="longPurpose" class="form-control" rows="4" placeholder="Tuliskan detail singkat keperluan…"
+                required></textarea>
               <div class="invalid-feedback">Wajib diisi.</div>
             </div>
           </div>
@@ -207,14 +212,19 @@
             <div class="col-md-7">
               <label class="form-label">Nominal Donasi</label>
               <div class="d-flex flex-wrap gap-2 mb-2">
-                <button type="button" class="btn btn-outline-success btn-sm btn-donasi" data-amt="10000">Rp10.000</button>
-                <button type="button" class="btn btn-outline-success btn-sm btn-donasi" data-amt="20000">Rp20.000</button>
-                <button type="button" class="btn btn-outline-success btn-sm btn-donasi" data-amt="50000">Rp50.000</button>
-                <button type="button" class="btn btn-outline-success btn-sm btn-donasi" data-amt="100000">Rp100.000</button>
+                <button type="button" class="btn btn-outline-success btn-sm btn-donasi"
+                  data-amt="10000">Rp10.000</button>
+                <button type="button" class="btn btn-outline-success btn-sm btn-donasi"
+                  data-amt="20000">Rp20.000</button>
+                <button type="button" class="btn btn-outline-success btn-sm btn-donasi"
+                  data-amt="50000">Rp50.000</button>
+                <button type="button" class="btn btn-outline-success btn-sm btn-donasi"
+                  data-amt="100000">Rp100.000</button>
               </div>
               <div class="input-group">
                 <span class="input-group-text">Rp</span>
-                <input type="number" min="0" step="1000" class="form-control" id="donationAmount" placeholder="Nominal lain (opsional)">
+                <input type="number" min="0" step="1000" class="form-control" id="donationAmount"
+                  placeholder="Nominal lain (opsional)">
               </div>
               <small class="text-muted">Nominal donasi akan ikut tercatat saat submit (simulasi front-end).</small>
             </div>
@@ -234,7 +244,7 @@
             <strong>Masjid Syamsul Ulum</strong>
           </div>
           <div class="text-muted small">
-            Jl. Telekomunikasi No.1, Bandung • Jawa Barat, Indonesia<br/>
+            Jl. Telekomunikasi No.1, Bandung • Jawa Barat, Indonesia<br />
             Telp: 08xx-xxxx-xxxx • Email: msu@example.ac.id
           </div>
         </div>
@@ -253,4 +263,5 @@
     document.getElementById('yearNow').textContent = new Date().getFullYear();
   </script>
 </body>
+
 </html>

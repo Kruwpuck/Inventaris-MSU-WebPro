@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="id">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -10,16 +11,18 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
   <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
 
   <!-- NAVBAR -->
   <nav class="navbar navbar-expand-lg navbar-masjid sticky-top">
     <div class="container">
       <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
-        <img src="loogoo.png" alt="Logo" class="logo">
+        <img src="loogoo.png" alt="Logo" class="logo" style="height: 56px;">
       </a>
 
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain" aria-label="Toggle navigation">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain"
+        aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
 
@@ -27,7 +30,7 @@
         <ul class="navbar-nav align-items-lg-center gap-lg-4">
           <li class="nav-item"><a class="nav-link active" href="#beranda">Beranda</a></li>
           <li class="nav-item"><a class="nav-link" href="barang.html">Pinjam Barang</a></li>
-          <li class="nav-item"><a class="nav-link" href="ruangan.html">Pinjam Fasilitas</a></li>
+          <li class="nav-item"><a class="nav-link" href="ruangan.html">Pinjam Ruangan</a></li>
         </ul>
       </div>
     </div>
@@ -64,59 +67,60 @@
     <div class="container">
       <h3 class="section-title mb-3">Deskripsi Aplikasi</h3>
       <p class="mb-0">
-        Aplikasi Inventory MSU memudahkan pengecekan ketersediaan, peminjaman, dan pengembalian barang/fasilitas secara tertib dan tercatat.
+        Aplikasi Inventory MSU memudahkan pengecekan ketersediaan, peminjaman, dan pengembalian barang/fasilitas secara
+        tertib dan tercatat.
       </p>
     </div>
   </section>
 
   <!-- FLOW PEMINJAMAN (bernomor + panah) -->
-<section class="pb-4">
-  <div class="container">
-    <h3 class="section-title mb-4">Flow Peminjaman</h3>
+  <section class="pb-4">
+    <div class="container">
+      <h3 class="section-title mb-4">Flow Peminjaman</h3>
 
-    <div class="row g-4 flow-steps">
-      <div class="col-6 col-lg-3">
-        <div class="flow-card tap-anim reveal-up">
-          <span class="flow-step-badge">1</span>
-          <div class="flow-thumb">
-            <img src="peminjam.jpeg" alt="Mengisi Form Peminjaman" class="img-fluid">
+      <div class="row g-4 flow-steps">
+        <div class="col-6 col-lg-3">
+          <div class="flow-card tap-anim reveal-up">
+            <span class="flow-step-badge">1</span>
+            <div class="flow-thumb">
+              <img src="peminjam.jpeg" alt="Mengisi Form Peminjaman" class="img-fluid">
+            </div>
+            <div class="flow-caption">Mengisi Form Peminjaman</div>
           </div>
-          <div class="flow-caption">Mengisi Form Peminjaman</div>
         </div>
-      </div>
 
-      <div class="col-6 col-lg-3">
-        <div class="flow-card tap-anim reveal-up" style="transition-delay:.05s">
-          <span class="flow-step-badge">2</span>
-          <div class="flow-thumb">
-            <img src="setuju.jpeg" alt="Pengelola Menyetujui" class="img-fluid">
+        <div class="col-6 col-lg-3">
+          <div class="flow-card tap-anim reveal-up" style="transition-delay:.05s">
+            <span class="flow-step-badge">2</span>
+            <div class="flow-thumb">
+              <img src="setuju.jpeg" alt="Pengelola Menyetujui" class="img-fluid">
+            </div>
+            <div class="flow-caption">Pengelola Menyetujui</div>
           </div>
-          <div class="flow-caption">Pengelola Menyetujui</div>
         </div>
-      </div>
 
-      <div class="col-6 col-lg-3">
-        <div class="flow-card tap-anim reveal-up" style="transition-delay:.1s">
-          <span class="flow-step-badge">3</span>
-          <div class="flow-thumb">
-            <img src="jabat.jpg" alt="Pengurus Melakukan COD" class="img-fluid">
+        <div class="col-6 col-lg-3">
+          <div class="flow-card tap-anim reveal-up" style="transition-delay:.1s">
+            <span class="flow-step-badge">3</span>
+            <div class="flow-thumb">
+              <img src="jabat.jpg" alt="Pengurus Melakukan COD" class="img-fluid">
+            </div>
+            <div class="flow-caption">Pengurus Melakukan COD</div>
           </div>
-          <div class="flow-caption">Pengurus Melakukan COD</div>
         </div>
-      </div>
 
-      <div class="col-6 col-lg-3">
-        <div class="flow-card tap-anim reveal-up" style="transition-delay:.15s">
-          <span class="flow-step-badge">4</span>
-          <div class="flow-thumb">
-            <img src="balik.jpg" alt="Pengembalian & Selesai" class="img-fluid">
+        <div class="col-6 col-lg-3">
+          <div class="flow-card tap-anim reveal-up" style="transition-delay:.15s">
+            <span class="flow-step-badge">4</span>
+            <div class="flow-thumb">
+              <img src="balik.jpg" alt="Pengembalian & Selesai" class="img-fluid">
+            </div>
+            <div class="flow-caption">Pengembalian & Selesai</div>
           </div>
-          <div class="flow-caption">Pengembalian & Selesai</div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
 
   <!-- WAKTU PEMINJAMAN -->
@@ -394,7 +398,7 @@
             <strong>Masjid Syamsul Ulum</strong>
           </div>
           <div class="text-muted small">
-            Jl. Telekomunikasi No.1, Bandung • Jawa Barat, Indonesia<br/>
+            Jl. Telekomunikasi No.1, Bandung • Jawa Barat, Indonesia<br />
             Telp: 08xx-xxxx-xxxx • Email: msu@example.ac.id
           </div>
         </div>
@@ -410,4 +414,5 @@
   <script src="main.js"></script>
   <script>document.getElementById('yearNow').textContent = new Date().getFullYear();</script>
 </body>
+
 </html>
