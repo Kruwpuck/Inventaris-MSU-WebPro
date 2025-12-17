@@ -21,11 +21,8 @@ class Dashboard extends Component
         } elseif ($type === 'kembali') {
             $record->returned_at = $record->returned_at ? null : now();
             
-<<<<<<< HEAD
-            // Auto-check 'ambil' if 'kembali' is checked (Logic from Step 70)
-=======
-            // Auto-check 'ambil' if 'kembali' is checked
->>>>>>> 485abd5ca0e092fcd41540a7589f5eb19fad224c
+            // Auto-check 'ambil' if 'kembali' is checked (Logic from Step 70
+            // Auto-check 'ambil' if 'kembali' is check
             if ($record->returned_at && !$record->picked_up_at) {
                 $record->picked_up_at = $record->returned_at;
             }
@@ -33,10 +30,7 @@ class Dashboard extends Component
 
         $record->save();
 
-<<<<<<< HEAD
-        // Sync Status to LoanRequest
-=======
->>>>>>> 485abd5ca0e092fcd41540a7589f5eb19fad224c
+
         if ($record->returned_at) {
             $request->status = 'returned';
         } elseif ($record->picked_up_at) {
@@ -61,10 +55,9 @@ class Dashboard extends Component
         
         $data = \App\Models\LoanRequest::query()
             ->whereIn('status', ['approved', 'handed_over'])
-<<<<<<< HEAD
+
             // Filter: Show if NO Record OR (Record exists but NOT BOTH timestamps are set)
-=======
->>>>>>> 485abd5ca0e092fcd41540a7589f5eb19fad224c
+
             ->where(function ($query) {
                 $query->whereDoesntHave('loanRecord')
                       ->orWhereHas('loanRecord', function ($q) {
@@ -72,10 +65,8 @@ class Dashboard extends Component
                             ->orWhereNull('returned_at');
                       });
             })
-<<<<<<< HEAD
-            // Filter: Only show loans for today
-=======
->>>>>>> 485abd5ca0e092fcd41540a7589f5eb19fad224c
+
+            // Filter: Only show loans for toda
             ->whereDate('loan_date_start', \Carbon\Carbon::today())
             ->with(['items', 'loanRecord'])
             ->latest('loan_date_start')
