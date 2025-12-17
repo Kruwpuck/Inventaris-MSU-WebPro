@@ -249,7 +249,13 @@
                                         {{ optional($d->loanRecord)->returned_at ? $d->loanRecord->returned_at->format('d M Y | H:i') : '-' }}
                                     </td>
                                     <td>
-                                        {{ $d->items->pluck('name')->join(', ') }}
+                                        <div class="d-flex flex-column gap-1">
+                                            @foreach($d->items as $item)
+                                                <span class="text-secondary small fw-medium text-nowrap">
+                                                    &bull; {{ $item->name }} <span class="text-muted">(x{{ $item->pivot->quantity ?? 1 }})</span>
+                                                </span>
+                                            @endforeach
+                                        </div>
                                     </td>
                                     <td class="text-center">
                                         <button class="btn btn-outline-danger btn-sm rounded-pill px-3" 
