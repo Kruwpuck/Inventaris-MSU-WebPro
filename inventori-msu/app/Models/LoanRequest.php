@@ -11,14 +11,20 @@ class LoanRequest extends Model
         'borrower_name',
         'borrower_email',
         'borrower_phone',
-        'borrower_reason',
+        'department',             // ✅ Baru
+        'nim_nip',                // ✅ Baru
+        'borrower_reason',        // Keperluan
         'proposal_path',          // ✅ tambah ini
         'loan_date_start',
         'loan_date_end',
-        'start_time', // Jam Mulai
-        'duration',   // Durasi (integer)
+        'start_time',
+        'end_time',
+        'ktp_path',             // ✅ Baru
+        'activity_location',    // ✅ Baru
+        'activity_description', // ✅ Baru
         'status',
         'rejection_reason',
+        'donation_amount', // ✅ Baru
     ];
 
     protected $casts = [

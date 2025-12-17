@@ -1,11 +1,7 @@
-@push('styles')
-<link rel="stylesheet" href="{{ asset('css/styles.css') }}?v={{ time() }}">
-@endpush
-
 <div>
   <!-- HERO -->
   <header id="beranda" class="hero">
-    <div class="hero-bg" style="background-image:url('{{ asset('assets/plaza1.png') }}');"></div>
+    <div class="hero-bg" style="background-image:url('{{ asset('fe-guest/plaza1.png') }}');"></div>
     <div class="hero-overlay"></div>
     <div class="container text-center">
       <h1 class="hero-title drop-in">
@@ -34,144 +30,137 @@
     <div class="container">
       <h3 class="section-title mb-3">Deskripsi Aplikasi</h3>
       <p class="mb-0">
-        Aplikasi Inventory MSU memudahkan pengecekan ketersediaan, peminjaman, dan pengembalian barang/fasilitas secara tertib dan tercatat.
+        Aplikasi Inventory MSU memudahkan pengecekan ketersediaan, peminjaman, dan pengembalian barang/fasilitas secara
+        tertib dan tercatat.
       </p>
     </div>
   </section>
 
-  <!-- FLOW PEMINJAMAN -->
-<section class="pb-4">
-  <div class="container">
-    <h3 class="section-title mb-4">Flow Peminjaman</h3>
+  <!-- FLOW PEMINJAMAN (bernomor + panah) -->
+  <section class="pb-4">
+    <div class="container">
+      <h3 class="section-title mb-4">Flow Peminjaman</h3>
 
-    <div class="row g-4 flow-steps">
-      <div class="col-6 col-lg-3">
-        <div class="flow-card tap-anim reveal-up">
-          <span class="flow-step-badge">1</span>
-          <div class="flow-thumb">
-            <img src="{{ asset('assets/peminjam.jpeg') }}" alt="Mengisi Form Peminjaman" class="img-fluid">
+      <div class="row g-4 flow-steps">
+        <div class="col-6 col-lg-3">
+          <div class="flow-card tap-anim reveal-up">
+            <span class="flow-step-badge">1</span>
+            <div class="flow-thumb">
+              <img src="{{ asset('fe-guest/peminjam.jpeg') }}" alt="Mengisi Form Peminjaman" class="img-fluid">
+            </div>
+            <div class="flow-caption">Mengisi Form Peminjaman</div>
           </div>
-          <div class="flow-caption">Mengisi Form Peminjaman</div>
         </div>
-      </div>
 
-      <div class="col-6 col-lg-3">
-        <div class="flow-card tap-anim reveal-up" style="transition-delay:.05s">
-          <span class="flow-step-badge">2</span>
-          <div class="flow-thumb">
-            <img src="{{ asset('assets/setuju.jpeg') }}" alt="Pengelola Menyetujui" class="img-fluid">
+        <div class="col-6 col-lg-3">
+          <div class="flow-card tap-anim reveal-up" style="transition-delay:.05s">
+            <span class="flow-step-badge">2</span>
+            <div class="flow-thumb">
+              <img src="{{ asset('fe-guest/setuju.jpeg') }}" alt="Pengelola Menyetujui" class="img-fluid">
+            </div>
+            <div class="flow-caption">Pengelola Menyetujui</div>
           </div>
-          <div class="flow-caption">Pengelola Menyetujui</div>
         </div>
-      </div>
 
-      <div class="col-6 col-lg-3">
-        <div class="flow-card tap-anim reveal-up" style="transition-delay:.1s">
-          <span class="flow-step-badge">3</span>
-          <div class="flow-thumb">
-            <img src="{{ asset('assets/jabat.jpg') }}" alt="Pengurus Melakukan COD" class="img-fluid">
+        <div class="col-6 col-lg-3">
+          <div class="flow-card tap-anim reveal-up" style="transition-delay:.1s">
+            <span class="flow-step-badge">3</span>
+            <div class="flow-thumb">
+              <img src="{{ asset('fe-guest/jabat.jpg') }}" alt="Pengurus Melakukan COD" class="img-fluid">
+            </div>
+            <div class="flow-caption">Pengurus Melakukan COD</div>
           </div>
-          <div class="flow-caption">Pengurus Melakukan COD</div>
         </div>
-      </div>
 
-      <div class="col-6 col-lg-3">
-        <div class="flow-card tap-anim reveal-up" style="transition-delay:.15s">
-          <span class="flow-step-badge">4</span>
-          <div class="flow-thumb">
-            <img src="{{ asset('assets/balik.jpg') }}" alt="Pengembalian & Selesai" class="img-fluid">
+        <div class="col-6 col-lg-3">
+          <div class="flow-card tap-anim reveal-up" style="transition-delay:.15s">
+            <span class="flow-step-badge">4</span>
+            <div class="flow-thumb">
+              <img src="{{ asset('fe-guest/balik.jpg') }}" alt="Pengembalian & Selesai" class="img-fluid">
+            </div>
+            <div class="flow-caption">Pengembalian & Selesai</div>
           </div>
-          <div class="flow-caption">Pengembalian & Selesai</div>
         </div>
       </div>
     </div>
-  </div>
-</section>
-
-
-  <!-- WAKTU PEMINJAMAN (Datebar) needs javascript from main.js/datebar module to work, styles from styles.css -->
-  <!-- WAKTU PEMINJAMAN (Datebar V2) -->
-  <div class="container">
-  <section class="datebar-v2 mb-4 reveal-up" id="bookingMetaBar">
-      <h3 class="section-title mb-4 d-flex align-items-center gap-2" style="font-size:1.25rem; padding-left: 4px;">
-        <i class="bi bi-clock-history"></i> Waktu Peminjaman
-      </h3>
-
-      <div class="datebar-content">
-          <!-- Row 1: Inputs (Force 1 Lines) -->
-          <div class="inputs-row d-flex gap-4 align-items-end mb-4">
-              <!-- Tanggal Pakai -->
-              <div class="flex-fill">
-                  <label for="dateStart" class="form-label mb-2 fw-bold">
-                  <i class="bi bi-calendar-event me-2"></i>Tanggal Pakai
-                  </label>
-                  <input id="dateStart" type="date" class="form-control" style="padding: 10px;">
-              </div>
-
-              <!-- Jam Mulai -->
-              <div class="flex-fill">
-                  <label for="timeStart" class="form-label mb-2 fw-bold">
-                  <i class="bi bi-alarm me-2"></i>Jam Mulai
-                  </label>
-                  <input id="timeStart" type="time" class="form-control" style="padding: 10px;">
-              </div>
-
-              <!-- Durasi -->
-              <div class="flex-fill">
-                  <label for="durationSel" class="form-label mb-2 fw-bold">
-                  <i class="bi bi-hourglass-split me-2"></i>Durasi
-                  </label>
-                  <select id="durationSel" class="form-select" style="padding: 10px;">
-                  <option value="1">1 jam</option>
-                  <option value="2">2 jam</option>
-                  <option value="3">3 jam</option>
-                  <option value="4">4 jam</option>
-                  <option value="8">Seharian</option>
-                  </select>
-              </div>
-          </div>
-
-          <!-- Row 2: Button -->
-          <div class="action-row">
-              <button id="btnSetDates" class="btn btn-success w-100 py-2 fw-bold" style="font-size: 1rem;">
-                  <i class="bi bi-search me-2"></i>Cek Ketersediaan
-              </button>
-              <div class="small text-muted mt-2 js-daterange text-center" aria-live="polite"></div>
-          </div>
-      </div>
   </section>
-  </div>
+
+
+  <!-- WAKTU PEMINJAMAN -->
+  <section class="datebar">
+    <div class="container">
+      <div class="reveal-up">
+        <h5 class="section-title mb-3"><i class="bi bi-clock me-2"></i>Waktu Peminjaman</h5>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label small fw-bold">Tanggal Pakai</label>
+            <input id="dateStart" type="date" class="form-control">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label small fw-bold">Tanggal Kembali</label>
+            <input id="dateEnd" type="date" class="form-control">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label small fw-bold">Sesi Peminjaman</label>
+            <select id="sessionSel" class="form-select">
+              <optgroup label="Sesi (1/3 Hari)">
+                <option value="Pagi">Pagi (06.00 - 12.00)</option>
+                <option value="Siang">Siang (12.00 - 18.00)</option>
+                <option value="Malam">Malam (18.00 - 20.00)</option>
+              </optgroup>
+              <optgroup label="Paket (2/3 Hari)">
+                <option value="PagiSiang">Pagi & Siang (06.00 - 18.00)</option>
+                <option value="SiangMalam">Siang & Malam (12.00 - 20.00)</option>
+              </optgroup>
+              <optgroup label="Full Day">
+                <option value="Seharian">Seharian (06.00 - 20.00)</option>
+              </optgroup>
+            </select>
+          </div>
+          <div class="col-12 d-flex align-items-end mt-3 gap-2">
+            <div class="text-muted small js-daterange me-auto">Silakan tentukan waktu peminjaman dulu.</div>
+            <button id="btnShowCalendar" class="btn btn-outline-secondary" type="button" title="Lihat Jadwal Harian">
+              <i class="bi bi-calendar3"></i>
+            </button>
+            <button id="btnSetDates" class="btn btn-success">
+              <i class="bi bi-search me-1"></i> Cek Ketersediaan
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <!-- PINJAM BARANG -->
   <section id="pinjam-barang" class="py-4">
     <div class="container">
       <h3 class="section-title mb-3">Pinjam Barang</h3>
 
-      <div class="items-grid">
-        @forelse($items as $item)
-        <div class="col reveal-up">
-            <article class="item-card tap-anim h-100" data-type="barang" data-max="{{ $item->stock }}">
-                <div class="item-thumb">
-                <img src="{{ asset('assets/' . $item->image_path) }}" alt="{{ $item->name }}" class="img-fluid" onerror="this.onerror=null; this.src='{{ asset('assets/' . $item->image_path) }}'; this.onerror=function(){this.src='https://placehold.co/400';}">
-                <span class="badge-status">Active</span>
-                <div class="qty-actions">
-                    <button type="button" class="qty-btn" data-action="inc">−</button>
-                    <button type="button" class="qty-btn" data-action="dec">＋</button>
-                </div>
-                </div>
-                <div class="item-body">
-                <div class="item-title">{{ $item->name }}</div>
-                <div class="item-meta">Sisa : <span class="sisa">{{ $item->stock }}</span></div>
-                </div>
-            </article>
+      <div class="row g-4 align-items-stretch items-grid">
+        <!-- Dynamic Items Loop -->
+        @foreach($items as $item)
+        <div class="col-6 col-md-4 col-lg-2-4">
+          <article class="item-card tap-anim reveal-up h-100" data-type="barang" data-max="{{ $item->stock }}">
+            <div class="item-thumb">
+              <img src="{{ asset('fe-guest/' . $item->image_path) }}" alt="{{ $item->name }}" class="img-fluid" onerror="this.onerror=null; this.src='{{ asset('fe-guest/' . $item->image_path) }}'; this.onerror=function(){this.src='https://placehold.co/400';}">
+              <span class="badge-status">Active</span>
+              <div class="qty-actions">
+                <button type="button" class="qty-btn" data-action="inc">−</button>
+                <button type="button" class="qty-btn" data-action="dec">＋</button>
+              </div>
+            </div>
+            <div class="item-body">
+              <div class="item-title fw-bold">{{ $item->name }}</div>
+              <div class="item-desc text-muted small mb-2">{{ $item->description }}</div>
+              <div class="item-meta">Sisa : <span class="sisa">{{ $item->stock }}</span></div>
+            </div>
+          </article>
         </div>
-        @empty
-        <div class="col"><p class="text-muted text-center w-100">Tidak ada barang.</p></div>
-        @endforelse
+        @endforeach
 
-        <!-- Link to full catalogue -->
-        <div class="col reveal-up">
-          <a href="{{ route('catalogue.barang') }}" class="cta-card tap-anim h-100 text-decoration-none">
+        <!-- CTA Card -->
+        <div class="col-12 col-md-4 col-lg-2-4">
+          <a href="{{ route('guest.catalogue.barang') }}" class="cta-card tap-anim reveal-up h-100 text-decoration-none">
             <div class="cta-plus">+</div>
             <div>Cari Barang</div>
           </a>
@@ -184,31 +173,31 @@
   <section id="pinjam-fasilitas" class="py-4">
     <div class="container">
       <h3 class="section-title mb-3">Pinjam Ruangan</h3>
-
-      <div class="items-grid">
-        @forelse($facilities as $room)
-        <div class="col reveal-up">
-            <article class="item-card tap-anim h-100" data-type="ruang" data-max="1">
-                <div class="item-thumb">
-                <img src="{{ asset('assets/' . $room->image_path) }}" alt="{{ $room->name }}" class="img-fluid" onerror="this.onerror=null; this.src='{{ asset('assets/' . $room->image_path) }}'; this.onerror=function(){this.src='https://placehold.co/400';}">
-                <span class="badge-status">Active</span>
-                <div class="qty-actions">
-                    <button type="button" class="qty-btn" data-action="inc">−</button>
-                    <button type="button" class="qty-btn" data-action="dec">＋</button>
-                </div>
-                </div>
-                <div class="item-body">
-                <div class="item-title">{{ $room->name }}</div>
-                <div class="item-meta">Sisa : <span class="sisa">1</span></div>
-                </div>
-            </article>
+      <div class="row g-4 align-items-stretch items-grid">
+        <!-- Dynamic Items Loop -->
+        @foreach($facilities as $item)
+        <div class="col-6 col-md-4 col-lg-2-4">
+          <article class="item-card tap-anim reveal-up h-100" data-type="ruang" data-max="1">
+            <div class="item-thumb">
+              <img src="{{ asset('fe-guest/' . $item->image_path) }}" alt="{{ $item->name }}" class="img-fluid" onerror="this.onerror=null; this.src='{{ asset('fe-guest/' . $item->image_path) }}'; this.onerror=function(){this.src='https://placehold.co/400';}">
+              <span class="badge-status">Active</span>
+              <div class="qty-actions">
+                <button type="button" class="qty-btn" data-action="inc">−</button>
+                <button type="button" class="qty-btn" data-action="dec">＋</button>
+              </div>
+            </div>
+            <div class="item-body">
+              <div class="item-title fw-bold">{{ $item->name }}</div>
+              <div class="item-desc text-muted small mb-2">{{ $item->description }}</div>
+              <div class="item-meta">Sisa : <span class="sisa">1</span></div>
+            </div>
+          </article>
         </div>
-        @empty
-        <!-- Placeholder if no rooms fetched or empty -->
-        @endforelse
-        
-        <div class="col reveal-up">
-          <a href="{{ route('catalogue.ruangan') }}" class="cta-card tap-anim h-100 text-decoration-none">
+        @endforeach
+
+        <!-- CTA Card -->
+        <div class="col-6 col-md-4 col-lg-2-4">
+          <a href="{{ route('guest.catalogue.ruangan') }}" class="cta-card tap-anim reveal-up h-100 text-decoration-none">
             <div class="cta-plus">+</div>
             <div>Cari Ruang</div>
           </a>
@@ -217,6 +206,3 @@
     </div>
   </section>
 </div>
-@push('scripts')
-<script src="{{ asset('js/barang.js') }}?v=3"></script>
-@endpush

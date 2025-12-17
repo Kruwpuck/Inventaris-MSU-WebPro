@@ -20,6 +20,7 @@ class Riwayat extends Component
             ->when($this->search, function ($q) {
                 $q->where(function ($sub) {
                     $sub->where('borrower_name', 'like', '%' . $this->search . '%')
+                        ->orWhere('borrower_phone', 'like', '%' . $this->search . '%')
                         ->orWhereHas('items', function ($i) {
                             $i->where('name', 'like', '%' . $this->search . '%');
                         })
@@ -58,7 +59,8 @@ class Riwayat extends Component
         // Revert status to approved so it shows up in Dashboard again
         $request->update(['status' => 'approved']);
 
-        session()->flash('success', 'Peminjaman dibatalkan.');
+        // session()->flash('success', 'Peminjaman dibatalkan.');
+        $this->dispatch('show-toast', type: 'success', message: 'Peminjaman berhasil dibatalkan.');
     }
 
     public function submit($id)
@@ -75,6 +77,7 @@ class Riwayat extends Component
             $request->loanRecord->update(['is_submitted' => true]);
         }
 
-        session()->flash('success', 'Peminjaman diselesaikan.');
+        // session()->flash('success', 'Peminjaman diselesaikan.');
+        $this->dispatch('show-toast', type: 'success', message: 'Peminjaman berhasil diselesaikan.');
     }
 }

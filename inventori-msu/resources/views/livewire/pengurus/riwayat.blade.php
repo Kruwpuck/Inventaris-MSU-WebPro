@@ -128,7 +128,7 @@
     </style>
 
     <!-- NAVBAR -->
-    <nav class="navbar navbar-expand-lg fixed-top">
+    <nav class="navbar navbar-expand-lg fixed-top" wire:ignore>
         <div class="container">
             <!-- Logo -->
             <a class="navbar-brand" href="{{ route('pengurus.dashboard') }}">
@@ -185,13 +185,13 @@
 
     <!-- CONTENT -->
     <div class="container pb-5">
-        <div class="mt-4 d-flex justify-content-between align-items-end">
+        <div class="mt-4 d-flex flex-column flex-md-row justify-content-between align-items-center align-items-md-end gap-3 gap-md-0 text-center text-md-start">
             <div>
                 <h1 class="page-title">Riwayat Peminjaman</h1>
                 <p class="page-subtitle mb-0">Arsip semua aktivitas peminjaman fasilitas.</p>
             </div>
             
-            <div class="input-group" style="max-width: 300px;">
+            <div class="input-group" style="width: 100%; max-width: 300px;">
                 <span class="input-group-text bg-white border-end-0 rounded-start-pill ps-3">
                     <i class="bi bi-search text-secondary"></i>
                 </span>
@@ -201,7 +201,14 @@
             </div>
         </div>
 
-        <div class="custom-table-container mt-4">
+        <div class="custom-table-container mt-4 position-relative" wire:loading.class="table-loading">
+            <!-- Loading Overlay -->
+            <div wire:loading.flex class="position-absolute top-0 start-0 w-100 h-100 align-items-center justify-content-center bg-white bg-opacity-50" style="z-index: 10;">
+                <div class="spinner-border text-success" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+
             @if($data->isEmpty())
                 <!-- HEADER ONLY for context (consistent with previous request) -->
                  <div class="table-responsive">
@@ -210,6 +217,7 @@
                             <tr>
                                 <th>NO</th>
                                 <th>NAMA PEMINJAM</th>
+                                <th>KONTAK</th>
                                 <th>MULAI PEMINJAMAN</th>
                                 <th>SELESAI PEMINJAMAN</th>
                                 <th>FASILITAS</th>
@@ -228,6 +236,7 @@
                         <thead>
                             <th>NO</th>
                                 <th>NAMA PEMINJAM</th>
+                                <th>KONTAK</th>
                                 <th>MULAI PEMINJAMAN</th>
                                 <th>SELESAI PEMINJAMAN</th>
                                 <th>FASILITAS</th>
@@ -240,6 +249,7 @@
                                 <tr wire:key="{{ $d->id }}">
                                     <td>{{ $loop->iteration }}</td>
                                     <td class="fw-bold">{{ $d->borrower_name }}</td>
+                                    <td>{{ $d->borrower_phone }}</td>
                                     <td class="text-secondary">
                                         <i class="bi bi-calendar4 me-2"></i> 
                                         {{ optional($d->loanRecord)->picked_up_at ? $d->loanRecord->picked_up_at->format('d M Y | H:i') : '-' }}
@@ -285,6 +295,29 @@
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         
         <script>
+            // Toast Configuration
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+
+            // Listen for Livewire event
+            document.addEventListener('livewire:init', () => {
+                Livewire.on('show-toast', (event) => {
+                    Toast.fire({
+                        icon: event.type,
+                        title: event.message
+                    });
+                });
+            });
+
             function confirmCancel(id) {
                 Swal.fire({
                     title: 'Batalkan Peminjaman?',

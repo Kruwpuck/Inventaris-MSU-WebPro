@@ -16,6 +16,9 @@ class Approval extends Component
     // Modal Cetak (BARU)
     public $selectedRequest;
 
+    // Modal Detail Peminjam
+    public $selectedBorrower;
+
     public function render()
     {
         $pendingRequests = \App\Models\LoanRequest::where('status', 'pending')
@@ -89,5 +92,12 @@ class Approval extends Component
 
         // Buka modal cetak di frontend
         $this->dispatch('open-print-modal');
+    }
+
+    // ===== SHOW BORROWER DETAILS =====
+    public function showBorrowerDetails($id)
+    {
+        $this->selectedBorrower = \App\Models\LoanRequest::findOrFail($id);
+        $this->dispatch('open-borrower-modal');
     }
 }
