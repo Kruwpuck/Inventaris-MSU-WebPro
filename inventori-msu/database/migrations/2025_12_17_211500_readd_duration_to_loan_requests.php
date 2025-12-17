@@ -11,11 +11,9 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('loan_requests', function (Blueprint $table) {
-            if (!Schema::hasColumn('loan_requests', 'start_time')) {
-                $table->time('start_time')->nullable()->after('loan_date_end');
-            }
+            // Re-add duration column if it doesn't exist
             if (!Schema::hasColumn('loan_requests', 'duration')) {
-                $table->integer('duration')->nullable()->after('start_time'); // dalam jam
+                $table->string('duration')->nullable()->after('loan_date_start');
             }
         });
     }
@@ -26,7 +24,9 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::table('loan_requests', function (Blueprint $table) {
-            $table->dropColumn(['start_time', 'duration']);
+            if (Schema::hasColumn('loan_requests', 'duration')) {
+                $table->dropColumn('duration');
+            }
         });
     }
 };
