@@ -141,6 +141,7 @@ class Cart extends Component
 
         // Send Email
         try {
+            \Illuminate\Support\Facades\Log::info('Proses kirim email dimulai untuk: ' . $this->borrower_email);
             \Illuminate\Support\Facades\Mail::to($this->borrower_email)->send(new \App\Mail\LoanSubmitted($loan));
         } catch (\Exception $e) {
             // Log error but allow flow to continue
