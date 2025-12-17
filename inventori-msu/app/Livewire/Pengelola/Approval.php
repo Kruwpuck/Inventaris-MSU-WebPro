@@ -3,49 +3,58 @@
 namespace App\Livewire\Pengelola;
 
 use Livewire\Component;
-use App\Models\LoanRequest;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Schema;
 
 class Approval extends Component
 {
+    // Modal Reject
     public $rejectId;
     public $rejectReason;
 
+    // Modal Approve
+    public $approveId;
+
     public function render()
     {
-        $pendingRequests = LoanRequest::query()
-            ->where('status', 'pending')
+        $pendingRequests = \App\Models\LoanRequest::where('status', 'pending')
             ->with('items')
-            ->latest('id')
+            ->latest()
             ->get();
 
-        $historyRequests = LoanRequest::query()
-            ->whereIn('status', ['approved', 'rejected'])
+        $historyRequests = \App\Models\LoanRequest::whereIn('status', ['approved', 'rejected'])
             ->with('items')
-            ->latest('id')
+            ->latest()
             ->get();
 
         return view('livewire.pengelola.approval', [
             'pendingRequests' => $pendingRequests,
-            'historyRequests' => $historyRequests,
+            'historyRequests' => $historyRequests
         ])->layout('pengelola.layouts.pengelola');
     }
 
-    public function approve($id)
+    // ===== APPROVE (pakai modal) =====
+    public function prepareApprove($id)
     {
-        $req = LoanRequest::findOrFail($id);
+        $this->approveId = $id;
+        $this->dispatch('open-approve-modal');
+    }
+
+    public function approveConfirmed()
+    {
+        $this->validate([
+            'approveId' => 'required|exists:loan_requests,id',
+        ]);
+
+        $req = \App\Models\LoanRequest::findOrFail($this->approveId);
         $req->status = 'approved';
-
-        // optional: simpan siapa yg proses (kalau kolomnya ada)
-        $this->setIfColumnExists($req, 'processed_by', Auth::user()?->name);
-        $this->setIfColumnExists($req, 'approved_by', Auth::user()?->name);
-
         $req->save();
 
         session()->flash('success', 'Pengajuan berhasil disetujui.');
+
+        $this->approveId = null;
+        $this->dispatch('close-approve-modal');
     }
 
+    // ===== REJECT (tetap) =====
     public function prepareReject($id)
     {
         $this->rejectId = $id;
@@ -60,32 +69,12 @@ class Approval extends Component
             'rejectReason' => 'required|string|min:3',
         ]);
 
-        $req = LoanRequest::findOrFail($this->rejectId);
+        $req = \App\Models\LoanRequest::findOrFail($this->rejectId);
         $req->status = 'rejected';
         $req->rejection_reason = $this->rejectReason;
-
-        // optional: simpan siapa yg proses (kalau kolomnya ada)
-        $this->setIfColumnExists($req, 'processed_by', Auth::user()?->name);
-        $this->setIfColumnExists($req, 'rejected_by', Auth::user()?->name);
-
         $req->save();
 
         session()->flash('success', 'Pengajuan berhasil ditolak.');
         $this->dispatch('close-reject-modal');
-
-        $this->reset(['rejectId', 'rejectReason']);
-    }
-
-    private function setIfColumnExists(LoanRequest $model, string $column, $value): void
-    {
-        if ($value === null) return;
-
-        try {
-            if (Schema::hasColumn($model->getTable(), $column)) {
-                $model->{$column} = $value;
-            }
-        } catch (\Throwable $e) {
-            // amanin aja kalau Schema/DB belum siap
-        }
     }
 }
