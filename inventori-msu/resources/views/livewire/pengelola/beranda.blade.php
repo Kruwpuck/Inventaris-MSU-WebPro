@@ -54,11 +54,10 @@
 
 <div>
     {{-- HERO --}}
-    <section class="d-flex justify-content-center align-items-start position-relative w-100"
-        style="padding-top:55px;height:70vh;background-image:url('{{ asset('aset/ramadhan.png') }}');
+    <section class="d-flex justify-content-center align-items-start position-relative w-100" style="padding-top:55px;height:70vh;background-image:url('{{ asset('aset/ramadhan.png') }}');
         background-size:contain;background-position:center;background-repeat:no-repeat;">
         <img src="{{ asset('aset/MSU.png') }}" alt="Syamsul Ulum" class="img-fluid shadow-strong rounded-3 mt-5"
-            style="height:230px;width:1100px;z-index:2" />
+            style="max-width:1100px; width:100%; height:auto; z-index:2" />
     </section>
 
     <div class="container">
@@ -229,7 +228,8 @@
 
                         <div class="mb-3">
                             <label class="form-label">Deskripsi</label>
-                            <textarea class="form-control" wire:model.defer="editDescription" rows="3" required></textarea>
+                            <textarea class="form-control" wire:model.defer="editDescription" rows="3"
+                                required></textarea>
                         </div>
 
                         {{-- kalau barang tampil stok --}}
@@ -241,7 +241,8 @@
                         @else
                             <div class="mb-3">
                                 <label class="form-label">Kapasitas (orang)</label>
-                                <input type="number" class="form-control" wire:model.defer="editCapacity" min="0" required />
+                                <input type="number" class="form-control" wire:model.defer="editCapacity" min="0"
+                                    required />
                             </div>
                         @endif
                     </div>
