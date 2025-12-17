@@ -2,64 +2,165 @@
 
 @push('head')
   <style>
-    body { background: #fff; font-family: "Poppins", sans-serif; }
+    body {
+      background: #fff;
+      font-family: "Poppins", sans-serif;
+    }
 
     .toolbar .btn,
     .toolbar .form-select,
     .toolbar .form-control,
-    .toolbar .input-group-text { border-radius: 9999px; }
-
-    .toolbar .btn-pill{
-      border-radius:9999px;border:1px solid #0b492c;color:#0b492c;background:#fff;
-    }
-    .toolbar .btn-pill:hover,.toolbar .btn-pill:focus{
-      color:#0b492c;background:#f5fbf7;border-color:#0b492c;
+    .toolbar .input-group-text {
+      border-radius: 9999px;
     }
 
-    .toolbar .dropdown-menu{
-      border-radius:14px;border:1px solid #0b492c;
-      box-shadow:0 10px 24px rgba(0,0,0,.1);
-      padding:6px 0;min-width:100%;
-    }
-    .toolbar .dropdown-item{ padding:.5rem 1rem;border-radius:10px; }
-    .toolbar .dropdown-item.active,.toolbar .dropdown-item:hover{
-      background:#e9f6ef;color:#0b492c;
+    .toolbar .btn-pill {
+      border-radius: 9999px;
+      border: 1px solid #0b492c;
+      color: #0b492c;
+      background: #fff;
     }
 
-    .table-wrapper{
-      background:#fff;border-radius:18px;box-shadow:0 6px 18px rgba(0,0,0,.06);padding:16px;
-    }
-    .table thead th{
-      color:#5f6b77;font-weight:700;font-size:.9rem;white-space:nowrap;vertical-align:middle;
-      background:#f7f8fa;border-bottom:2px solid #b7c1cc !important;
-    }
-    .table-bordered{ border:1.5px solid #b7c1cc !important; }
-    .table-bordered> :not(caption)>*{ border-width:1.5px 0; }
-    .table-bordered> :not(caption)>*>*{
-      border-color:#b7c1cc !important;padding:.8rem .75rem;vertical-align:middle;font-size:.95rem;
+    .toolbar .btn-pill:hover,
+    .toolbar .btn-pill:focus {
+      color: #0b492c;
+      background: #f5fbf7;
+      border-color: #0b492c;
     }
 
-    .badge-status{
-      display:inline-block;min-width:130px;text-align:center;border-radius:9999px;
-      padding:.35rem .6rem;font-weight:600;font-size:.8rem;white-space:nowrap;
+    .toolbar .dropdown-menu {
+      border-radius: 14px;
+      border: 1px solid #0b492c;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, .1);
+      padding: 6px 0;
+      min-width: 100%;
     }
-    .status-sedang{ background:#f3f7cf;color:#6a7b00; }
-    .status-sudah{ background:#d9f3e7;color:#0b492c; }
-    .status-terlambat{ background:#7a2c2c;color:#fff; }
-    .status-pending{ background:#fff3cd;color:#856404; }
-    .status-approved{ background:#cff4fc;color:#055160; }
-    .status-ditolak{ background:#f8d7da;color:#721c24; }
-    .status-selesai{ background:#28a745;color:#fff; }
-    .status-menunggu-submit{ background:#e2e3e5;color:#383d41; }
 
-    #fSearch:focus{ border-color:#000; box-shadow:none; outline:none; }
+    .toolbar .dropdown-item {
+      padding: .5rem 1rem;
+      border-radius: 10px;
+    }
 
-    @media print{
-      .shadow-soft,.shadow-strong,.table-wrapper{ box-shadow:none !important; }
-      .table thead th{ background:#eee !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-      .table-bordered{ border:2px solid #000 !important; }
-      .table-bordered> :not(caption)>*>*{ border-color:#000 !important; }
-      .navbar{ display:none; }
+    .toolbar .dropdown-item.active,
+    .toolbar .dropdown-item:hover {
+      background: #e9f6ef;
+      color: #0b492c;
+    }
+
+    .table-wrapper {
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, .06);
+      padding: 16px;
+    }
+
+    .table thead th {
+      color: #5f6b77;
+      font-weight: 700;
+      font-size: .9rem;
+      white-space: nowrap;
+      vertical-align: middle;
+      background: #f7f8fa;
+      border-bottom: 2px solid #b7c1cc !important;
+    }
+
+    .table-bordered {
+      border: 1.5px solid #b7c1cc !important;
+    }
+
+    .table-bordered> :not(caption)>* {
+      border-width: 1.5px 0;
+    }
+
+    .table-bordered> :not(caption)>*>* {
+      border-color: #b7c1cc !important;
+      padding: .8rem .75rem;
+      vertical-align: middle;
+      font-size: .95rem;
+    }
+
+    .badge-status {
+      display: inline-block;
+      min-width: 130px;
+      text-align: center;
+      border-radius: 9999px;
+      padding: .35rem .6rem;
+      font-weight: 600;
+      font-size: .8rem;
+      white-space: nowrap;
+    }
+
+    .status-sedang {
+      background: #f3f7cf;
+      color: #6a7b00;
+    }
+
+    .status-sudah {
+      background: #d9f3e7;
+      color: #0b492c;
+    }
+
+    .status-terlambat {
+      background: #7a2c2c;
+      color: #fff;
+    }
+
+    .status-pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .status-approved {
+      background: #cff4fc;
+      color: #055160;
+    }
+
+    .status-ditolak {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .status-selesai {
+      background: #28a745;
+      color: #fff;
+    }
+
+    .status-menunggu-submit {
+      background: #e2e3e5;
+      color: #383d41;
+    }
+
+    #fSearch:focus {
+      border-color: #000;
+      box-shadow: none;
+      outline: none;
+    }
+
+    @media print {
+
+      .shadow-soft,
+      .shadow-strong,
+      .table-wrapper {
+        box-shadow: none !important;
+      }
+
+      .table thead th {
+        background: #eee !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .table-bordered {
+        border: 2px solid #000 !important;
+      }
+
+      .table-bordered> :not(caption)>*>* {
+        border-color: #000 !important;
+      }
+
+      .navbar {
+        display: none;
+      }
     }
   </style>
 
@@ -69,88 +170,89 @@
 <div class="container pt-5">
   <div style="height: 84px"></div>
 
-  <div class="toolbar d-flex flex-wrap gap-3 align-items-center mb-4">
+  <div class="toolbar d-flex flex-column flex-lg-row gap-3 mb-4">
 
-    <div class="btn-group">
-      <button type="button" class="btn btn-outline-success px-4" style="border-color:#0b492c;color:#0b492c"
-        onclick="downloadLaporan('xlsx')">
-        <i class="bi bi-download me-2"></i>Unduh
-      </button>
-      <button type="button" class="btn btn-outline-success dropdown-toggle dropdown-toggle-split"
-        data-bs-toggle="dropdown" style="border-color:#0b492c;color:#0b492c">
-        <span class="visually-hidden">Toggle Dropdown</span>
-      </button>
-      <ul class="dropdown-menu">
-        <li><a class="dropdown-item" href="#" onclick="downloadLaporan('xlsx')">.XLSX</a></li>
-        <li><a class="dropdown-item" href="#" onclick="downloadLaporan('csv')">.CSV</a></li>
-        <li><a class="dropdown-item" href="#" onclick="downloadLaporan('pdf')">.PDF</a></li>
-      </ul>
-    </div>
-
-    {{-- Periode: CUSTOM ONLY --}}
-    <div class="dropdown">
-      <button class="btn btn-pill dropdown-toggle" type="button" data-bs-toggle="dropdown" id="btnPeriode">
-        Pilih Tanggal
-      </button>
-
-      <div class="dropdown-menu p-3" style="min-width: 320px;">
-        <div class="mb-2 fw-semibold" style="color:#0b492c">Custom Range</div>
-
-        <div class="row g-2">
-          <div class="col-6">
-            <label class="form-label small mb-1">Dari</label>
-            <input id="fFrom" type="date" class="form-control">
-          </div>
-          <div class="col-6">
-            <label class="form-label small mb-1">Sampai</label>
-            <input id="fTo" type="date" class="form-control">
-          </div>
-        </div>
-
-        <button id="btnApplyRange" class="btn btn-success w-100 mt-3" type="button"
-          style="background-color:#0b492c;border-color:#0b492c">
-          Terapkan
+    <!-- Group 1: Actions & Filters -->
+    <div class="d-flex flex-column flex-md-row gap-3 flex-grow-1">
+      <div class="btn-group w-100 w-md-auto">
+        <button type="button" class="btn btn-outline-success px-4" style="border-color:#0b492c;color:#0b492c"
+          onclick="downloadLaporan('xlsx')">
+          <i class="bi bi-download me-2"></i>Unduh
         </button>
+        <button type="button" class="btn btn-outline-success dropdown-toggle dropdown-toggle-split"
+          data-bs-toggle="dropdown" style="border-color:#0b492c;color:#0b492c">
+          <span class="visually-hidden">Toggle Dropdown</span>
+        </button>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="#" onclick="downloadLaporan('xlsx')">.XLSX</a></li>
+          <li><a class="dropdown-item" href="#" onclick="downloadLaporan('csv')">.CSV</a></li>
+          <li><a class="dropdown-item" href="#" onclick="downloadLaporan('pdf')">.PDF</a></li>
+        </ul>
+      </div>
+
+      {{-- Periode: CUSTOM ONLY --}}
+      <div class="dropdown w-100 w-md-auto">
+        <button class="btn btn-pill dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" id="btnPeriode">
+          Pilih Tanggal
+        </button>
+
+        <div class="dropdown-menu p-3" style="min-width: 320px;">
+          <div class="mb-2 fw-semibold" style="color:#0b492c">Custom Range</div>
+
+          <div class="row g-2">
+            <div class="col-6">
+              <label class="form-label small mb-1">Dari</label>
+              <input id="fFrom" type="date" class="form-control">
+            </div>
+            <div class="col-6">
+              <label class="form-label small mb-1">Sampai</label>
+              <input id="fTo" type="date" class="form-control">
+            </div>
+          </div>
+
+          <button id="btnApplyRange" class="btn btn-success w-100 mt-3" type="button"
+            style="background-color:#0b492c;border-color:#0b492c">
+            Terapkan
+          </button>
+        </div>
+      </div>
+
+      {{-- Kategori --}}
+      <div class="dropdown w-100 w-md-auto">
+        <button class="btn btn-pill dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" id="btnKategori">
+          Semua Kategori
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="btnKategori">
+          <li><a class="dropdown-item active" href="#" data-value="all">Semua Kategori</a></li>
+          <li><a class="dropdown-item" href="#" data-value="Barang">Barang</a></li>
+          <li><a class="dropdown-item" href="#" data-value="Ruangan">Ruangan</a></li>
+        </ul>
+      </div>
+
+      {{-- Status --}}
+      <div class="dropdown w-100 w-md-auto">
+        <button class="btn btn-pill dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" id="btnStatus">
+          Semua Status
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="btnStatus">
+          <li><a class="dropdown-item active" href="#" data-value="all">Semua Status</a></li>
+          <li><a class="dropdown-item" href="#" data-value="Sedang Dipinjam">Sedang Dipinjam</a></li>
+          <li><a class="dropdown-item" href="#" data-value="Sudah Kembali">Sudah Kembali</a></li>
+          <li><a class="dropdown-item" href="#" data-value="Terlambat">Terlambat</a></li>
+          <li><a class="dropdown-item" href="#" data-value="Siap Diambil">Siap Diambil</a></li>
+        </ul>
       </div>
     </div>
 
-    {{-- Kategori --}}
-    <div class="dropdown">
-      <button class="btn btn-pill dropdown-toggle" type="button" data-bs-toggle="dropdown" id="btnKategori">
-        Semua Kategori
-      </button>
-      <ul class="dropdown-menu" aria-labelledby="btnKategori">
-        <li><a class="dropdown-item active" href="#" data-value="all">Semua Kategori</a></li>
-        <li><a class="dropdown-item" href="#" data-value="Barang">Barang</a></li>
-        <li><a class="dropdown-item" href="#" data-value="Ruangan">Ruangan</a></li>
-      </ul>
-    </div>
-
-    {{-- Status (HANYA yang ini + tambah Siap Diambil) --}}
-    <div class="dropdown">
-      <button class="btn btn-pill dropdown-toggle" type="button" data-bs-toggle="dropdown" id="btnStatus">
-        Semua Status
-      </button>
-      <ul class="dropdown-menu" aria-labelledby="btnStatus">
-        <li><a class="dropdown-item active" href="#" data-value="all">Semua Status</a></li>
-        <li><a class="dropdown-item" href="#" data-value="Sedang Dipinjam">Sedang Dipinjam</a></li>
-        <li><a class="dropdown-item" href="#" data-value="Sudah Kembali">Sudah Kembali</a></li>
-        <li><a class="dropdown-item" href="#" data-value="Terlambat">Terlambat</a></li>
-        <li><a class="dropdown-item" href="#" data-value="Siap Diambil">Siap Diambil</a></li>
-      </ul>
-    </div>
-
-    <div class="ms-auto"></div>
-
-    {{-- Search (UI TIDAK DIUBAH) --}}
-    <div class="input-group" style="max-width:320px">
+    {{-- Search (Responsive) --}}
+    <div class="input-group w-100 w-lg-auto" style="min-width: 250px;">
       <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
       <input id="fSearch" type="text" class="form-control" placeholder="Cari laporan...">
     </div>
   </div>
 
   <div class="table-wrapper mb-4">
-    <div class="table-responsive">
+    <div class="table-responsive" style="overflow-x: auto;">
       <table class="table table-bordered align-middle">
         <thead>
           <tr>
@@ -302,8 +404,8 @@
 
       if (sorted.length === 0) {
         return {
-          labels: ["Proyektor","Meja","Speaker","Terpal","Sofa","Hijab","Ruang Utama","Selasar","Zoom","Ruang VIP"],
-          data: [12,10,9,8,7,6,5,4,3,2],
+          labels: ["Proyektor", "Meja", "Speaker", "Terpal", "Sofa", "Hijab", "Ruang Utama", "Selasar", "Zoom", "Ruang VIP"],
+          data: [12, 10, 9, 8, 7, 6, 5, 4, 3, 2],
           isDummy: true
         };
       }
@@ -362,7 +464,7 @@
 
       const f = new Date(from + "T00:00:00");
       const t = new Date(to + "T00:00:00");
-      const fmt = (d) => String(d.getMonth()+1).padStart(2,'0') + "/" + String(d.getDate()).padStart(2,'0') + "/" + d.getFullYear();
+      const fmt = (d) => String(d.getMonth() + 1).padStart(2, '0') + "/" + String(d.getDate()).padStart(2, '0') + "/" + d.getFullYear();
       return `${fmt(f)} - ${fmt(t)}`;
     }
 
