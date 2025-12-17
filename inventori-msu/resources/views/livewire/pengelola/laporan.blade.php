@@ -126,7 +126,7 @@
       </ul>
     </div>
 
-    {{-- Status --}}
+    {{-- Status (HANYA yang ini + tambah Siap Diambil) --}}
     <div class="dropdown">
       <button class="btn btn-pill dropdown-toggle" type="button" data-bs-toggle="dropdown" id="btnStatus">
         Semua Status
@@ -136,6 +136,7 @@
         <li><a class="dropdown-item" href="#" data-value="Sedang Dipinjam">Sedang Dipinjam</a></li>
         <li><a class="dropdown-item" href="#" data-value="Sudah Kembali">Sudah Kembali</a></li>
         <li><a class="dropdown-item" href="#" data-value="Terlambat">Terlambat</a></li>
+        <li><a class="dropdown-item" href="#" data-value="Siap Diambil">Siap Diambil</a></li>
       </ul>
     </div>
 
@@ -255,6 +256,11 @@
           btn.textContent = item.textContent.trim();
           const value = item.getAttribute("data-value");
           onChange && onChange(value);
+
+          // close dropdown
+          const dd = bootstrap.Dropdown.getOrCreateInstance(btn);
+          dd.hide();
+
           filterTable();
         });
       });
@@ -364,7 +370,7 @@
     function filterTable() {
       if (!tbody) return;
 
-      // ✅ FIX: filter aktif kalau from ATAU to terisi (tidak harus dua-duanya)
+      // filter aktif kalau from ATAU to terisi (tidak harus dua-duanya)
       const from = rangeFrom ? new Date(rangeFrom + "T00:00:00") : null;
       const to = rangeTo ? new Date(rangeTo + "T23:59:59") : null;
 
@@ -479,7 +485,7 @@
       syncMenuWidth();
       window.addEventListener("resize", syncMenuWidth);
 
-      // ✅ FIX: TIDAK set default hari ini (biar ga ngunci hasil)
+      // tidak set default hari ini (biar ga ngunci hasil)
       rangeFrom = inputFrom?.value || "";
       rangeTo = inputTo?.value || "";
       if (btnPeriode) btnPeriode.textContent = formatBtnRangeLabel(rangeFrom, rangeTo);
