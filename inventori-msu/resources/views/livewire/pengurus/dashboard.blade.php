@@ -193,7 +193,17 @@
 
         <!-- DATA SECTION -->
         <section>
-            <h3 class="section-title">Peminjaman Hari Ini</h3>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="section-title mb-0">Peminjaman Hari Ini</h3>
+                <div class="input-group" style="max-width: 300px;">
+                    <span class="input-group-text bg-white border-end-0 rounded-start-pill ps-3">
+                        <i class="bi bi-search text-secondary"></i>
+                    </span>
+                    <input type="text" class="form-control border-start-0 rounded-end-pill ps-0" 
+                           placeholder="Cari..." 
+                           wire:model.live.debounce.300ms="search">
+                </div>
+            </div>
 
             @if($data->isEmpty())
                 <!-- EMPTY STATE (Exact Match) -->
@@ -242,16 +252,15 @@
                                 <td class="text-center">
                                     <div class="d-flex justify-content-center">
                                         <input class="form-check-input" type="checkbox" style="width: 1.2em; height: 1.2em;"
-                                               wire:click="toggleStatus({{ $d->id }}, 'ambil')"
-                                            {{ optional($d->loanRecord)->picked_up_at ? 'checked' : '' }}>
+                                               onclick="confirmPickup(event, {{ $d->id }})"
+                                            {{ optional($d->loanRecord)->picked_up_at ? 'checked disabled' : '' }}>
                                     </div>
                                 </td>
                                 <td class="text-center">
                                     <div class="d-flex justify-content-center">
                                         <input class="form-check-input" type="checkbox" style="width: 1.2em; height: 1.2em;"
-                                               wire:click="toggleStatus({{ $d->id }}, 'kembali')"
-                                               wire:confirm="Apakah fasilitasnya sudah kembali?"
-                                            {{ optional($d->loanRecord)->returned_at ? 'checked' : '' }}>
+                                               onclick="confirmReturn(event, {{ $d->id }})"
+                                            {{ optional($d->loanRecord)->returned_at ? 'checked disabled' : '' }}>
                                     </div>
                                 </td>
                             </tr>
@@ -271,5 +280,50 @@
 
     @push('scripts')
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        
+        <script>
+            function confirmPickup(event, id) {
+                event.preventDefault();
+                
+                Swal.fire({
+                    title: 'Konfirmasi Pengambilan',
+                    text: "Apakah fasilitas sudah diambil?",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#198754',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Ya, Sudah Diambil',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        @this.call('toggleStatus', id, 'ambil');
+                    }
+                });
+            }
+
+            function confirmReturn(event, id) {
+                event.preventDefault(); // Prevent default checkbox change
+                
+                // If it's already checked (returned), maybe we don't want to uncheck it or different logic? 
+                // Assuming this is only for MARKING as returned.
+                // If user unchecks, we might need different logic. For now, strictly for Returning.
+                
+                Swal.fire({
+                    title: 'Konfirmasi Pengembalian',
+                    text: "Apakah fasilitas ini sudah dikembalikan?",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#198754',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Ya, Sudah Kembali',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        @this.call('toggleStatus', id, 'kembali');
+                    }
+                });
+            }
+        </script>
     @endpush
 </div>
