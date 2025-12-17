@@ -10,11 +10,11 @@
         .header-text strong { font-size: 16px; color: #000; display: block; margin-bottom: 4px; }
         .content { margin-bottom: 30px; }
         .greeting { font-weight: bold; font-size: 16px; margin-bottom: 10px; }
-        .detail-box { background-color: #f9f9f9; padding: 15px; border-left: 4px solid #E60012; margin: 20px 0; }
+        .detail-box { background-color: #fff5f5; padding: 15px; border-left: 4px solid #cc0000; margin: 20px 0; }
         .footer { font-size: 11px; color: #999; border-top: 1px solid #eee; padding-top: 15px; margin-top: 30px; }
         ul.details { list-style: none; padding: 0; margin: 0; }
         ul.details li { margin-bottom: 8px; }
-        ul.details li span { font-weight: bold; width: 120px; display: inline-block; }
+        ul.details li span { font-weight: bold; width: 140px; display: inline-block; }
     </style>
 </head>
 <body>
@@ -33,22 +33,24 @@
         <div class="content">
             <div class="greeting">Halo, {{ $loan->borrower_name }}</div>
             
-            <p>Terima kasih telah melakukan peminjaman fasilitas di Masjid Syamsul Ulum. Permohonan Anda telah kami terima dan saat ini sedang dalam proses peninjauan oleh pengelola.</p>
-            
-            <p>Berikut adalah ringkasan permohonan Anda:</p>
+            <p>Terima kasih telah mengajukan peminjaman di Masjid Syamsul Ulum.</p>
+            <p>Mohon maaf, kami harus menolak permohonan peminjaman Anda dengan rincian sebagai berikut:</p>
             
             <div class="detail-box">
                 <ul class="details">
+                    <li><span>Tanggal Pengajuan</span> : {{ $loan->created_at->format('d F Y') }}</li>
                     <li><span>Keperluan</span> : {{ $loan->borrower_reason }}</li>
-                    <li><span>Tanggal</span> : {{ $loan->loan_date_start->format('d F Y') }}</li>
-                    <li><span>Waktu</span> : {{ $loan->start_time }} s/d {{ \Carbon\Carbon::parse($loan->start_time)->addHours($loan->duration)->format('H:i') }} WIB</li>
-                    <li><span>Status</span> : <strong>Menunggu Persetujuan</strong></li>
+                    <li><span>Status</span> : <strong style="color: #cc0000;">DITOLAK</strong></li>
+                    <li style="margin-top: 10px; border-top: 1px dashed #ccc; padding-top: 10px;">
+                        <span>Alasan Penolakan</span> :<br>
+                        <em>"{{ $loan->rejection_reason }}"</em>
+                    </li>
                 </ul>
             </div>
 
-            <p>Kami akan memberitahukan status selanjutnya melalui email ini setelah permohonan Anda ditinjau.</p>
+            <p>Jika Anda memiliki pertanyaan lebih lanjut atau ingin memperbaiki data pengajuan, silakan hubungi kontak pengelola terlampir atau balas email ini.</p>
             
-            <p>Terima kasih atas perhatian dan kerjasamanya.</p>
+            <p>Terima kasih atas pengertiannya.</p>
             
             <p>Salam hangat,<br>
             <strong>Pengelola MSU</strong>
@@ -58,7 +60,7 @@
         <!-- FOOTER -->
         <div class="footer">
             &copy; {{ date('Y') }} Masjid Syamsul Ulum Telkom University. All rights reserved.<br>
-            Email ini dibuat secara otomatis, mohon tidak membalas email ini.
+            Email ini dibuat secara otomatis.
         </div>
     </div>
 </body>
