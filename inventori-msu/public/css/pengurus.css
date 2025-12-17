@@ -133,3 +133,12 @@ body {
   background-color: #2fa16c;
   border-color: #2fa16c;
 }
+
+/* Loading State */
+.table-loading {
+  pointer-events: none;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+  user-select: none;
+  cursor: wait;
+}
