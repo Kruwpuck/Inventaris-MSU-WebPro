@@ -168,13 +168,13 @@
     <!-- CONTENT -->
     <!-- CONTENT -->
     <div class="container pb-5">
-        <div class="mt-4 d-flex justify-content-between align-items-end">
+        <div class="mt-4 d-flex flex-column flex-md-row justify-content-between align-items-center align-items-md-end gap-3 gap-md-0 text-center text-md-start">
             <div>
                 <h1 class="page-title">Peminjaman Fasilitas</h1>
                 <p class="page-subtitle mb-0">Kelola status pengambilan dan pengembalian fasilitas.</p>
             </div>
             
-            <div class="input-group" style="max-width: 300px;">
+            <div class="input-group" style="width: 100%; max-width: 300px;">
                 <span class="input-group-text bg-white border-end-0 rounded-start-pill ps-3">
                     <i class="bi bi-search text-secondary"></i>
                 </span>
