@@ -1,14 +1,73 @@
-{{-- resources/views/livewire/pengelola/tambah-hapus.blade.php --}}
 @push('head')
-<style>
-  body{background:#fff;font-family:"Poppins",sans-serif}
-  .form-card{border-radius:22px}
-  .pill{border-radius:9999px}
-  .btn-msu{background:#0b492c;border-color:#0b492c}
-  .btn-msu:hover{filter:brightness(.95)}
-  .preview{height:360px;object-fit:cover;border-radius:18px}
-  @media (max-width:991.98px){.preview{height:240px}}
-</style>
+  <style>
+    body {
+      background: #fff;
+      font-family: "Poppins", sans-serif;
+    }
+
+    .form-card {
+      border-radius: 22px;
+    }
+
+    .pill {
+      border-radius: 9999px;
+    }
+
+    /* --- PERBAIKAN TOMBOL DAFTAR (FIX HOVER) --- */
+    .btn-msu {
+      background-color: #0b492c !important;
+      /* Hijau Default */
+      border-color: #0b492c !important;
+      color: #ffffff !important;
+      /* Teks Putih */
+      transition: all 0.3s ease;
+    }
+
+    /* Saat Hover/Focus: Tetap Hijau Gelap & Teks Putih */
+    .btn-msu:hover,
+    .btn-msu:focus,
+    .btn-msu:active {
+      background-color: #093e25 !important;
+      /* Hijau lebih gelap */
+      border-color: #093e25 !important;
+      color: #ffffff !important;
+      transform: translateY(-1px);
+      /* Efek naik dikit */
+      box-shadow: 0 4px 12px rgba(11, 73, 44, 0.3);
+    }
+
+    /* ------------------------------------------- */
+
+    .preview {
+      height: 360px;
+      object-fit: cover;
+      border-radius: 18px;
+    }
+
+    @media (max-width:991.98px) {
+      .preview {
+        height: 240px;
+      }
+    }
+
+    /* Styling Input Group agar rapi */
+    .input-group .form-control.pill {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    .input-group .input-group-text.pill {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      border-left: 0;
+      background: #e9ecef;
+    }
+
+    /* Mencegah kedip saat loading AlpineJS */
+    [x-cloak] {
+      display: none !important;
+    }
+  </style>
 @endpush
 
 <div class="container pt-5">
@@ -20,48 +79,60 @@
     <div class="mx-auto" style="width:120px;height:3px;background:#2a6a55;border-radius:2px"></div>
   </section>
 
-  @if (session('success'))
-    <div class="alert alert-success">{{ session('success') }}</div>
+  {{-- Alert Sukses --}}
+  @if (session()->has('success'))
+    <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+      <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
   @endif
 
   <section class="pb-5">
     <div class="row g-4 align-items-stretch">
 
-      {{-- LEFT: FOTO --}}
+      {{-- KIRI: FOTO --}}
       <div class="col-12 col-lg-5">
         <div class="card form-card shadow h-100">
           <div class="card-body">
             <h5 class="mb-3">Foto Barang/Ruangan</h5>
 
-            {{-- Preview: jika user pilih file -> temporaryUrl() --}}
             @if ($image)
-              <img class="w-100 preview mb-3" src="{{ $image->temporaryUrl() }}" alt="Preview">
+              <img class="w-100 preview mb-3 shadow-sm" src="{{ $image->temporaryUrl() }}" alt="Preview Upload">
             @else
-              <img class="w-100 preview mb-3"
-                   src="https://images.unsplash.com/photo-1520975922219-830a99aa20a6?q=80&w=1600&auto=format&fit=crop"
-                   alt="Preview">
+              <img class="w-100 preview mb-3 shadow-sm"
+                src="https://images.unsplash.com/photo-1520975922219-830a99aa20a6?q=80&w=1600&auto=format&fit=crop"
+                alt="Preview Default">
             @endif
 
-            <input type="file" class="form-control" accept="image/*" wire:model="image">
-            <small class="text-muted d-block mt-2">Format JPG/PNG, maksimal 5MB.</small>
-            @error('image') <small class="text-danger">{{ $message }}</small> @enderror
-            <div wire:loading wire:target="image" class="small text-muted mt-1">Mengunggah...</div>
+            <label class="btn btn-outline-secondary pill w-100">
+              <i class="bi bi-upload me-2"></i> Pilih Foto
+              <input type="file" class="d-none" accept="image/*" wire:model="image">
+            </label>
+            <small class="text-muted d-block mt-2 text-center">Format JPG/PNG, maksimal 5MB.</small>
+
+            @error('image') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+
+            <div wire:loading wire:target="image" class="text-center small text-primary mt-2">
+              <span class="spinner-border spinner-border-sm" role="status"></span> Mengunggah...
+            </div>
           </div>
         </div>
       </div>
 
-      {{-- RIGHT: FORM --}}
+      {{-- KANAN: FORM --}}
       <div class="col-12 col-lg-7">
         <div class="card form-card shadow h-100">
-          <div class="card-body">
+          {{-- x-data: Mengaktifkan AlpineJS untuk interaksi instan --}}
+          <div class="card-body" x-data="{ kategori: @entangle('category') }">
             <h5 class="text-center fw-bold mb-4">Form Pendaftaran</h5>
 
             <form wire:submit.prevent="save" class="row g-3">
 
-              {{-- Kategori --}}
+              {{-- 1. KATEGORI (Urutan Pertama) --}}
               <div class="col-12">
-                <label class="form-label">Kategori*</label>
-                <select class="form-select pill" wire:model="category" required>
+                <label class="form-label text-muted">Kategori*</label>
+                {{-- x-model menghubungkan dropdown ke AlpineJS agar UI berubah instan --}}
+                <select class="form-select pill" wire:model="category" x-model="kategori">
                   <option value="">Pilih kategori</option>
                   <option value="Barang">Barang</option>
                   <option value="Ruangan">Ruangan</option>
@@ -69,59 +140,76 @@
                 @error('category') <small class="text-danger">{{ $message }}</small> @enderror
               </div>
 
-              {{-- Nama --}}
+              {{-- 2. NAMA (Urutan Kedua) --}}
               <div class="col-12">
-                <label class="form-label">Nama*</label>
-                <input type="text" class="form-control pill"
-                       wire:model.defer="name"
-                       placeholder="Contoh: Proyektor / Ruang Tamu VIP" required>
+                <label class="form-label text-muted">Nama*</label>
+                <input type="text" class="form-control pill" wire:model="name"
+                  placeholder="Contoh: Proyektor / Ruang Tamu VIP">
                 @error('name') <small class="text-danger">{{ $message }}</small> @enderror
               </div>
 
-              {{-- Deskripsi --}}
+              {{-- 3. DESKRIPSI --}}
               <div class="col-12">
-                <label class="form-label">Deskripsi</label>
-                <textarea class="form-control" rows="3" style="border-radius:18px"
-                          wire:model.defer="description"
-                          placeholder="Spesifikasi singkat / aturan penggunaan (opsional)"></textarea>
+                <label class="form-label text-muted">Deskripsi</label>
+                <textarea class="form-control" rows="3" style="border-radius:18px" wire:model="description"
+                  placeholder="Spesifikasi singkat..."></textarea>
                 @error('description') <small class="text-danger">{{ $message }}</small> @enderror
               </div>
 
-              {{-- Status (belum ke DB, disimpan di properti saja) --}}
+              {{-- GRID SYSTEM: STATUS & INPUT DINAMIS --}}
+
+              {{-- Kolom Kiri: Status --}}
               <div class="col-12 col-md-6">
-                <label class="form-label">Status</label>
-                <select class="form-select pill" wire:model.defer="status">
+                <label class="form-label text-muted">Status</label>
+                <select class="form-select pill" wire:model="status">
                   <option value="Tersedia">Tersedia</option>
                   <option value="Tidak Tersedia">Tidak Tersedia</option>
                   <option value="Perawatan">Perawatan</option>
+                  <option value="Dipakai">Dipakai</option>
                 </select>
+                @error('status') <small class="text-danger">{{ $message }}</small> @enderror
               </div>
 
-              {{-- Stok / Kapasitas (muncul sesuai kategori) --}}
-              @if ($category === 'Barang')
-                <div class="col-12 col-md-6">
-                  <label class="form-label">Stok*</label>
-                  <input type="number" min="0" class="form-control pill"
-                         wire:model.defer="stock" placeholder="Contoh: 10">
+              {{-- Kolom Kanan: Input Dinamis (Muncul Instan pakai x-show) --}}
+              <div class="col-12 col-md-6">
+
+                {{-- Jika Barang -> Muncul STOK --}}
+                <div x-show="kategori == 'Barang'" x-cloak>
+                  <label class="form-label text-muted">Stok Barang*</label>
+                  <input type="number" min="0" class="form-control pill" wire:model="stock" placeholder="Jml Stok">
                   @error('stock') <small class="text-danger">{{ $message }}</small> @enderror
                 </div>
-              @elseif ($category === 'Ruangan')
-                <div class="col-12 col-md-6">
-                  <label class="form-label">Kapasitas*</label>
+
+                {{-- Jika Ruangan -> Muncul KAPASITAS --}}
+                <div x-show="kategori == 'Ruangan'" x-cloak>
+                  <label class="form-label text-muted">Kapasitas Ruangan*</label>
                   <div class="input-group">
-                    <input type="number" min="1" class="form-control pill"
-                           wire:model.defer="capacity" placeholder="Contoh: 100">
+                    <input type="number" min="1" class="form-control pill" wire:model="capacity"
+                      placeholder="Max Orang">
                     <span class="input-group-text pill">orang</span>
                   </div>
                   @error('capacity') <small class="text-danger">{{ $message }}</small> @enderror
                 </div>
-              @endif
 
-              {{-- Aksi --}}
-              <div class="col-12 d-flex justify-content-end pt-2">
-                <button type="reset" class="btn btn-outline-secondary pill px-4 me-2">Bersihkan</button>
-                <button type="submit" class="btn btn-msu text-white pill px-4">
-                  <i class="bi bi-check2-circle me-1"></i>Daftar
+                {{-- Placeholder (Jika belum pilih kategori) --}}
+                <div x-show="!kategori" x-cloak>
+                  <label class="form-label text-muted">&nbsp;</label>
+                  <input type="text" class="form-control pill" disabled style="background-color: #f8f9fa; border:none;">
+                </div>
+
+              </div>
+
+              {{-- Tombol Aksi --}}
+              <div class="col-12 d-flex justify-content-end pt-3">
+                <button type="button" wire:click="resetForm" class="btn btn-outline-secondary pill px-4 me-2">
+                  Bersihkan
+                </button>
+
+                <button type="submit" class="btn btn-msu pill px-4">
+                  <div wire:loading wire:target="save" class="spinner-border spinner-border-sm text-white me-1"
+                    role="status"></div>
+                  <span wire:loading.remove wire:target="save"><i class="bi bi-check2-circle me-1"></i></span>
+                  Daftar
                 </button>
               </div>
 
