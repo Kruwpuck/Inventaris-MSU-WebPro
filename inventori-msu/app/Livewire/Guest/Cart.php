@@ -19,17 +19,19 @@ class Cart extends Component
     public $borrower_nim;
     public $borrower_prodi;
     public $borrower_description;
-    
+
     // Loan Details
     public $loan_date_start;
     public $loan_time_start;
     public $loan_duration;
-    
+
     public $donation_amount;
-    public $document_file; 
+
+    // file proposal/dokumen dari guest
+    public $document_file;
 
     protected $listeners = ['cart-updated' => '$refresh'];
-    
+
     public function setActiveItem($id)
     {
         $this->activeItemId = $id;
@@ -81,67 +83,68 @@ class Cart extends Component
         foreach ($cart as $cartItem) {
             $inv = \App\Models\Inventory::find($cartItem['id']);
             if (!$inv) {
-                 session()->flash('error', "Item tidak ditemukan dalam database.");
-                 return;
+                session()->flash('error', "Item tidak ditemukan dalam database.");
+                return;
             }
 
             // Check stock limit
             if ($inv->category == 'barang' && $cartItem['quantity'] > $inv->stock) {
-                 session()->flash('error', "Stok untuk '{$inv->name}' tidak mencukupi (Tersedia: {$inv->stock}, Diminta: {$cartItem['quantity']}).");
-                 return;
+                session()->flash('error', "Stok untuk '{$inv->name}' tidak mencukupi (Tersedia: {$inv->stock}, Diminta: {$cartItem['quantity']}).");
+                return;
             }
         }
 
-        // Save File
-        $path = $this->document_file->store('documents', 'public');
+        // ✅ Save proposal/document file
+        $path = $this->document_file->store('documents', 'public'); // ex: documents/xxxx.pdf
 
         // Calculate DateTime
         try {
             $startDateTime = \Carbon\Carbon::parse($this->loan_date_start . ' ' . $this->loan_time_start);
-            $endDateTime = $startDateTime->copy()->addHours((int)$this->loan_duration);
+            $endDateTime = $startDateTime->copy()->addHours((int) $this->loan_duration);
         } catch (\Exception $e) {
             $startDateTime = now();
             $endDateTime = now()->addHour();
         }
 
         // Create Loan Request
-        $fullReason = $this->borrower_reason; 
+        $fullReason = $this->borrower_reason;
         if ($this->borrower_description) {
             $fullReason .= " (" . $this->borrower_description . ")";
         }
 
         // Using DB transaction
-        \Illuminate\Support\Facades\DB::transaction(function() use ($cart, $path, $startDateTime, $endDateTime, $fullReason) {
-            
+        \Illuminate\Support\Facades\DB::transaction(function () use ($cart, $path, $startDateTime, $endDateTime, $fullReason) {
+
             $loan = \App\Models\LoanRequest::create([
                 'borrower_name' => $this->borrower_name,
                 'borrower_email' => $this->borrower_email,
                 'borrower_phone' => $this->borrower_phone,
                 'borrower_reason' => $fullReason,
+                'proposal_path' => $path,          // ✅ INI KUNCI UTAMANYA
                 'loan_date_start' => $startDateTime,
                 'loan_date_end' => $endDateTime,
                 'status' => 'pending',
-                // 'document_path' => $path, 
             ]);
 
-            foreach($cart as $cartItem) {
+            foreach ($cart as $cartItem) {
                 \App\Models\LoanItem::create([
                     'loan_request_id' => $loan->id,
                     'inventory_id' => $cartItem['id'],
-                    'quantity' => (int)$cartItem['quantity']
+                    'quantity' => (int) $cartItem['quantity']
                 ]);
             }
         });
 
         $this->clearCart();
 
-        return redirect()->route('guest.success')->with('success', 'Peminjaman berhasil diajukan! Silahkan tunggu persetujuan pengelola.');
+        return redirect()->route('guest.success')
+            ->with('success', 'Peminjaman berhasil diajukan! Silahkan tunggu persetujuan pengelola.');
     }
 
     public function render()
     {
         $cart = $this->getCart();
-        
+
         // Auto-select tab logic
         if ($this->activeItemId === null || !isset($cart[$this->activeItemId])) {
             $this->activeItemId = !empty($cart) ? array_key_first($cart) : null;
