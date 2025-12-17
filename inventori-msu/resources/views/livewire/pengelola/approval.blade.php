@@ -132,7 +132,6 @@
           <tbody>
             @forelse($pendingRequests as $req)
               @php
-                // Tgl pinjam: cuma 1 tanggal (start)
                 $start = optional($req->loan_date_start)->format('Y-m-d')
                   ?? (is_string($req->loan_date_start) ? $req->loan_date_start : '-');
 
@@ -168,10 +167,10 @@
 
                 <td>
                   <div class="d-flex flex-wrap gap-2">
+                    {{-- ✅ UBAH: pakai modal, bukan browser confirm --}}
                     <button
                       class="btn btn-approve btn-sm btn-box"
-                      wire:click="approve({{ $req->id }})"
-                      wire:confirm="Yakin ingin menyetujui pengajuan ini?"
+                      wire:click="prepareApprove({{ $req->id }})"
                       type="button"
                     >
                       <i class="bi bi-check-lg me-1"></i>Setuju
@@ -285,6 +284,31 @@
     </div>
   </div>
 
+  {{-- =========================
+       MODAL APPROVE
+  ========================= --}}
+  <div class="modal fade" id="approveModal" tabindex="-1" wire:ignore.self>
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Konfirmasi Persetujuan</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body">
+          <p class="mb-0">Yakin ingin menyetujui pengajuan ini?</p>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-box" data-bs-dismiss="modal">Batal</button>
+          <button type="button" class="btn btn-approve btn-box" wire:click="approveConfirmed">
+            <i class="bi bi-check-lg me-1"></i>Ya, Setuju
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   {{-- MODAL PENOLAKAN --}}
   <div class="modal fade" id="rejectionModal" tabindex="-1" wire:ignore.self>
     <div class="modal-dialog modal-dialog-centered">
@@ -319,13 +343,19 @@
 @push('scripts')
 <script>
   document.addEventListener('livewire:init', () => {
-    const el = document.getElementById('rejectionModal');
-    if (!el) return;
+    // Approve Modal
+    const approveEl = document.getElementById('approveModal');
+    const approveModal = approveEl ? new bootstrap.Modal(approveEl) : null;
 
-    const rejectionModal = new bootstrap.Modal(el);
+    // Reject Modal
+    const rejectEl = document.getElementById('rejectionModal');
+    const rejectionModal = rejectEl ? new bootstrap.Modal(rejectEl) : null;
 
-    Livewire.on('open-reject-modal', () => rejectionModal.show());
-    Livewire.on('close-reject-modal', () => rejectionModal.hide());
+    Livewire.on('open-approve-modal', () => approveModal && approveModal.show());
+    Livewire.on('close-approve-modal', () => approveModal && approveModal.hide());
+
+    Livewire.on('open-reject-modal', () => rejectionModal && rejectionModal.show());
+    Livewire.on('close-reject-modal', () => rejectionModal && rejectionModal.hide());
   });
 </script>
 @endpush
