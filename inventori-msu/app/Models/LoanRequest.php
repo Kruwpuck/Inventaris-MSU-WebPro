@@ -12,6 +12,7 @@ class LoanRequest extends Model
         'borrower_email',
         'borrower_phone',
         'borrower_reason',
+        'proposal_path',          // ✅ tambah ini
         'loan_date_start',
         'loan_date_end',
         'status',
