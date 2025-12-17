@@ -37,19 +37,28 @@ class Laporan extends Component
 
                 switch ($lr->status) {
                     case 'returned':
-                        // (NOTE) di laporan kamu sebelumnya ada "Menunggu Submit".
-                        // Karena dropdown kamu TIDAK punya itu, biarkan tetap mapping,
-                        // nanti akan ter-filter dan tidak akan tampil.
-                        if ($lr->loanRecord && $lr->loanRecord->is_submitted) {
-                            $statusUi = 'Sudah Kembali';
-                        } else {
-                            $statusUi = 'Menunggu Submit';
-                        }
+                        $tglKembali = '-';
+                        $actualReturn = null;
 
                         if ($lr->loanRecord && $lr->loanRecord->returned_at) {
-                            $tglKembali = Carbon::parse($lr->loanRecord->returned_at)->format('m/d/Y');
+                            $actualReturn = Carbon::parse($lr->loanRecord->returned_at);
+                            $tglKembali = $actualReturn->format('m/d/Y');
                         } else {
                             $tglKembali = $jatuhTempo->format('m/d/Y');
+                        }
+
+                        // Logic Refined:
+                        // 1. Not Submitted -> "Sudah Kembali" (ALWAYS)
+                        // 2. Submitted -> Check Late vs On Time
+                        
+                        if ($lr->loanRecord && $lr->loanRecord->is_submitted) {
+                            if ($actualReturn && $actualReturn->gt($jatuhTempo)) {
+                                $statusUi = 'Terlambat';
+                            } else {
+                                $statusUi = 'Selesai';
+                            }
+                        } else {
+                             $statusUi = 'Sudah Kembali';
                         }
                         break;
 
@@ -90,7 +99,7 @@ class Laporan extends Component
         });
 
         // ✅ FILTER: hanya status yang ada di dropdown laporan
-        $allowedStatuses = ['Sedang Dipinjam', 'Sudah Kembali', 'Terlambat', 'Siap Diambil'];
+        $allowedStatuses = ['Sedang Dipinjam', 'Sudah Kembali', 'Terlambat', 'Siap Diambil', 'Selesai'];
         $laporans = $laporans->filter(fn ($r) => in_array($r->status, $allowedStatuses, true))->values();
 
         // optional: search backend biar list gak terlalu banyak
