@@ -35,8 +35,8 @@ class LaporanExportController extends Controller
         $rows = $requests->flatMap(function ($lr) use ($today) {
             return $lr->items->map(function ($inv) use ($lr, $today) {
 
-                $tglPinjam   = Carbon::parse($lr->loan_date_start);
-                $jatuhTempo  = Carbon::parse($lr->loan_date_end);
+                $tglPinjam  = Carbon::parse($lr->loan_date_start);
+                $jatuhTempo = Carbon::parse($lr->loan_date_end);
 
                 // map backend -> UI status
                 $statusUi = 'Unknown';
@@ -89,17 +89,18 @@ class LaporanExportController extends Controller
                     'nama_item'   => $inv->name,
                     'kategori'    => $kategoriUi,
                     'peminjam'    => $lr->borrower_name,
-
-                    // simpan Carbon dulu biar bisa difilter periode
-                    'tgl_pinjam'  => $tglPinjam,
-                    'jatuh_tempo' => $jatuhTempo,
-
+                    'tgl_pinjam'  => $tglPinjam,   // Carbon
+                    'jatuh_tempo' => $jatuhTempo,  // Carbon
                     'tgl_kembali' => $tglKembali,
                     'jumlah'      => (int) ($inv->pivot->quantity ?? 1),
                     'status'      => $statusUi,
                 ];
             });
         })->values();
+
+        // ✅ FILTER: hanya status yang ada di dropdown laporan
+        $allowedStatuses = ['Sedang Dipinjam', 'Sudah Kembali', 'Terlambat', 'Siap Diambil'];
+        $rows = $rows->filter(fn ($r) => in_array($r['status'], $allowedStatuses, true))->values();
 
         /**
          * ==========================
@@ -134,7 +135,6 @@ class LaporanExportController extends Controller
          * ==========================
          * SEARCH TEXT
          * ==========================
-         * cari apa pun yang ada di tabel (gabung semua kolom penting)
          */
         if ($q) {
             $qLower = strtolower($q);
@@ -196,13 +196,11 @@ class LaporanExportController extends Controller
         $today = Carbon::today();
 
         if ($periode === 'custom') {
-            // validasi minimal: from & to harus ada
             if ($fromParam && $toParam) {
                 try {
                     $from = Carbon::parse($fromParam)->startOfDay();
                     $to   = Carbon::parse($toParam)->endOfDay();
 
-                    // swap kalau user kebalik input
                     if ($from->gt($to)) {
                         [$from, $to] = [$to, $from];
                     }
@@ -213,12 +211,10 @@ class LaporanExportController extends Controller
                         $from->format('m/d/Y') . ' - ' . $to->format('m/d/Y'),
                     ];
                 } catch (\Throwable $e) {
-                    // kalau parsing gagal, fallback ke all
                     return [null, null, 'Semua Waktu'];
                 }
             }
 
-            // kalau custom tapi param kosong -> fallback all biar ga error
             return [null, null, 'Semua Waktu'];
         }
 
