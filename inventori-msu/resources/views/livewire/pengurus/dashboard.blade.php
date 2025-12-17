@@ -169,11 +169,11 @@
                 /* Gradient from top (transparent) to bottom (white) to reveal image top and make text readable at bottom */
                 background-image: url("{{ asset('aset/gedung.png') }}");
                 background-size: cover;
-                background-position: center -80px; /* Shifts image up to move 'Syamsul Ulum' higher */
+                background-position: center center;
                 border-radius: 20px;
                 box-shadow: 0 4px 20px rgba(0,0,0,0.03);
-                padding: 4rem 3rem;
-                min-height: 380px; 
+                padding: 4rem 3rem 2rem 3rem; /* Reduced bottom padding to lower text */
+                min-height: 450px; /* Increased height for more separation */ 
                 display: flex;
                 align-items: flex-end; /* Align text to bottom */
                 justify-content: center; /* Center text horizontally */
@@ -193,9 +193,9 @@
 
         <!-- DATA SECTION -->
         <section>
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3 class="section-title mb-0">Peminjaman Hari Ini</h3>
-                <div class="input-group" style="max-width: 300px;">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-3">
+                <h3 class="section-title mb-3 mb-md-0 text-center text-md-start">Peminjaman Hari Ini</h3>
+                <div class="input-group" style="width: 100%; max-width: 300px;">
                     <span class="input-group-text bg-white border-end-0 rounded-start-pill ps-3">
                         <i class="bi bi-search text-secondary"></i>
                     </span>
