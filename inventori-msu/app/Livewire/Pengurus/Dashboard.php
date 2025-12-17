@@ -43,21 +43,12 @@ class Dashboard extends Component
         session()->flash('success', 'Status berhasil diperbarui!');
     }
 
+    public $search = '';
+
     public function render()
     {
-        // Filter: approved or handed_over. Hide if returned (or both dates set).
-        // Since we update status to 'returned' when returned_at is set, we can just filter by status.
-        // But to be consistent with "Wait until both set" if that was the rule?
-        // JS Logic: "Jika dua-duanya sudah centang -> hapus".
-        // If we strictly follow JS, we should wait until both are checked.
-        // My previous implementation (Step 96) used: 
-        // ->whereIn('status', ['approved', 'handed_over']) AND (No Record OR Not Both Set)
-        
         $data = \App\Models\LoanRequest::query()
             ->whereIn('status', ['approved', 'handed_over'])
-
-            // Filter: Show if NO Record OR (Record exists but NOT BOTH timestamps are set)
-
             ->where(function ($query) {
                 $query->whereDoesntHave('loanRecord')
                       ->orWhereHas('loanRecord', function ($q) {
@@ -65,9 +56,20 @@ class Dashboard extends Component
                             ->orWhereNull('returned_at');
                       });
             })
-
-            // Filter: Only show loans for toda
-            ->whereDate('loan_date_start', \Carbon\Carbon::today())
+            // If search is empty, show TODAY's loans. If searching, show matching loans from ANY date.
+            ->when(!$this->search, function ($q) {
+                $q->whereDate('loan_date_start', \Carbon\Carbon::today());
+            })
+            ->when($this->search, function ($q) {
+                $q->where(function ($sub) {
+                    $sub->where('borrower_name', 'like', '%' . $this->search . '%')
+                        ->orWhereHas('items', function ($i) {
+                            $i->where('name', 'like', '%' . $this->search . '%');
+                        })
+                        ->orWhere('loan_date_start', 'like', '%' . $this->search . '%')
+                        ->orWhere('loan_date_end', 'like', '%' . $this->search . '%');
+                });
+            })
             ->with(['items', 'loanRecord'])
             ->latest('loan_date_start')
             ->get();
