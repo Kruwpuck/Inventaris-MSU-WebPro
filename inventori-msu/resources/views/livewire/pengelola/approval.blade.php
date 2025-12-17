@@ -2,164 +2,285 @@
 
 @push('head')
 <style>
-  body {
-    background-color: #ffffff;
-    font-family: "Poppins", sans-serif;
+  body { background:#fff; font-family:"Poppins",sans-serif; }
+
+  .page-wrap{ padding-top: 110px; padding-bottom: 60px; }
+
+  .section-title{
+    font-size: 2.1rem;
+    font-weight: 500;
+    letter-spacing: .2px;
   }
-  .shadow-soft {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08),
-      0 2px 4px rgba(0, 0, 0, 0.04);
+  .section-subtitle{ color:#6c757d; margin-top: .5rem; }
+
+  .card-soft{
+    background:#fff;
+    border-radius: 16px;
+    box-shadow: 0 6px 18px rgba(0,0,0,.06);
+    border: 1px solid rgba(0,0,0,.04);
   }
-  .navbar-nav .nav-link {
-    color: #2fa16c;
-    font-weight: 600;
-    margin: 0 10px;
-    transition: color 0.2s ease;
+
+  .table thead th{
+    background:#f8f9fa;
+    color:#4b5563;
+    font-weight: 700;
+    font-size: .92rem;
+    white-space: nowrap;
+    border-bottom: 1px solid rgba(0,0,0,.08) !important;
+    vertical-align: middle;
   }
-  .navbar-nav .nav-link:hover {
-    color: #0b492c;
+  .table tbody td{ vertical-align: middle; }
+
+  /* ====== BADGE KOTAK (status) — LEBIH KECIL ====== */
+  .badge-box{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding: .22rem .5rem;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: .75rem;
+    white-space: nowrap;
+    min-width: 78px;
+    line-height: 1.2;
+    border: 1px solid rgba(0,0,0,.08);
   }
-  .navbar-nav .nav-link.active {
-    color: #0b492c !important;
+  .badge-pending{ background:#f6d36a; color:#3b2f00; }
+  .badge-approved{ background:#2e7d32; color:#fff; }
+  .badge-rejected{ background:#c62828; color:#fff; }
+
+  /* ====== BUTTON KOTAK (aksi) — LEBIH RINGKAS ====== */
+  .btn-box{
+    border-radius: 4px !important;
+    padding: .28rem .65rem !important;
+    font-size: .78rem;
+    font-weight: 700;
+    line-height: 1.2;
+    border-width: 1px !important;
   }
-  input[type="search"]:focus,
-  input[type="text"]:focus,
-  .form-control:focus {
-    box-shadow: none !important;
-    border-color: #000 !important;
+  .btn-approve{
+    background:#2e7d32 !important;
+    border-color:#2e7d32 !important;
+    color:#fff !important;
   }
-  .action-buttons .btn {
-    min-width: 90px;
+  .btn-reject{
+    background:#c62828 !important;
+    border-color:#c62828 !important;
+    color:#fff !important;
+  }
+
+  .items-list{
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+  }
+  .items-list li{ line-height: 1.35; }
+
+  .btn-icon{
+    width: 38px;
+    height: 38px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    border-radius: 10px;
+    border: 1px solid rgba(0,0,0,.12);
+    background:#fff;
+  }
+  .btn-icon:hover{ background:#f8f9fa; }
+
+  .table-responsive{ border-radius: 16px; overflow: hidden; }
+
+  @media (max-width: 576px){
+    .section-title{ font-size: 1.6rem; }
   }
 </style>
 @endpush
 
-<div>
-  <div class="container pt-5 pb-5" style="padding-top: 100px">
-    <div class="row">
-      <div class="col-12">
-        
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
+<div class="container page-wrap">
 
-        <h2 class="mb-4">Daftar Pengajuan (Pending)</h2>
-        <p class="text-muted mb-4">
-          Tinjau pengajuan peminjaman barang dan fasilitas yang masih tertunda.
-        </p>
+  @if (session('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      {{ session('success') }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  @endif
 
-        <div class="table-responsive shadow-soft rounded-3">
-          <table class="table table-hover align-middle mb-0">
-            <thead class="table-light">
-              <tr>
-                <th scope="col">ID</th>
-                <th scope="col">Peminjam</th>
-                <th scope="col">Barang/Ruangan</th>
-                <th scope="col">Tgl Pinjam</th>
-                <th scope="col">Status</th>
-                <th scope="col" style="min-width: 190px">Aksi</th>
+  {{-- =========================
+       PENDING SECTION
+  ========================= --}}
+  <div class="mb-5">
+    <div class="mb-4">
+      <div class="section-title">Daftar Pengajuan (Pending)</div>
+      <div class="section-subtitle">Tinjau pengajuan peminjaman barang dan fasilitas yang masih tertunda.</div>
+    </div>
+
+    <div class="card-soft">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead>
+            <tr>
+              <th style="width:90px">ID</th>
+              <th style="min-width:160px">Peminjam</th>
+              <th style="min-width:220px">Barang/Fasilitas</th>
+              <th style="min-width:140px">Tgl Pinjam</th>
+              <th style="width:130px">Status</th>
+              <th style="min-width:190px">Aksi</th>
+              <th style="min-width:170px">Proposal</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @forelse($pendingRequests as $req)
+              @php
+                // Tgl pinjam: cuma 1 tanggal (start)
+                $start = optional($req->loan_date_start)->format('Y-m-d')
+                  ?? (is_string($req->loan_date_start) ? $req->loan_date_start : '-');
+
+                $proposalUrl = $req->proposal_url
+                  ?? $req->proposal_path
+                  ?? $req->proposal
+                  ?? null;
+
+                if ($proposalUrl && !str_starts_with($proposalUrl, 'http')) {
+                  $proposalUrl = str_starts_with($proposalUrl, '/')
+                    ? $proposalUrl
+                    : (str_starts_with($proposalUrl, 'storage/') ? asset($proposalUrl) : asset('storage/'.$proposalUrl));
+                }
+              @endphp
+
+              <tr wire:key="pending-{{ $req->id }}">
+                <td><strong>P{{ str_pad($req->id, 3, '0', STR_PAD_LEFT) }}</strong></td>
+                <td>{{ $req->borrower_name }}</td>
+
+                <td>
+                  <ul class="items-list">
+                    @foreach($req->items as $item)
+                      <li>{{ $item->name }} (x{{ $item->pivot->quantity ?? 1 }})</li>
+                    @endforeach
+                  </ul>
+                </td>
+
+                <td>{{ $start }}</td>
+
+                <td>
+                  <span class="badge-box badge-pending">Pending</span>
+                </td>
+
+                <td>
+                  <div class="d-flex flex-wrap gap-2">
+                    <button
+                      class="btn btn-approve btn-sm btn-box"
+                      wire:click="approve({{ $req->id }})"
+                      wire:confirm="Yakin ingin menyetujui pengajuan ini?"
+                      type="button"
+                    >
+                      <i class="bi bi-check-lg me-1"></i>Setuju
+                    </button>
+
+                    <button
+                      class="btn btn-reject btn-sm btn-box"
+                      wire:click="prepareReject({{ $req->id }})"
+                      type="button"
+                    >
+                      <i class="bi bi-x-lg me-1"></i>Tolak
+                    </button>
+                  </div>
+                </td>
+
+                <td>
+                  @if($proposalUrl)
+                    <a class="btn btn-outline-primary btn-sm btn-box" href="{{ $proposalUrl }}" target="_blank" rel="noopener">
+                      <i class="bi bi-file-earmark-text me-1"></i>Tinjau Proposal
+                    </a>
+                  @else
+                    <span class="text-muted">-</span>
+                  @endif
+                </td>
               </tr>
-            </thead>
-            <tbody>
-                @forelse($pendingRequests as $req)
-                    <tr wire:key="pending-{{ $req->id }}">
-                        <td><strong>{{ $req->id }}</strong></td>
-                        <td>{{ $req->borrower_name }}</td>
-                        <td>
-                            <ul class="list-unstyled mb-0">
-                                @foreach($req->items as $item)
-                                    <li>{{ $item->name }} (x{{ $item->pivot->quantity }})</li>
-                                @endforeach
-                            </ul>
-                        </td>
-                        <td>
-                            {{ $req->loan_date_start->format('d M Y') }} - 
-                            {{ $req->loan_date_end->format('d M Y') }}
-                        </td>
-                        <td><span class="badge bg-warning text-dark">{{ ucfirst($req->status) }}</span></td>
-                        <td>
-                            <div class="d-flex align-items-center" style="gap: .25rem;">
-                                <button class="btn btn-success btn-sm" 
-                                        wire:click="approve({{ $req->id }})"
-                                        wire:confirm="Yakin ingin menyetujui pengajuan ini?">
-                                    <i class="bi bi-check-lg"></i> Setuju
-                                </button>
-                                <button class="btn btn-danger btn-sm" 
-                                        wire:click="prepareReject({{ $req->id }})">
-                                    <i class="bi bi-x-lg"></i> Tolak
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="6" class="p-5 text-muted text-center">
-                            Tidak ada pengajuan pending saat ini.
-                        </td>
-                    </tr>
-                @endforelse
-            </tbody>
-          </table>
-        </div>
+            @empty
+              <tr>
+                <td colspan="7" class="p-5 text-muted text-center">
+                  Tidak ada pengajuan pending saat ini.
+                </td>
+              </tr>
+            @endforelse
+          </tbody>
+
+        </table>
+      </div>
+    </div>
+  </div>
+
+  {{-- =========================
+       HISTORY SECTION
+  ========================= --}}
+  <div>
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-3">
+      <div>
+        <div class="section-title">Riwayat Keputusan</div>
+        <div class="section-subtitle">Daftar pengajuan yang telah disetujui atau ditolak.</div>
       </div>
     </div>
 
-    <div class="row mt-5 pt-3">
-      <div class="col-12">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-          <h2 class="mb-0">Riwayat Keputusan</h2>
-          {{-- Export button could be re-implemented to point to a route --}}
-        </div>
+    <div class="card-soft">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead>
+            <tr>
+              <th style="width:90px">ID</th>
+              <th style="min-width:160px">Peminjam</th>
+              <th style="min-width:240px">Item</th>
+              <th style="width:140px">Status</th>
+              <th style="min-width:220px">Catatan</th>
+              <th style="width:90px" class="text-center">Cetak</th>
+            </tr>
+          </thead>
 
-        <p class="text-muted mb-4">
-          Daftar pengajuan yang telah disetujui atau ditolak.
-        </p>
+          <tbody>
+            @forelse($historyRequests as $hist)
+              @php
+                $isApproved = $hist->status === 'approved';
+                $note = $hist->rejection_reason ?? '-';
+              @endphp
 
-        <div class="table-responsive shadow-soft rounded-3">
-          <table class="table table-hover align-middle mb-0">
-            <thead class="table-light">
-              <tr>
-                <th scope="col">ID</th>
-                <th scope="col">Peminjam</th>
-                <th scope="col">Item</th>
-                <th scope="col">Status</th>
-                <th scope="col">Catatan</th>
+              <tr wire:key="hist-{{ $hist->id }}">
+                <td><strong>P{{ str_pad($hist->id, 3, '0', STR_PAD_LEFT) }}</strong></td>
+                <td>{{ $hist->borrower_name }}</td>
+
+                <td>
+                  <ul class="items-list">
+                    @foreach($hist->items as $item)
+                      <li>{{ $item->name }} (x{{ $item->pivot->quantity ?? 1 }})</li>
+                    @endforeach
+                  </ul>
+                </td>
+
+                <td>
+                  @if($isApproved)
+                    <span class="badge-box badge-approved">Approved</span>
+                  @else
+                    <span class="badge-box badge-rejected">Rejected</span>
+                  @endif
+                </td>
+
+                <td>{{ $note }}</td>
+
+                <td class="text-center">
+                  <button class="btn-icon" type="button" onclick="window.print()" title="Cetak">
+                    <i class="bi bi-printer"></i>
+                  </button>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-                @forelse($historyRequests as $hist)
-                    <tr wire:key="hist-{{ $hist->id }}">
-                        <td><strong>{{ $hist->id }}</strong></td>
-                        <td>{{ $hist->borrower_name }}</td>
-                        <td>
-                             <ul class="list-unstyled mb-0">
-                                @foreach($hist->items as $item)
-                                    <li>{{ $item->name }} (x{{ $item->pivot->quantity }})</li>
-                                @endforeach
-                            </ul>
-                        </td>
-                        <td>
-                            @if($hist->status == 'approved')
-                                <span class="badge bg-success">Approved</span>
-                            @else
-                                <span class="badge bg-danger">Rejected</span>
-                            @endif
-                        </td>
-                        <td>{{ $hist->rejection_reason ?? '-' }}</td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="5" class="p-5 text-muted text-center">
-                            Belum ada riwayat keputusan.
-                        </td>
-                    </tr>
-                @endforelse
-            </tbody>
-          </table>
-        </div>
+            @empty
+              <tr>
+                <td colspan="6" class="p-5 text-muted text-center">
+                  Belum ada riwayat keputusan.
+                </td>
+              </tr>
+            @endforelse
+          </tbody>
+
+        </table>
       </div>
     </div>
   </div>
@@ -173,23 +294,20 @@
             <h5 class="modal-title">Alasan Penolakan</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
+
           <div class="modal-body">
-            <p>Anda wajib memberikan alasan mengapa pengajuan ini ditolak.</p>
-            
+            <p class="text-muted mb-3">Anda wajib memberikan alasan mengapa pengajuan ini ditolak.</p>
+
             <div class="mb-3">
               <label class="form-label">Catatan Alasan (Wajib diisi)</label>
-              <textarea
-                class="form-control"
-                wire:model="rejectReason"
-                rows="4"
-                required
-              ></textarea>
+              <textarea class="form-control" wire:model="rejectReason" rows="4" required></textarea>
               @error('rejectReason') <span class="text-danger small">{{ $message }}</span> @enderror
             </div>
           </div>
+
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-            <button type="submit" class="btn btn-danger">Kirim Penolakan</button>
+            <button type="button" class="btn btn-secondary btn-box" data-bs-dismiss="modal">Batal</button>
+            <button type="submit" class="btn btn-danger btn-box">Kirim Penolakan</button>
           </div>
         </form>
       </div>
@@ -200,16 +318,14 @@
 
 @push('scripts')
 <script>
-    document.addEventListener('livewire:init', () => {
-        const rejectionModal = new bootstrap.Modal(document.getElementById('rejectionModal'));
+  document.addEventListener('livewire:init', () => {
+    const el = document.getElementById('rejectionModal');
+    if (!el) return;
 
-        Livewire.on('open-reject-modal', () => {
-            rejectionModal.show();
-        });
+    const rejectionModal = new bootstrap.Modal(el);
 
-        Livewire.on('close-reject-modal', () => {
-            rejectionModal.hide();
-        });
-    });
+    Livewire.on('open-reject-modal', () => rejectionModal.show());
+    Livewire.on('close-reject-modal', () => rejectionModal.hide());
+  });
 </script>
 @endpush
