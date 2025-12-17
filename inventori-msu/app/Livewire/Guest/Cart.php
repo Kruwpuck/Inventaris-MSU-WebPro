@@ -123,6 +123,8 @@ class Cart extends Component
                 'proposal_path' => $path,          // ✅ INI KUNCI UTAMANYA
                 'loan_date_start' => $startDateTime,
                 'loan_date_end' => $endDateTime,
+                'start_time' => $this->loan_time_start, // ✅ Simpan Jam
+                'duration' => $this->loan_duration,     // ✅ Simpan Durasi
                 'status' => 'pending',
             ]);
 
