@@ -98,7 +98,7 @@
               <label class="form-label">Lokasi Kegiatan</label>
               <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
-                <input type="text" class="form-control" id="location" value="Telkom University" readonly required />
+                <input type="text" class="form-control" id="location" placeholder="Masukkan lokasi kegiatan" required />
               </div>
               <div class="form-text text-muted">Hanya tersedia untuk kegiatan di lingkungan Telkom University.</div>
             </div>

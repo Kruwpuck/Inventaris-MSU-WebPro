@@ -79,6 +79,21 @@ class LoanController extends Controller
             'ktp' => 'required|file|max:10240',
         ]);
 
+        // Server-side Logic Check: Past Time
+        $startStr = $request->startDate . ' ' . $request->startTime;
+        $endStr = $request->endDate . ' ' . $request->endTime;
+        
+        $startDT = \Carbon\Carbon::parse($startStr);
+        $endDT = \Carbon\Carbon::parse($endStr);
+
+        if ($startDT->isPast()) {
+             return response()->json(['message' => 'ERROR: Waktu tidak valid. Tanggal/Jam sudah terlewat.'], 422);
+        }
+        
+        if ($startDT->greaterThanOrEqualTo($endDT)) {
+             return response()->json(['message' => 'ERROR: Waktu tidak valid. Jam Berakhir harus lebih lambat dari Jam Mulai.'], 422);
+        }
+
         DB::beginTransaction();
         try {
             // Handle Proposal File

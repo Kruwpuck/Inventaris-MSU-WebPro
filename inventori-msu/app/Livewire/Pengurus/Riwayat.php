@@ -63,7 +63,7 @@ class Riwayat extends Component
         $this->dispatch('show-toast', type: 'success', message: 'Peminjaman berhasil dibatalkan.');
     }
 
-    public function submit($id)
+    public function submit($id, $notes = null)
     {
         $request = LoanRequest::find($id);
 
@@ -74,7 +74,10 @@ class Riwayat extends Component
         $request->update(['status' => 'returned']);
 
         if ($request->loanRecord) {
-            $request->loanRecord->update(['is_submitted' => true]);
+            $request->loanRecord->update([
+                'is_submitted' => true,
+                'notes' => $notes
+            ]);
         }
 
         // session()->flash('success', 'Peminjaman diselesaikan.');

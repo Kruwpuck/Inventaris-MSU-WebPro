@@ -603,6 +603,37 @@ async function checkRealtimeAvailability() {
 
     if (!sDate || !sTime || !eDate || !eTime) return;
 
+    // Client-side Validation: Past Time
+    const startDateTime = new Date(`${sDate}T${sTime}`);
+    const now = new Date();
+    if (startDateTime < now) {
+        alert("ERROR: Waktu tidak valid. Tanggal/Jam peminjaman sudah terlewat.");
+
+        // Reset Inputs
+        if (loanDate) loanDate.value = '';
+        if (loanTimeStart) loanTimeStart.value = '';
+        if (loanDateEnd) loanDateEnd.value = '';
+        if (loanTimeEnd) loanTimeEnd.value = '';
+
+        return;
+    }
+
+    // Client-side Validation: Start >= End
+    if (eDate && eTime) {
+        const endDateTime = new Date(`${eDate}T${eTime}`);
+        if (startDateTime >= endDateTime) {
+            alert("ERROR: Waktu tidak valid. Jam Berakhir harus lebih lambat dari Jam Mulai.");
+
+            // Reset Inputs
+            if (loanDate) loanDate.value = '';
+            if (loanTimeStart) loanTimeStart.value = '';
+            if (loanDateEnd) loanDateEnd.value = '';
+            if (loanTimeEnd) loanTimeEnd.value = '';
+
+            return;
+        }
+    }
+
     try {
         const q = new URLSearchParams({
             startDate: sDate,
@@ -837,6 +868,46 @@ function buildMailtoURL({ to, subject, body, cc = '', bcc = '' }) {
     });
 
     async function processSubmission() {
+
+        // Validate Time again
+        // Validate Time again
+        const sDateVal = document.getElementById('loanDate').value;
+        const sTimeVal = document.getElementById('loanTimeStart').value;
+        const eDateVal = document.getElementById('loanDateEnd')?.value;
+        const eTimeVal = document.getElementById('loanTimeEnd')?.value;
+
+        if (sDateVal && sTimeVal) {
+            const startDateTime = new Date(`${sDateVal}T${sTimeVal}`);
+            const now = new Date();
+
+            if (startDateTime < now) {
+                alert("ERROR: Waktu tidak valid. Tanggal/Jam peminjaman sudah terlewat.");
+                resetTimeInputs();
+                return;
+            }
+
+            if (eDateVal && eTimeVal) {
+                const endDateTime = new Date(`${eDateVal}T${eTimeVal}`);
+                if (startDateTime >= endDateTime) {
+                    alert("ERROR: Waktu tidak valid. Jam Berakhir harus lebih lambat dari Jam Mulai.");
+                    resetTimeInputs();
+                    return;
+                }
+            }
+        }
+
+        function resetTimeInputs() {
+            const elDate = document.getElementById('loanDate');
+            const elTime = document.getElementById('loanTimeStart');
+            const elDateEnd = document.getElementById('loanDateEnd');
+            const elTimeEnd = document.getElementById('loanTimeEnd');
+
+            if (elDate) elDate.value = '';
+            if (elTime) elTime.value = '';
+            if (elDateEnd) elDateEnd.value = '';
+            if (elTimeEnd) elTimeEnd.value = '';
+        }
+
         const phone = document.getElementById('loanNumber')?.value?.trim() || '';
         const email = document.getElementById('email')?.value?.trim() || '';
         const pj = document.getElementById('pjName')?.value?.trim() || '';
