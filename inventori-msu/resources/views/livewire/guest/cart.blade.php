@@ -167,8 +167,10 @@
             <button class="btn btn-outline-danger" type="button" id="btnCancel">
               <i class="bi bi-x-circle me-1"></i>Batalkan
             </button>
-            <button class="btn btn-primary btn-book" type="submit" id="btnSubmit" disabled>
-              <i class="bi bi-check2-circle me-1"></i>Kirim Booking
+            <button class="btn btn-primary btn-book" type="submit" id="btnSubmit" wire:loading.attr="disabled" @click="saveEmailToLS">
+              <span wire:loading.remove wire:target="document_file, submit"><i class="bi bi-check2-circle me-1"></i>Kirim Booking</span>
+              <span wire:loading wire:target="document_file"><span class="spinner-border spinner-border-sm me-1"></span>Uploading...</span>
+              <span wire:loading wire:target="submit"><span class="spinner-border spinner-border-sm me-1"></span>Memproses...</span>
             </button>
           </div>
         </form>
