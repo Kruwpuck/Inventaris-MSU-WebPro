@@ -37,7 +37,15 @@ class PeminjamanFasilitas extends Component
         }
         $request->save();
 
-        session()->flash('success', 'Status berhasil diperbarui!');
+        $message = 'Status berhasil diperbarui!';
+        if ($type === 'ambil' && $record->picked_up_at) {
+            $message = 'Fasilitas berhasil diambil.';
+        } elseif ($type === 'kembali' && $record->returned_at) {
+            $message = 'Fasilitas berhasil dikembalikan.';
+        }
+
+        // session()->flash('success', 'Status berhasil diperbarui!');
+        $this->dispatch('show-toast', type: 'success', message: $message);
     }
 
     public $search = '';
@@ -57,6 +65,7 @@ class PeminjamanFasilitas extends Component
             ->when($this->search, function ($q) {
                 $q->where(function ($sub) {
                     $sub->where('borrower_name', 'like', '%' . $this->search . '%')
+                        ->orWhere('borrower_phone', 'like', '%' . $this->search . '%')
                         ->orWhereHas('items', function ($i) {
                             $i->where('name', 'like', '%' . $this->search . '%');
                         })

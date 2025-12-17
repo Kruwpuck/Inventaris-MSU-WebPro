@@ -110,7 +110,7 @@
     </style>
 
     <!-- NAVBAR -->
-    <nav class="navbar navbar-expand-lg fixed-top">
+    <nav class="navbar navbar-expand-lg fixed-top" wire:ignore>
         <div class="container">
             <!-- Logo -->
             <a class="navbar-brand" href="{{ route('pengurus.dashboard') }}">
@@ -184,7 +184,14 @@
             </div>
         </div>
 
-        <div class="custom-table-container mt-4">
+        <div class="custom-table-container mt-4 position-relative" wire:loading.class="table-loading">
+            <!-- Loading Overlay -->
+            <div wire:loading.flex class="position-absolute top-0 start-0 w-100 h-100 align-items-center justify-content-center bg-white bg-opacity-50" style="z-index: 10;">
+                <div class="spinner-border text-success" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+
             @if($data->isEmpty())
                 <!-- HEADER ONLY for context, then empty state -->
                  <div class="table-responsive">
@@ -193,6 +200,7 @@
                             <tr>
                                 <th>NO</th>
                                 <th>NAMA PEMINJAM</th>
+                                <th>KONTAK</th>
                                 <th>WAKTU AMBIL</th>
                                 <th>WAKTU KEMBALI</th>
                                 <th>FASILITAS</th>
@@ -214,6 +222,7 @@
                             <tr>
                                 <th>NO</th>
                                 <th>NAMA PEMINJAM</th>
+                                <th>KONTAK</th>
                                 <th>WAKTU AMBIL</th>
                                 <th>WAKTU KEMBALI</th>
                                 <th>FASILITAS</th>
@@ -226,6 +235,7 @@
                                 <tr wire:key="{{ $d->id }}">
                                     <td>{{ $loop->iteration }}</td>
                                     <td class="fw-semibold">{{ $d->borrower_name }}</td>
+                                    <td>{{ $d->borrower_phone }}</td>
                                     <td class="text-secondary">
                                         {{ $d->loan_date_start ? $d->loan_date_start->format('d M Y | H:i') : '-' }}
                                     </td>
@@ -265,8 +275,32 @@
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         
         <script>
+            // Toast Configuration
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+
+            // Listen for Livewire event
+            document.addEventListener('livewire:init', () => {
+                Livewire.on('show-toast', (event) => {
+                    Toast.fire({
+                        icon: event.type,
+                        title: event.message
+                    });
+                });
+            });
+
             function confirmPickup(event, id) {
                 event.preventDefault();
+                const checkbox = event.target;
                 
                 Swal.fire({
                     title: 'Konfirmasi Pengambilan',
@@ -279,6 +313,7 @@
                     cancelButtonText: 'Batal'
                 }).then((result) => {
                     if (result.isConfirmed) {
+                        checkbox.checked = true;
                         @this.call('toggleStatus', id, 'ambil');
                     }
                 });
@@ -286,6 +321,7 @@
 
             function confirmReturn(event, id) {
                 event.preventDefault(); 
+                const checkbox = event.target;
                 
                 Swal.fire({
                     title: 'Konfirmasi Pengembalian',
@@ -298,6 +334,7 @@
                     cancelButtonText: 'Batal'
                 }).then((result) => {
                     if (result.isConfirmed) {
+                        checkbox.checked = true;
                         @this.call('toggleStatus', id, 'kembali');
                     }
                 });
