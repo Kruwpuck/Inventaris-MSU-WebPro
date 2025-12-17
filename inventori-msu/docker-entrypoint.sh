@@ -19,7 +19,8 @@ done
 # Run migrations (only new ones)
 echo "Running migrations..."
 php artisan config:clear
-php artisan migrate --force
+# WARNING: This wipes the database on every startup!
+php artisan migrate:fresh --seed --force
 
 # Run seeders (already included in migrate:fresh --seed)
 # echo "Running seeders..."
