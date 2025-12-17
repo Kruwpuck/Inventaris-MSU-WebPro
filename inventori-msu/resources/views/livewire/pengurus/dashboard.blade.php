@@ -244,10 +244,14 @@
                                 <td class="text-center text-secondary">
                                     {{ $d->loan_date_end ? $d->loan_date_end->format('d M Y | H:i') : '-' }}
                                 </td>
-                                <td class="text-center">
-                                    <span class="badge bg-light text-dark border fw-normal">
-                                        {{ $d->items->pluck('name')->join(', ') }}
-                                    </span>
+                                <td>
+                                    <div class="d-flex flex-column gap-1">
+                                        @foreach($d->items as $item)
+                                            <span class="text-secondary small fw-medium text-nowrap">
+                                                &bull; {{ $item->name }} <span class="text-muted">(x{{ $item->pivot->quantity ?? 1 }})</span>
+                                            </span>
+                                        @endforeach
+                                    </div>
                                 </td>
                                 <td class="text-center">
                                     <div class="d-flex justify-content-center">
