@@ -40,6 +40,8 @@ class PeminjamanFasilitas extends Component
         session()->flash('success', 'Status berhasil diperbarui!');
     }
 
+    public $search = '';
+
     public function render()
     {
         // Filter: Approved/HandedOver AND (No Record OR (Record exists but NOT BOTH timestamps are set))
@@ -51,6 +53,16 @@ class PeminjamanFasilitas extends Component
                         $q->whereNull('picked_up_at')
                             ->orWhereNull('returned_at');
                     });
+            })
+            ->when($this->search, function ($q) {
+                $q->where(function ($sub) {
+                    $sub->where('borrower_name', 'like', '%' . $this->search . '%')
+                        ->orWhereHas('items', function ($i) {
+                            $i->where('name', 'like', '%' . $this->search . '%');
+                        })
+                        ->orWhere('loan_date_start', 'like', '%' . $this->search . '%')
+                        ->orWhere('loan_date_end', 'like', '%' . $this->search . '%');
+                });
             })
             ->with(['items', 'loanRecord'])
             ->latest('loan_date_start')

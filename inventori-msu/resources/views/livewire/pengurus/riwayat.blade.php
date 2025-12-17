@@ -185,9 +185,20 @@
 
     <!-- CONTENT -->
     <div class="container pb-5">
-        <div class="mt-4">
-            <h1 class="page-title">Riwayat Peminjaman</h1>
-            <p class="page-subtitle">Arsip semua aktivitas peminjaman fasilitas.</p>
+        <div class="mt-4 d-flex justify-content-between align-items-end">
+            <div>
+                <h1 class="page-title">Riwayat Peminjaman</h1>
+                <p class="page-subtitle mb-0">Arsip semua aktivitas peminjaman fasilitas.</p>
+            </div>
+            
+            <div class="input-group" style="max-width: 300px;">
+                <span class="input-group-text bg-white border-end-0 rounded-start-pill ps-3">
+                    <i class="bi bi-search text-secondary"></i>
+                </span>
+                <input type="text" class="form-control border-start-0 rounded-end-pill ps-0" 
+                       placeholder="Cari..." 
+                       wire:model.live.debounce.300ms="search">
+            </div>
         </div>
 
         <div class="custom-table-container mt-4">
@@ -215,13 +226,13 @@
                 <div class="table-responsive">
                     <table class="table table-hover mb-0 align-middle">
                         <thead>
-                            <tr>
-                                <th>NO</th>
+                            <th>NO</th>
                                 <th>NAMA PEMINJAM</th>
                                 <th>MULAI PEMINJAMAN</th>
                                 <th>SELESAI PEMINJAMAN</th>
                                 <th>FASILITAS</th>
-                                <th>STATUS</th>
+                                <th class="text-center">CANCEL</th>
+                                <th class="text-center">SUBMIT</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -230,34 +241,29 @@
                                     <td>{{ $loop->iteration }}</td>
                                     <td class="fw-bold">{{ $d->borrower_name }}</td>
                                     <td class="text-secondary">
-                                        <i class="bi bi-calendar4 me-2"></i> {{ $d->loan_date_start ? $d->loan_date_start->format('Y-m-d') : '-' }}
+                                        <i class="bi bi-calendar4 me-2"></i> 
+                                        {{ optional($d->loanRecord)->picked_up_at ? $d->loanRecord->picked_up_at->format('d M Y | H:i') : '-' }}
                                     </td>
                                     <td class="text-secondary">
-                                        <i class="bi bi-calendar4 me-2"></i> {{ $d->loan_date_end ? $d->loan_date_end->format('Y-m-d') : '-' }}
+                                        <i class="bi bi-calendar4 me-2"></i> 
+                                        {{ optional($d->loanRecord)->returned_at ? $d->loanRecord->returned_at->format('d M Y | H:i') : '-' }}
                                     </td>
                                     <td>
-                                        <button class="btn btn-outline-success btn-sm rounded-pill px-3" style="font-size: 0.8rem;">
-                                            <i class="bi bi-eye me-1"></i> Detail
+                                        {{ $d->items->pluck('name')->join(', ') }}
+                                    </td>
+                                    <td class="text-center">
+                                        <button class="btn btn-outline-danger btn-sm rounded-pill px-3" 
+                                                onclick="confirmCancel({{ $d->id }})"
+                                                {{ optional($d->loanRecord)->is_submitted ? 'disabled' : '' }}>
+                                            <i class="bi bi-x-circle me-1"></i> Cancel
                                         </button>
                                     </td>
-                                    <td>
-                                        @php
-                                            $isLate = false;
-                                            // Check if both dates exist and verify "Lateness"
-                                            if (optional($d->loanRecord)->returned_at && $d->loan_date_end) {
-                                                if ($d->loanRecord->returned_at->gt($d->loan_date_end)) {
-                                                    $isLate = true;
-                                                }
-                                            }
-                                        @endphp
-
-                                        @if($d->status == 'rejected')
-                                            <span class="badge-status-terlambat">DITOLAK</span>
-                                        @elseif($isLate)
-                                            <span class="badge-status-terlambat">TERLAMBAT</span>
-                                        @else
-                                            <span class="badge-status-selesai">SELESAI</span>
-                                        @endif
+                                    <td class="text-center">
+                                        <button class="btn btn-outline-success btn-sm rounded-pill px-3" 
+                                                onclick="confirmSubmit({{ $d->id }})"
+                                                {{ optional($d->loanRecord)->is_submitted ? 'disabled' : '' }}>
+                                            <i class="bi bi-check-circle me-1"></i> Submit
+                                        </button>
                                     </td>
                                 </tr>
                             @endforeach
@@ -270,5 +276,42 @@
 
     @push('scripts')
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        
+        <script>
+            function confirmCancel(id) {
+                Swal.fire({
+                    title: 'Batalkan Peminjaman?',
+                    text: "Data akan dikembalikan ke Dashboard.",
+                    icon: 'warning', // changed from question for stronger warning
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33', // Red
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Ya, Batalkan',
+                    cancelButtonText: 'Kembali'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        @this.call('cancel', id);
+                    }
+                });
+            }
+
+            function confirmSubmit(id) {
+                Swal.fire({
+                    title: 'Selesaikan Peminjaman?',
+                    text: "Data akan disimpan permanen sebagai selesai.",
+                    icon: 'success', // or question
+                    showCancelButton: true,
+                    confirmButtonColor: '#198754', // Green
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Ya, Selesaikan',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        @this.call('submit', id);
+                    }
+                });
+            }
+        </script>
     @endpush
 </div>

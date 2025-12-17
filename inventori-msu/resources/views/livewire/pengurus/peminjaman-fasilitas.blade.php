@@ -166,10 +166,22 @@
     </nav>
 
     <!-- CONTENT -->
+    <!-- CONTENT -->
     <div class="container pb-5">
-        <div class="mt-4">
-            <h1 class="page-title">Peminjaman Fasilitas</h1>
-            <p class="page-subtitle">Kelola status pengambilan dan pengembalian fasilitas.</p>
+        <div class="mt-4 d-flex justify-content-between align-items-end">
+            <div>
+                <h1 class="page-title">Peminjaman Fasilitas</h1>
+                <p class="page-subtitle mb-0">Kelola status pengambilan dan pengembalian fasilitas.</p>
+            </div>
+            
+            <div class="input-group" style="max-width: 300px;">
+                <span class="input-group-text bg-white border-end-0 rounded-start-pill ps-3">
+                    <i class="bi bi-search text-secondary"></i>
+                </span>
+                <input type="text" class="form-control border-start-0 rounded-end-pill ps-0" 
+                       placeholder="Cari..." 
+                       wire:model.live.debounce.300ms="search">
+            </div>
         </div>
 
         <div class="custom-table-container mt-4">
@@ -227,14 +239,13 @@
                                     </td>
                                     <td class="text-center">
                                         <input class="form-check-input" type="checkbox" style="width: 1.2em; height: 1.2em; border-color: #dee2e6;"
-                                            wire:click="toggleStatus({{ $d->id }}, 'ambil')"
-                                            {{ optional($d->loanRecord)->picked_up_at ? 'checked' : '' }}>
+                                            onclick="confirmPickup(event, {{ $d->id }})"
+                                            {{ optional($d->loanRecord)->picked_up_at ? 'checked disabled' : '' }}>
                                     </td>
                                     <td class="text-center">
                                         <input class="form-check-input" type="checkbox" style="width: 1.2em; height: 1.2em; border-color: #dee2e6;"
-                                            wire:click="toggleStatus({{ $d->id }}, 'kembali')"
-                                            wire:confirm="Apakah fasilitasnya sudah kembali?"
-                                            {{ optional($d->loanRecord)->returned_at ? 'checked' : '' }}>
+                                            onclick="confirmReturn(event, {{ $d->id }})"
+                                            {{ optional($d->loanRecord)->returned_at ? 'checked disabled' : '' }}>
                                     </td>
                                 </tr>
                             @endforeach
@@ -247,5 +258,46 @@
 
     @push('scripts')
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        
+        <script>
+            function confirmPickup(event, id) {
+                event.preventDefault();
+                
+                Swal.fire({
+                    title: 'Konfirmasi Pengambilan',
+                    text: "Apakah fasilitas sudah diambil?",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#198754',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Ya, Sudah Diambil',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        @this.call('toggleStatus', id, 'ambil');
+                    }
+                });
+            }
+
+            function confirmReturn(event, id) {
+                event.preventDefault(); 
+                
+                Swal.fire({
+                    title: 'Konfirmasi Pengembalian',
+                    text: "Apakah fasilitas ini sudah dikembalikan?",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#198754',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Ya, Sudah Kembali',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        @this.call('toggleStatus', id, 'kembali');
+                    }
+                });
+            }
+        </script>
     @endpush
 </div>

@@ -7,6 +7,8 @@ use App\Models\LoanRequest;
 
 class Riwayat extends Component
 {
+    public $search = '';
+
     public function render()
     {
         $data = LoanRequest::query()
@@ -14,6 +16,16 @@ class Riwayat extends Component
             ->whereHas('loanRecord', function ($q) {
                 $q->whereNotNull('picked_up_at')
                   ->orWhereNotNull('returned_at');
+            })
+            ->when($this->search, function ($q) {
+                $q->where(function ($sub) {
+                    $sub->where('borrower_name', 'like', '%' . $this->search . '%')
+                        ->orWhereHas('items', function ($i) {
+                            $i->where('name', 'like', '%' . $this->search . '%');
+                        })
+                        ->orWhere('loan_date_start', 'like', '%' . $this->search . '%')
+                        ->orWhere('loan_date_end', 'like', '%' . $this->search . '%');
+                });
             })
             ->with(['items', 'loanRecord'])
             ->latest('created_at')
