@@ -23,7 +23,6 @@ class Beranda extends Component
 
     protected function rules()
     {
-        // rules dinamis biar validasi gak berat & sesuai kategori
         $rules = [
             'editId'          => 'required|exists:inventories,id',
             'editCategory'    => 'required|in:barang,ruangan',
@@ -40,10 +39,17 @@ class Beranda extends Component
         return $rules;
     }
 
+    /** dipanggil saat klik tombol Cari / enter */
+    public function search()
+    {
+        $this->q = trim($this->q);
+    }
+
+    
+
     // ===== OPEN EDIT =====
     public function openEdit($id)
     {
-        // select kolom yang perlu aja (lebih cepat)
         $item = Inventory::select('id','category','name','description','stock','capacity')
             ->findOrFail($id);
 
@@ -110,19 +116,18 @@ class Beranda extends Component
 
     public function render()
     {
-        // ambil sekali aja
         $items = Inventory::query()
             ->select('id','name','description','category','stock','capacity','image_path','is_active')
-            ->when($this->q, function ($query) {
-                $query->where(function ($q) {
-                    $q->where('name', 'like', "%{$this->q}%")
-                      ->orWhere('description', 'like', "%{$this->q}%");
+            ->when(trim($this->q) !== '', function ($query) {
+                $term = trim($this->q);
+                $query->where(function ($q) use ($term) {
+                    $q->where('name', 'like', "%{$term}%")
+                      ->orWhere('description', 'like', "%{$term}%");
                 });
             })
             ->orderBy('name')
             ->get();
 
-        // pisah di memory (tanpa query ulang)
         $barangs   = $items->where('category', 'barang');
         $fasilitas = $items->where('category', 'ruangan');
 
