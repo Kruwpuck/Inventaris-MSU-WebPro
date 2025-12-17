@@ -125,13 +125,10 @@
       color: #fff;
     }
 
-    /* Hijau tua solid */
     .status-menunggu-submit {
       background: #e2e3e5;
       color: #383d41;
     }
-
-    /* Abu-abu */
 
     #fSearch:focus {
       border-color: #000;
@@ -234,7 +231,7 @@
 
     <div class="ms-auto"></div>
 
-    {{-- Search --}}
+    {{-- Search (UI TIDAK DIUBAH) --}}
     <div class="input-group" style="max-width:320px">
       <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
       <input id="fSearch" type="text" class="form-control" placeholder="Cari laporan...">
@@ -349,13 +346,15 @@
     // ========= CHART =========
     let chartTop = null;
 
+    // ✅ FIXED: chart pakai baseVisible (periode/kategori/status) dan TIDAK ikut search
     function buildTop10FromVisibleRows() {
-      if (!tbody) return { labels: [], data: [] };
+      if (!tbody) return { labels: [], data: [], isDummy: false };
 
       const mapCount = new Map();
 
       Array.from(tbody.querySelectorAll("tr")).forEach((tr) => {
-        if (tr.style.display === "none") return;
+        // chart IGNORE search: hanya ikut base filter
+        if (tr.dataset.baseVisible !== "1") return;
 
         const nama = tr.querySelector(".td-nama")?.textContent?.trim() || "-";
         const jumlah = parseInt(tr.querySelector(".td-jumlah")?.textContent || "1", 10) || 1;
@@ -367,12 +366,12 @@
         .sort((a, b) => b[1] - a[1])
         .slice(0, 10);
 
-      // CHANGE: If no data found (empty table/filtered out), use DUMMY DATA to match old UI
+      // dummy data kalau kosong
       if (sorted.length === 0) {
         return {
           labels: ["Proyektor", "Meja", "Speaker", "Terpal", "Sofa", "Hijab", "Ruang Utama", "Selasar", "Zoom", "Ruang VIP"],
           data: [12, 10, 9, 8, 7, 6, 5, 4, 3, 2],
-          isDummy: true // Flag to indicate dummy data
+          isDummy: true
         };
       }
 
@@ -389,14 +388,12 @@
 
       const top = buildTop10FromVisibleRows();
 
-      // Default chart color (adjust as needed to match screenshot)
-      const barColor = "#a0cdf0"; // Light blue similar to screenshot
+      const barColor = "#a0cdf0";
       const barBorder = "#ffffff";
 
       if (chartTop) {
         chartTop.data.labels = top.labels;
         chartTop.data.datasets[0].data = top.data;
-        // Update styling just in case
         chartTop.data.datasets[0].backgroundColor = barColor;
         chartTop.data.datasets[0].borderColor = barBorder;
         chartTop.update();
@@ -436,6 +433,7 @@
       });
     }
 
+    // ✅ FIXED: search cari semua kolom, tapi chart tidak ikut search
     function filterTable() {
       if (!tbody) return;
 
@@ -458,35 +456,47 @@
       const q = (inputSearch?.value || "").toLowerCase().trim();
       let rowIdx = 0;
 
-      // 1. First loop: apply date/search filter to rows (so we know what IS valid data)
+      // 1) baseVisible = periode/kategori/status (tanpa search)
       Array.from(tbody.querySelectorAll("tr")).forEach((tr) => {
-        const kategori = tr.getAttribute("data-kategori");
-        const status = tr.getAttribute("data-status");
-        const cellsText = Array.from(tr.children).map(td => td.textContent).join(" ").toLowerCase();
-        const tglPinjam = parseMDY(tr.children[4].textContent);
+        const kategori = tr.getAttribute("data-kategori") || "";
+        const status = tr.getAttribute("data-status") || "";
+
+        const tglPinjam = parseMDY(tr.children[4]?.textContent || "");
 
         let okPeriode = true;
         if (from && to) okPeriode = !!tglPinjam && tglPinjam >= from && tglPinjam <= to;
 
         const okKategori = vKategori === "all" || kategori === vKategori;
         const okStatus = vStatus === "all" || status === vStatus;
-        const okSearch = q === "" || cellsText.includes(q);
 
-        const visible = okPeriode && okKategori && okStatus && okSearch;
+        const baseVisible = okPeriode && okKategori && okStatus;
+        tr.dataset.baseVisible = baseVisible ? "1" : "0";
+      });
 
-        // Set row visibility (used for chart calculation + table display if visible)
-        tr.style.display = visible ? "" : "none";
-        if (visible) {
+      // 2) apply search untuk tampilan tabel saja (search semua kolom)
+      Array.from(tbody.querySelectorAll("tr")).forEach((tr) => {
+        const baseVisible = tr.dataset.baseVisible === "1";
+
+        const cellsText = Array.from(tr.children)
+          .map(td => (td.textContent || "").toLowerCase())
+          .join(" ");
+
+        const okSearch = (q === "") || cellsText.includes(q);
+
+        const visibleForTable = baseVisible && okSearch;
+
+        tr.style.display = visibleForTable ? "" : "none";
+
+        if (visibleForTable) {
           rowIdx += 1;
           tr.children[0].textContent = rowIdx;
         }
       });
 
-      // 2. Render Chart based on the visible rows
+      // 3) chart tetap ikut base filter, bukan search
       renderOrUpdateChart();
 
-      // 3. UI Requirement: If specific period selected (not 'all'), HIDE the table wrapper entirely
-      //    "untuk set waktu yang lain hanya menampilkan grafik saja"
+      // 4) requirement: kalau periode bukan 'all', tabel disembunyikan
       if (vPeriode !== 'all') {
         if (tableWrapper) tableWrapper.style.display = 'none';
       } else {
@@ -540,7 +550,6 @@
     });
 
     // ====== Livewire re-render support ======
-    // Livewire v3
     document.addEventListener("livewire:init", () => {
       if (window.Livewire) {
         Livewire.hook('morph.updated', () => {
@@ -549,7 +558,6 @@
       }
     });
 
-    // fallback kalau event di atas ga kebaca
     document.addEventListener("livewire:navigated", () => filterTable());
   </script>
 @endpush
