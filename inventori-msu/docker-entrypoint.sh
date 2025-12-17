@@ -18,6 +18,7 @@ done
 # Run migrations
 # Run migrations (only new ones)
 echo "Running migrations..."
+php artisan config:clear
 php artisan migrate --force
 
 # Run seeders (already included in migrate:fresh --seed)

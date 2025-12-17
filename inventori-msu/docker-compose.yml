@@ -31,8 +31,9 @@ services:
       MYSQL_ROOT_PASSWORD: bismillah
       MYSQL_USER: habb
       MYSQL_PASSWORD: 589654785
-    ports:
-      - "3307:3306"   # supaya tidak tabrakan dengan XAMPP/MySQL lokal
+    # PENTING: Jangan gunakan 'ports' di sini untuk keamanan.
+    # ports:
+    #   - "3307:3306"
     volumes:
       - dbdata:/var/lib/mysql
   phpmyadmin:
