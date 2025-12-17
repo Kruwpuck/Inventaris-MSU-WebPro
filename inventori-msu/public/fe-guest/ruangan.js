@@ -201,8 +201,8 @@ let isScheduleFixed = false;
 function initScheduleFilter() {
   const dateStart = document.getElementById('filterDateStart');
   const dateEnd = document.getElementById('filterDateEnd');
-  const timeStart = document.getElementById('filterTime');
-  const duration = document.getElementById('filterDuration');
+  const timeStart = document.getElementById('filterTimeStart');
+  const timeEnd = document.getElementById('filterTimeEnd');
   const btnCheck = document.getElementById('btnCheckAvailability');
   const resultText = document.getElementById('filterResultText');
 
@@ -211,29 +211,56 @@ function initScheduleFilter() {
   // Set default date to today
   const today = new Date().toISOString().split('T')[0];
   dateStart.min = today;
-  dateStart.value = today;
+  if (!dateStart.value) dateStart.value = today;
 
-  // Auto-set end date based on start date (simple logic for now)
+  // Auto-set end date based on start date
   dateStart.addEventListener('change', () => {
-    if (dateStart.value) dateEnd.value = dateStart.value;
+    if (dateStart.value && (!dateEnd.value || dateEnd.value < dateStart.value)) {
+      dateEnd.value = dateStart.value;
+    }
   });
 
   // Load saved meta if any
   const saved = JSON.parse(localStorage.getItem('msu_dates_v1') || '{}');
-  if (saved.start) {
-    dateStart.value = saved.start;
-    dateEnd.value = saved.end || saved.start;
-  }
-  if (saved.time) timeStart.value = saved.time;
-  if (saved.duration) duration.value = saved.duration;
+  if (saved.start) dateStart.value = saved.start;
+  if (saved.end) dateEnd.value = saved.end;
+  if (saved.time && timeStart) timeStart.value = saved.time;
+  if (saved.endTime && timeEnd) timeEnd.value = saved.endTime;
 
   // Initial state: Disable all item buttons
   toggleItemButtons(false);
 
   btnCheck.addEventListener('click', () => {
-    if (!dateStart.value || !timeStart.value || !duration.value) {
-      alert('Mohon lengkapi tanggal, jam mulai, dan durasi peminjaman.');
+    // Collect values
+    const sDate = dateStart.value;
+    const sTime = timeStart ? timeStart.value : '';
+    const eDate = dateEnd ? dateEnd.value : '';
+    const eTime = timeEnd ? timeEnd.value : '';
+
+    if (!sDate || !sTime) {
+      alert('Mohon lengkapi tanggal dan jam mulai.');
       return;
+    }
+
+    // 2. Validasi Waktu : Past Time
+    const startDateTime = new Date(`${sDate}T${sTime}`);
+    const now = new Date();
+    if (startDateTime < now) {
+      alert("ERROR: Waktu tidak valid. Tanggal/Jam peminjaman sudah terlewat.");
+      toggleItemButtons(false);
+      resultText.innerHTML = '<span class="text-danger">Waktu tidak valid!</span>';
+      return;
+    }
+
+    // 3. Validasi Waktu : Start >= End (jika ada end time)
+    if (eDate && eTime) {
+      const endDateTime = new Date(`${eDate}T${eTime}`);
+      if (startDateTime >= endDateTime) {
+        alert("ERROR: Waktu tidak valid. Jam Berakhir harus lebih lambat dari Jam Mulai.");
+        toggleItemButtons(false);
+        resultText.innerHTML = '<span class="text-danger">Waktu tidak valid!</span>';
+        return;
+      }
     }
 
     // "Check" logic (simulation)
@@ -241,22 +268,27 @@ function initScheduleFilter() {
     toggleItemButtons(true);
 
     // Update UI text
-    const d = new Date(dateStart.value).toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-    resultText.innerHTML = `<span class="text-success fw-bold"><i class="bi bi-check-circle me-1"></i>Jadwal dipilih:</span> ${d} (Jam ${timeStart.value}, ${duration.value} jam)`;
+    const dStr = new Date(sDate).toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    let timeInfo = `Jam ${sTime}`;
+    if (eTime) timeInfo += ` s/d ${eTime}`;
+
+    resultText.innerHTML = `<span class="text-success fw-bold"><i class="bi bi-check-circle me-1"></i>Jadwal dipilih:</span> ${dStr} (${timeInfo})`;
     resultText.classList.remove('text-muted');
 
     // Save meta
     const meta = {
-      start: dateStart.value,
-      end: dateEnd.value,
-      time: timeStart.value,
-      duration: duration.value
+      start: sDate,
+      end: eDate || sDate,
+      time: sTime,
+      endTime: eTime,
+      duration: ''
     };
     localStorage.setItem('msu_dates_v1', JSON.stringify(meta));
 
     // Scroll to items
     document.getElementById('itemsGrid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
+
 
   // AUTO-CHECK if data exists
   if (dateStart.value && timeStart.value && duration.value) {

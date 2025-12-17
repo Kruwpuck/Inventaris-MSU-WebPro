@@ -38,7 +38,7 @@ body {
 }
 
 .navbar-masjid .logo {
-  height: 56px;
+  height: 56px !important;
   width: auto;
   object-fit: contain;
   display: block;

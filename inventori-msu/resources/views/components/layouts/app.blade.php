@@ -21,7 +21,7 @@
   <nav class="navbar navbar-expand-lg navbar-masjid sticky-top">
     <div class="container">
       <a class="navbar-brand d-flex align-items-center gap-2" href="{{ route('guest.home') }}">
-        <img src="{{ asset('fe-guest/loogoo.png') }}" alt="Logo" class="logo">
+        <img src="{{ asset('fe-guest/loogoo.png') }}" alt="Logo" class="logo" style="height: 85px !important;">
       </a>
 
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain"
@@ -33,7 +33,7 @@
         <ul class="navbar-nav align-items-lg-center gap-lg-4">
           <li class="nav-item"><a class="nav-link {{ request()->routeIs('guest.home') ? 'active' : '' }}" href="{{ route('guest.home') }}">Beranda</a></li>
           <li class="nav-item"><a class="nav-link {{ request()->routeIs('guest.catalogue.barang') ? 'active' : '' }}" href="{{ route('guest.catalogue.barang') }}">Pinjam Barang</a></li>
-          <li class="nav-item"><a class="nav-link {{ request()->routeIs('guest.catalogue.ruangan') ? 'active' : '' }}" href="{{ route('guest.catalogue.ruangan') }}">Pinjam Fasilitas</a></li>
+          <li class="nav-item"><a class="nav-link {{ request()->routeIs('guest.catalogue.ruangan') ? 'active' : '' }}" href="{{ route('guest.catalogue.ruangan') }}">Pinjam Ruangan</a></li>
           <li class="nav-item d-flex align-items-center msu-cart-entry">
             <a class="nav-link position-relative" href="{{ route('guest.cart') }}" aria-label="Buka keranjang">
               <i class="bi bi-bag-check"></i>

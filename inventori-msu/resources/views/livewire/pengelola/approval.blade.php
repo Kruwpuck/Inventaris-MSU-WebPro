@@ -84,12 +84,34 @@
       background: #2e7d32 !important;
       border-color: #2e7d32 !important;
       color: #fff !important;
+      transition: all 0.2s ease;
+    }
+    .btn-approve:hover {
+      background: #1b5e20 !important;
+      border-color: #1b5e20 !important;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(46, 125, 50, 0.3);
+    }
+    .btn-approve:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 3px rgba(46, 125, 50, 0.2);
     }
 
     .btn-reject {
       background: #c62828 !important;
       border-color: #c62828 !important;
       color: #fff !important;
+      transition: all 0.2s ease;
+    }
+    .btn-reject:hover {
+      background: #b71c1c !important;
+      border-color: #b71c1c !important;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(198, 40, 40, 0.3);
+    }
+    .btn-reject:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 3px rgba(198, 40, 40, 0.2);
     }
 
     .items-list {
@@ -243,6 +265,7 @@
               <th style="width: 60px;" class="text-center">Profil</th>
               <th style="width: 180px;">Peminjam</th>
               <th style="min-width: 200px;">Barang/Fasilitas</th>
+              <th style="min-width: 180px;">Kegiatan & Lokasi</th>
               <th style="width: 180px;">Jadwal Peminjaman</th>
               <th style="width: 100px;">Status</th>
               <th style="width: 160px;">Aksi</th>
@@ -279,6 +302,15 @@
                       <li>&bull; {{ $item->name }} <span class="text-muted">(x{{ $item->pivot->quantity ?? 1 }})</span></li>
                     @endforeach
                   </ul>
+                </td>
+                <td>
+                  <div class="fw-bold text-dark text-truncate" style="max-width: 180px;" title="{{ $req->borrower_reason }}">
+                     {{ $req->borrower_reason ?? '-' }}
+                  </div>
+                  <div class="small text-muted d-flex align-items-center mt-1">
+                      <i class="bi bi-geo-alt me-1 text-danger"></i> 
+                      <span class="text-truncate" style="max-width: 150px;">{{ $req->activity_location ?? 'Telkom University' }}</span>
+                  </div>
                 </td>
                 <td>
                   <div class="d-flex flex-column" style="font-size: 0.85rem;">

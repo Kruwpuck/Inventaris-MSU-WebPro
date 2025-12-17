@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="id">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -10,12 +11,13 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
   <link rel="stylesheet" href="barang.css">
 </head>
+
 <body>
   <!-- NAVBAR (sama dengan index) -->
   <nav class="navbar navbar-expand-lg navbar-masjid sticky-top">
     <div class="container">
       <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
-        <img src="loogoo.png" alt="Logo" class="logo">
+        <img src="loogoo.png" alt="Logo" class="logo" style="height: 56px;">
       </a>
 
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
@@ -26,7 +28,7 @@
         <ul class="navbar-nav align-items-lg-center gap-lg-4">
           <li class="nav-item"><a class="nav-link" href="index.html#beranda">Beranda</a></li>
           <li class="nav-item"><a class="nav-link active" href="barang.html">Pinjam Barang</a></li>
-          <li class="nav-item"><a class="nav-link" href="ruangan.html#pinjam-fasilitas">Pinjam Fasilitas</a></li>
+          <li class="nav-item"><a class="nav-link" href="ruangan.html#pinjam-fasilitas">Pinjam Ruangan</a></li>
           <!-- Ikon cart disuntik otomatis oleh cart.js -->
         </ul>
       </div>
@@ -51,7 +53,7 @@
       <div class="search-wrap">
         <i class="bi bi-search"></i>
         <input id="searchInput" type="text" class="form-control search-input"
-               placeholder="Cari barang… (mis. proyektor, sound system)">
+          placeholder="Cari barang… (mis. proyektor, sound system)">
         <button id="clearSearch" class="btn btn-clear" type="button" aria-label="Bersihkan pencarian">
           <i class="bi bi-x-lg"></i>
         </button>
@@ -82,50 +84,131 @@
       </div>
 
       <!-- Sisanya -->
-      <div class="col reveal-up"><article class="item-card tap-anim"><div class="item-thumb">
-        <img src="sound.jpeg" alt="Sound System"><span class="badge-status">Active</span>
-        <div class="qty-actions"><button class="qty-btn" data-action="inc">−</button><button class="qty-btn" data-action="dec">＋</button></div>
-      </div><div class="item-body"><div class="item-title">Sound System</div><div class="item-meta">Sisa : <span class="sisa">5</span></div></div></article></div>
+      <div class="col reveal-up">
+        <article class="item-card tap-anim">
+          <div class="item-thumb">
+            <img src="sound.jpeg" alt="Sound System"><span class="badge-status">Active</span>
+            <div class="qty-actions"><button class="qty-btn" data-action="inc">−</button><button class="qty-btn"
+                data-action="dec">＋</button></div>
+          </div>
+          <div class="item-body">
+            <div class="item-title">Sound System</div>
+            <div class="item-meta">Sisa : <span class="sisa">5</span></div>
+          </div>
+        </article>
+      </div>
 
-      <div class="col reveal-up"><article class="item-card tap-anim"><div class="item-thumb">
-        <img src="terpal.jpeg" alt="Terpal"><span class="badge-status">Active</span>
-        <div class="qty-actions"><button class="qty-btn" data-action="inc">−</button><button class="qty-btn" data-action="dec">＋</button></div>
-      </div><div class="item-body"><div class="item-title">Terpal</div><div class="item-meta">Sisa : <span class="sisa">12</span></div></div></article></div>
+      <div class="col reveal-up">
+        <article class="item-card tap-anim">
+          <div class="item-thumb">
+            <img src="terpal.jpeg" alt="Terpal"><span class="badge-status">Active</span>
+            <div class="qty-actions"><button class="qty-btn" data-action="inc">−</button><button class="qty-btn"
+                data-action="dec">＋</button></div>
+          </div>
+          <div class="item-body">
+            <div class="item-title">Terpal</div>
+            <div class="item-meta">Sisa : <span class="sisa">12</span></div>
+          </div>
+        </article>
+      </div>
 
-      <div class="col reveal-up"><article class="item-card tap-anim"><div class="item-thumb">
-        <img src="karpet.jpeg" alt="Karpet"><span class="badge-status">Active</span>
-        <div class="qty-actions"><button class="qty-btn" data-action="inc">−</button><button class="qty-btn" data-action="dec">＋</button></div>
-      </div><div class="item-body"><div class="item-title">Karpet</div><div class="item-meta">Sisa : <span class="sisa">8</span></div></div></article></div>
+      <div class="col reveal-up">
+        <article class="item-card tap-anim">
+          <div class="item-thumb">
+            <img src="karpet.jpeg" alt="Karpet"><span class="badge-status">Active</span>
+            <div class="qty-actions"><button class="qty-btn" data-action="inc">−</button><button class="qty-btn"
+                data-action="dec">＋</button></div>
+          </div>
+          <div class="item-body">
+            <div class="item-title">Karpet</div>
+            <div class="item-meta">Sisa : <span class="sisa">8</span></div>
+          </div>
+        </article>
+      </div>
 
-      <div class="col reveal-up"><article class="item-card tap-anim"><div class="item-thumb">
-        <img src="kursi.jpeg" alt="Kursi Lipat"><span class="badge-status">Active</span>
-        <div class="qty-actions"><button class="qty-btn" data-action="inc">−</button><button class="qty-btn" data-action="dec">＋</button></div>
-      </div><div class="item-body"><div class="item-title">Kursi Lipat</div><div class="item-meta">Sisa : <span class="sisa">20</span></div></div></article></div>
+      <div class="col reveal-up">
+        <article class="item-card tap-anim">
+          <div class="item-thumb">
+            <img src="kursi.jpeg" alt="Kursi Lipat"><span class="badge-status">Active</span>
+            <div class="qty-actions"><button class="qty-btn" data-action="inc">−</button><button class="qty-btn"
+                data-action="dec">＋</button></div>
+          </div>
+          <div class="item-body">
+            <div class="item-title">Kursi Lipat</div>
+            <div class="item-meta">Sisa : <span class="sisa">20</span></div>
+          </div>
+        </article>
+      </div>
 
-      <div class="col reveal-up"><article class="item-card tap-anim"><div class="item-thumb">
-        <img src="meja.jpeg" alt="Meja Lipat"><span class="badge-status">Active</span>
-        <div class="qty-actions"><button class="qty-btn" data-action="inc">−</button><button class="qty-btn" data-action="dec">＋</button></div>
-      </div><div class="item-body"><div class="item-title">Meja Lipat</div><div class="item-meta">Sisa : <span class="sisa">10</span></div></div></article></div>
+      <div class="col reveal-up">
+        <article class="item-card tap-anim">
+          <div class="item-thumb">
+            <img src="meja.jpeg" alt="Meja Lipat"><span class="badge-status">Active</span>
+            <div class="qty-actions"><button class="qty-btn" data-action="inc">−</button><button class="qty-btn"
+                data-action="dec">＋</button></div>
+          </div>
+          <div class="item-body">
+            <div class="item-title">Meja Lipat</div>
+            <div class="item-meta">Sisa : <span class="sisa">10</span></div>
+          </div>
+        </article>
+      </div>
 
-      <div class="col reveal-up"><article class="item-card tap-anim"><div class="item-thumb">
-        <img src="mic.jpeg" alt="Mic Wireless"><span class="badge-status">Active</span>
-        <div class="qty-actions"><button class="qty-btn" data-action="inc">−</button><button class="qty-btn" data-action="dec">＋</button></div>
-      </div><div class="item-body"><div class="item-title">Mic Wireless</div><div class="item-meta">Sisa : <span class="sisa">6</span></div></div></article></div>
+      <div class="col reveal-up">
+        <article class="item-card tap-anim">
+          <div class="item-thumb">
+            <img src="mic.jpeg" alt="Mic Wireless"><span class="badge-status">Active</span>
+            <div class="qty-actions"><button class="qty-btn" data-action="inc">−</button><button class="qty-btn"
+                data-action="dec">＋</button></div>
+          </div>
+          <div class="item-body">
+            <div class="item-title">Mic Wireless</div>
+            <div class="item-meta">Sisa : <span class="sisa">6</span></div>
+          </div>
+        </article>
+      </div>
 
-      <div class="col reveal-up"><article class="item-card tap-anim"><div class="item-thumb">
-        <img src="kabel.jpeg" alt="Kabel Roll"><span class="badge-status">Active</span>
-        <div class="qty-actions"><button class="qty-btn" data-action="inc">−</button><button class="qty-btn" data-action="dec">＋</button></div>
-      </div><div class="item-body"><div class="item-title">Kabel Roll</div><div class="item-meta">Sisa : <span class="sisa">9</span></div></div></article></div>
+      <div class="col reveal-up">
+        <article class="item-card tap-anim">
+          <div class="item-thumb">
+            <img src="kabel.jpeg" alt="Kabel Roll"><span class="badge-status">Active</span>
+            <div class="qty-actions"><button class="qty-btn" data-action="inc">−</button><button class="qty-btn"
+                data-action="dec">＋</button></div>
+          </div>
+          <div class="item-body">
+            <div class="item-title">Kabel Roll</div>
+            <div class="item-meta">Sisa : <span class="sisa">9</span></div>
+          </div>
+        </article>
+      </div>
 
-      <div class="col reveal-up"><article class="item-card tap-anim"><div class="item-thumb">
-        <img src="tikar.jpeg" alt="Tikar"><span class="badge-status">Active</span>
-        <div class="qty-actions"><button class="qty-btn" data-action="inc">−</button><button class="qty-btn" data-action="dec">＋</button></div>
-      </div><div class="item-body"><div class="item-title">Tikar</div><div class="item-meta">Sisa : <span class="sisa">15</span></div></div></article></div>
+      <div class="col reveal-up">
+        <article class="item-card tap-anim">
+          <div class="item-thumb">
+            <img src="tikar.jpeg" alt="Tikar"><span class="badge-status">Active</span>
+            <div class="qty-actions"><button class="qty-btn" data-action="inc">−</button><button class="qty-btn"
+                data-action="dec">＋</button></div>
+          </div>
+          <div class="item-body">
+            <div class="item-title">Tikar</div>
+            <div class="item-meta">Sisa : <span class="sisa">15</span></div>
+          </div>
+        </article>
+      </div>
 
-      <div class="col reveal-up"><article class="item-card tap-anim"><div class="item-thumb">
-        <img src="speaker.jpeg" alt="Speaker Portable"><span class="badge-status">Active</span>
-        <div class="qty-actions"><button class="qty-btn" data-action="inc">−</button><button class="qty-btn" data-action="dec">＋</button></div>
-      </div><div class="item-body"><div class="item-title">Speaker Portable</div><div class="item-meta">Sisa : <span class="sisa">4</span></div></div></article></div>
+      <div class="col reveal-up">
+        <article class="item-card tap-anim">
+          <div class="item-thumb">
+            <img src="speaker.jpeg" alt="Speaker Portable"><span class="badge-status">Active</span>
+            <div class="qty-actions"><button class="qty-btn" data-action="inc">−</button><button class="qty-btn"
+                data-action="dec">＋</button></div>
+          </div>
+          <div class="item-body">
+            <div class="item-title">Speaker Portable</div>
+            <div class="item-meta">Sisa : <span class="sisa">4</span></div>
+          </div>
+        </article>
+      </div>
     </section>
 
     <p id="emptyState" class="text-center text-muted d-none mt-4">Tidak ada barang yang cocok dengan pencarian.</p>
@@ -182,7 +265,7 @@
             <strong>Masjid Syamsul Ulum</strong>
           </div>
           <div class="text-muted small">
-            Jl. Telekomunikasi No.1, Bandung • Jawa Barat, Indonesia<br/>
+            Jl. Telekomunikasi No.1, Bandung • Jawa Barat, Indonesia<br />
             Telp: 08xx-xxxx-xxxx • Email: msu@example.ac.id
           </div>
         </div>
@@ -198,4 +281,5 @@
   <script src="barang.js"></script>
   <script>document.getElementById('yearNow').textContent = new Date().getFullYear();</script>
 </body>
+
 </html>
