@@ -799,227 +799,120 @@ function buildMailtoURL({ to, subject, body, cc = '', bcc = '' }) {
 }
 
 /* ---------- Submit: sertakan semua item & donasi → buka draft email ---------- */
-(function wrapSubmitMulti_Mailto() {
+/* ---------- Validasi & Modal Helper (Livewire Friendly) ---------- */
+(function setupLivewireInteractions() {
     const form = document.getElementById('bookingForm');
-    const btnSubmit = document.getElementById('btnSubmit');
+    const btnSubmit = document.getElementById('btnSubmit'); // Type button now
     const reqInput = document.getElementById('requirements');
+    const ktpInput = document.getElementById('ktpUpload'); // Livewire uses wire:model, but we still check validity visually
 
-    function getDonation() {
-        const v = document.getElementById('donationAmount')?.value || '0';
-        const n = Number(v); return isNaN(n) ? 0 : n;
-    }
+    // Helper: Donation Buttons
+    document.querySelectorAll('.btn-donasi').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const amt = btn.getAttribute('data-amt');
+            const input = document.getElementById('donationAmount');
+            if (input) {
+                input.value = amt;
+                input.dispatchEvent(new Event('input')); // Trigger Livewire update
+            }
+        });
+    });
 
     function validateForm() {
-        if (!form) return;
-        const requiredValid = [...form.querySelectorAll('[required]')].every(el => el.value && el.checkValidity());
-        const cartHasQty = (MSUCart?.count() || 0) > 0;
-        const fileOK = !!reqInput?.files?.length;
-        const ktpOK = !!document.getElementById('ktpUpload')?.files?.length;
-        btnSubmit.disabled = !(requiredValid && cartHasQty && fileOK && ktpOK);
+        if (!form) return false;
+
+        // Native validity check
+        const requiredValid = [...form.querySelectorAll('[required]')].every(el => {
+            // For file inputs, Livewire wires them. If they have value/files, it's good.
+            if (el.type === 'file') return el.files.length > 0;
+            return el.value && el.checkValidity();
+        });
+
+        const cartHasQty = (window.MSUCart?.count() || 0) > 0;
+
+        // Update Submit Button State (Optional - Livewire handles this too via loading)
+        // But we want to prevent clicking if form invalid
+        if (btnSubmit) {
+            btnSubmit.disabled = !(requiredValid && cartHasQty);
+        }
+        return requiredValid && cartHasQty;
     }
 
     form?.addEventListener('input', validateForm);
     form?.addEventListener('change', validateForm);
-    reqInput?.addEventListener('change', () => {
-        const f = reqInput.files?.[0];
-        if (!f) return validateForm();
-        const max = 10 * 1024 * 1024; // 10MB
-        if (f.size > max) {
-            alert('Ukuran maksimum file 10 MB.');
-            reqInput.value = '';
-        }
-        validateForm();
-    });
 
-    // tombol batal → kembali ke halaman barang
-    document.getElementById('btnCancel')?.addEventListener('click', () => {
-        if (confirm('Batalkan pengisian form dan kembali ke halaman sebelumnya?')) {
-            window.location.href = 'barang.html';
-        }
-    });
+    // Initial validation check
+    validateForm();
 
-    /* SUBMIT HANDLER - Modified for Modal Confirmation */
-    form?.addEventListener('submit', async (e) => {
-        e.preventDefault(); e.stopPropagation();
+    // Handle "Kirim Booking" button click (Opens Modal)
+    btnSubmit?.addEventListener('click', () => {
         if (!form.checkValidity()) {
             form.classList.add('was-validated');
-            validateForm();
+            validateForm(); // Re-check to update UI
+
+            // Scroll to first invalid
+            const firstInvalid = form.querySelector(':invalid');
+            if (firstInvalid) firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
             return;
         }
 
-        // Show Confirmation Modal first
+        // Check Logic Waktu Client Side (Optional double check)
+        // ... (Time validation logic can stay if needed, simplified here)
+
+        // Show Confirmation Modal
         const confirmSubmitModalEl = document.getElementById('confirmSubmitModal');
         const confirmSubmitModal = confirmSubmitModalEl ? new bootstrap.Modal(confirmSubmitModalEl) : null;
-        const btnRealSubmit = document.getElementById('btnRealSubmit');
-
         if (confirmSubmitModal) {
             confirmSubmitModal.show();
-            // Handle real submit inside modal button click
-            // Remove previous listeners using cloned node or just setting onclick (simple way for this context)
-            // Using onclick property to overwrite previous handler if user opens modal multiple times
-            btnRealSubmit.onclick = function () {
-                confirmSubmitModal.hide();
-                processSubmission();
-            };
         } else {
-            // Fallback if modal missing
-            if (confirm("Pastikan data sudah benar. Kirim booking?")) processSubmission();
+            // Fallback if modal broken: Trigger Livewire direct?
+            // Since button inside modal has wire:click, if modal fails, we strictly can't submit via that button.
+            // But we can try finding the real submit button if it existed. 
+            alert("Error: Modal konfirmasi tidak ditemukan.");
         }
     });
 
-    async function processSubmission() {
-
-        // Validate Time again
-        // Validate Time again
-        const sDateVal = document.getElementById('loanDate').value;
-        const sTimeVal = document.getElementById('loanTimeStart').value;
-        const eDateVal = document.getElementById('loanDateEnd')?.value;
-        const eTimeVal = document.getElementById('loanTimeEnd')?.value;
-
-        if (sDateVal && sTimeVal) {
-            const startDateTime = new Date(`${sDateVal}T${sTimeVal}`);
-            const now = new Date();
-
-            if (startDateTime < now) {
-                alert("ERROR: Waktu tidak valid. Tanggal/Jam peminjaman sudah terlewat.");
-                resetTimeInputs();
-                return;
+    // File validation limit (Client side visual only)
+    const max = 10 * 1024 * 1024;
+    [reqInput, ktpInput].forEach(el => {
+        if (!el) return;
+        el.addEventListener('change', () => {
+            if (el.files[0] && el.files[0].size > max) {
+                alert('Ukuran file maksimal 10MB.');
+                el.value = '';
+                validateForm();
             }
+        });
+    });
 
-            if (eDateVal && eTimeVal) {
-                const endDateTime = new Date(`${eDateVal}T${eTimeVal}`);
-                if (startDateTime >= endDateTime) {
-                    alert("ERROR: Waktu tidak valid. Jam Berakhir harus lebih lambat dari Jam Mulai.");
-                    resetTimeInputs();
-                    return;
-                }
-            }
+    // Cancel Button
+    document.getElementById('btnCancel')?.addEventListener('click', () => {
+        if (confirm('Batalkan pengisian form dan kembali ke halaman sebelumnya?')) {
+            window.location.href = '/barang'; // Route URL
         }
+    });
 
-        function resetTimeInputs() {
-            const elDate = document.getElementById('loanDate');
-            const elTime = document.getElementById('loanTimeStart');
-            const elDateEnd = document.getElementById('loanDateEnd');
-            const elTimeEnd = document.getElementById('loanTimeEnd');
-
-            if (elDate) elDate.value = '';
-            if (elTime) elTime.value = '';
-            if (elDateEnd) elDateEnd.value = '';
-            if (elTimeEnd) elTimeEnd.value = '';
-        }
-
-        const phone = document.getElementById('loanNumber')?.value?.trim() || '';
-        const email = document.getElementById('email')?.value?.trim() || '';
-        const pj = document.getElementById('pjName')?.value?.trim() || '';
-        const nim = document.getElementById('idNumber')?.value?.trim() || '';
-        const prodi = document.getElementById('studyProgram')?.value || '';
-        const purpose = document.getElementById('purpose')?.value?.trim() || ''; // Value
-        const longPurpose = document.getElementById('longPurpose')?.value?.trim() || ''; // Value
-
-        // ... (removed redundant lines)
-
-        if (email) localStorage.setItem('lastBookingEmail', email);
-
-        const cart = (MSUCart && MSUCart.get()) || [];
-        if (!cart.length) {
-            alert('Keranjang kosong.');
-            return;
-        }
-
-        /* BACKEND SUBMIT */
-        const formData = new FormData();
-
-        formData.append('borrowerName', pj);
-        formData.append('email', email);
-        formData.append('phone', phone);
-        formData.append('department', prodi);
-        formData.append('nimNip', nim); // New
-
-        formData.append('reason', purpose); // Kegiatan
-        formData.append('activity_description', longPurpose); // Deskripsi Kegiatan
-        formData.append('activity_location', document.getElementById('location').value); // Lokasi
-
-        // Send Date & Time Range
-        const sDate = document.getElementById('loanDate').value;
-        const sTime = document.getElementById('loanTimeStart').value;
-        const eDate = document.getElementById('loanDateEnd').value;
-        const eTime = document.getElementById('loanTimeEnd').value;
-
-        formData.append('startDate', sDate);
-        formData.append('startTime', sTime);
-        formData.append('endDate', eDate);
-        formData.append('endTime', eTime);
-
-        // Files
-        const reqFile = document.getElementById('requirements');
-        if (reqFile.files.length > 0) {
-            formData.append('file', reqFile.files[0]); // Proposal
-        }
-
-        const ktpFile = document.getElementById('ktpUpload');
-        if (ktpFile && ktpFile.files.length > 0) {
-            formData.append('ktp', ktpFile.files[0]);
-        }
-
-        formData.append('items', JSON.stringify(cart));
-
-        // Donation
-        const donVal = document.getElementById('donationAmount')?.value || '0';
-        formData.append('donation', donVal);
-
-        // Loading state
-        const originalText = btnSubmit.innerHTML;
-        btnSubmit.disabled = true;
-        btnSubmit.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Mengirim...';
-
-        try {
-            const response = await fetch('/api/peminjaman', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf-token"]')?.content
-                },
-                body: formData
-            });
-
-            if (response.ok) {
-                MSUCart.clear();
-                window.location.href = '/success';
-            } else {
-                const text = await response.text();
-                throw new Error(text);
-            }
-        } catch (err) {
-            console.error(err);
-            alert('Gagal menyimpan booking: ' + err.message);
-            btnSubmit.disabled = false;
-            btnSubmit.innerHTML = originalText;
-        }
-    }
-
-    // Load meta booking (tanggal, sesi) dari localStorage (std: msu_dates_v2)
-    // Load meta booking dari localStorage (std: msu_dates_v2)
+    // Restore Data form LocalStorage (msu_dates_v2) if available
     try {
         const meta = JSON.parse(localStorage.getItem('msu_dates_v2') || '{}');
-        if (meta.startDate) {
-            const el = document.getElementById('loanDate');
-            if (el) el.value = meta.startDate;
-        }
-        if (meta.startTime) {
-            const el = document.getElementById('loanTimeStart');
-            if (el) el.value = meta.startTime;
-        }
-        if (meta.endDate) {
-            const el = document.getElementById('loanDateEnd');
-            if (el) el.value = meta.endDate;
-        }
-        if (meta.endTime) {
-            const el = document.getElementById('loanTimeEnd');
-            if (el) el.value = meta.endTime;
-        }
-    } catch (e) { }
+        const map = {
+            'loanDate': meta.startDate,
+            'loanTimeStart': meta.startTime,
+            'loanDateEnd': meta.endDate,
+            'loanTimeEnd': meta.endTime
+        };
+        Object.keys(map).forEach(id => {
+            if (map[id]) {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.value = map[id];
+                    el.dispatchEvent(new Event('input')); // Sync with Livewire
+                }
+            }
+        });
+    } catch (e) { console.error("Error loading stored dates", e); }
 
-    // initial
-    validateForm();
 })();
 
 /* ---------- Bootstrap awal ---------- */
