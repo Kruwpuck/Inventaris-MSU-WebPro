@@ -63,7 +63,28 @@ class Riwayat extends Component
         $this->dispatch('show-toast', type: 'success', message: 'Peminjaman berhasil dibatalkan.');
     }
 
-    public function submit($id, $notes = null)
+    public function checkIsLate($id)
+    {
+        $request = LoanRequest::find($id);
+        if (!$request) return false;
+
+        // Combine date and time to get full end timestamp
+        $endDateTime = $request->loan_date_end->copy(); // copy to avoid mutation if it's a Carbon object
+        
+        if ($request->end_time) {
+            $timeParts = explode(':', $request->end_time);
+            $endDateTime->setTime($timeParts[0], $timeParts[1]);
+        } else {
+            // Default to end of day if no time specified? Or keep as is (00:00:00)
+            // Usually end_time is mandatory. If not, maybe 23:59:59? 
+            // Let's assume strict check against whatever is in DB.
+            $endDateTime->setTime(23, 59, 59);
+        }
+
+        return now()->greaterThan($endDateTime);
+    }
+
+    public function submit($id, $notes = '-')
     {
         $request = LoanRequest::find($id);
 
@@ -76,7 +97,7 @@ class Riwayat extends Component
         if ($request->loanRecord) {
             $request->loanRecord->update([
                 'is_submitted' => true,
-                'notes' => $notes
+                'notes' => $notes ?: '-' // Default to dash if empty
             ]);
         }
 

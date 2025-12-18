@@ -39,9 +39,9 @@ class PeminjamanFasilitas extends Component
 
         $message = 'Status berhasil diperbarui!';
         if ($type === 'ambil' && $record->picked_up_at) {
-            $message = 'Fasilitas berhasil diambil.';
+            $message = 'Fasilitas berhasil diambil. Jangan lupa mintakan kartu identitas sebagai bukti peminjaman';
         } elseif ($type === 'kembali' && $record->returned_at) {
-            $message = 'Fasilitas berhasil dikembalikan.';
+            $message = 'Fasilitas berhasil dikembalikan. Jangan lupa kembalikan kartu identitas sebagai bukti pengembalian';
         }
 
         // session()->flash('success', 'Status berhasil diperbarui!');

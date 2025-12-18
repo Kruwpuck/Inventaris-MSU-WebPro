@@ -12,13 +12,13 @@
 .navbar-masjid {
   background: var(--green-1) !important;
   border-bottom: 1px solid rgba(0, 0, 0, .06);
-  padding: .6rem 0
+  padding: .30rem 0;
 }
 
 .navbar-masjid .logo {
-  width: 36px;
-  height: 36px;
-  object-fit: contain
+  height: 56px !important;
+  width: auto;
+  object-fit: contain;
 }
 
 .navbar-masjid .nav-link {
