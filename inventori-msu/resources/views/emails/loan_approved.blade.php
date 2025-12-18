@@ -174,8 +174,8 @@
 
         <p><strong>Catatan Tambahan:</strong></p>
         <ul style="margin-top: 0;">
-            <li>Tanggal Peminjaman: {{ $loan->loan_date_start->format('d-m-Y') }}</li>
-            <li>Jam Pakai: {{ $loan->start_time }} WIB (Durasi: {{ $loan->duration }} Jam)</li>
+            <li>Tanggal Peminjaman: {{ $loan->loan_date_start?->format('d-m-Y') ?? '-' }}</li>
+            <li>Jam Pakai: {{ $loan->start_time }} WIB (Durasi: {{ $loan->duration ?? 0 }} Jam)</li>
             <li>Keperluan: {{ $loan->borrower_reason }}</li>
         </ul>
 
