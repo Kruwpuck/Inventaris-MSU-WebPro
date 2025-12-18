@@ -237,10 +237,12 @@
                                     <td class="fw-semibold">{{ $d->borrower_name }}</td>
                                     <td>{{ $d->borrower_phone }}</td>
                                     <td class="text-secondary">
-                                        {{ $d->loan_date_start ? $d->loan_date_start->format('d M Y | H:i') : '-' }}
+                                        {{ $d->loan_date_start ? $d->loan_date_start->format('d M Y') : '-' }} | 
+                                        {{ $d->start_time ? \Carbon\Carbon::parse($d->start_time)->format('H:i') : '00:00' }}
                                     </td>
                                     <td class="text-secondary">
-                                        {{ $d->loan_date_end ? $d->loan_date_end->format('d M Y | H:i') : '-' }}
+                                        {{ $d->loan_date_end ? $d->loan_date_end->format('d M Y') : '-' }} | 
+                                        {{ $d->end_time ? \Carbon\Carbon::parse($d->end_time)->format('H:i') : '00:00' }}
                                     </td>
                                     <td>
                                         <div class="d-flex flex-column gap-1">
