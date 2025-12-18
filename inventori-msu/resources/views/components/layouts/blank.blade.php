@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title ?? 'Page Title' }}</title>
+    <link rel="icon" href="{{ asset('Assets/logo.png') }}" type="image/x-icon">
     @stack('styles')
     @livewireStyles
 </head>
