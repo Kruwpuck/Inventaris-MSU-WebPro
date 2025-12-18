@@ -22,7 +22,7 @@
       <p class="promo-subtitle mt-2 reveal-up" style="transition-delay:.1s">
         Semua urusan peminjaman dan perizinan kini bisa dilakukan secara online.
       </p>
-      <a href="#pinjam-barang" class="btn btn-panduan mt-3 reveal-up" style="transition-delay:.2s">
+      <a href="{{ asset('fe-guest/panduan_layanan.pdf') }}" target="_blank" class="btn btn-panduan mt-3 reveal-up" style="transition-delay:.2s">
         Baca Panduan
       </a>
     </div>

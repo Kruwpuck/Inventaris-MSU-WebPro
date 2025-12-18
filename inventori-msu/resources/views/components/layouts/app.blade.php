@@ -13,6 +13,14 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
   @stack('styles')
   @livewireStyles
+  <style>
+    /* Default Navbar Style (Fallback for pages without specific CSS) */
+    .navbar-masjid .logo {
+      height: 56px;
+      width: auto;
+      object-fit: contain;
+    }
+  </style>
 </head>
 
 <body>
@@ -21,7 +29,7 @@
   <nav class="navbar navbar-expand-lg navbar-masjid sticky-top">
     <div class="container">
       <a class="navbar-brand d-flex align-items-center gap-2" href="{{ route('guest.home') }}">
-        <img src="{{ asset('fe-guest/loogoo.png') }}" alt="Logo" class="logo" style="height: 85px !important;">
+        <img src="{{ asset('fe-guest/loogoo.png') }}" alt="Logo" class="logo">
       </a>
 
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain"
