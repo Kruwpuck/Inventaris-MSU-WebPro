@@ -128,7 +128,15 @@
 
             <form wire:submit.prevent="save" class="row g-3">
 
-              {{-- 1. KATEGORI (Urutan Pertama) --}}
+              {{-- 1. NAMA --}}
+              <div class="col-12">
+                <label class="form-label text-muted">Nama*</label>
+                <input type="text" class="form-control pill" wire:model="name"
+                  placeholder="Contoh: Proyektor / Ruang Tamu VIP">
+                @error('name') <small class="text-danger">{{ $message }}</small> @enderror
+              </div>
+
+              {{-- 2. KATEGORI --}}
               <div class="col-12">
                 <label class="form-label text-muted">Kategori*</label>
                 {{-- x-model menghubungkan dropdown ke AlpineJS agar UI berubah instan --}}
@@ -138,14 +146,6 @@
                   <option value="Ruangan">Ruangan</option>
                 </select>
                 @error('category') <small class="text-danger">{{ $message }}</small> @enderror
-              </div>
-
-              {{-- 2. NAMA (Urutan Kedua) --}}
-              <div class="col-12">
-                <label class="form-label text-muted">Nama*</label>
-                <input type="text" class="form-control pill" wire:model="name"
-                  placeholder="Contoh: Proyektor / Ruang Tamu VIP">
-                @error('name') <small class="text-danger">{{ $message }}</small> @enderror
               </div>
 
               {{-- 3. DESKRIPSI --}}

@@ -56,8 +56,8 @@
     {{-- HERO --}}
     <section class="d-flex justify-content-center align-items-start position-relative w-100" style="padding-top:55px;height:70vh;background-image:url('{{ asset('aset/ramadhan.png') }}');
         background-size:contain;background-position:center;background-repeat:no-repeat;">
-        <img src="{{ asset('aset/MSU.png') }}" alt="Syamsul Ulum" class="img-fluid shadow-strong rounded-3 mt-5"
-            style="max-width:1100px; width:100%; height:auto; z-index:2" />
+        <img src="{{ asset('aset/MSU.png') }}" alt="Syamsul Ulum" class="shadow-strong rounded-3 mt-5"
+            style="width:1100px; height:230px; object-fit:cover; z-index:2; max-width: none;" />
     </section>
 
     <div class="container">
