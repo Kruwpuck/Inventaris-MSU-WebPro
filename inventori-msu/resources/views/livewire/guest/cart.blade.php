@@ -5,13 +5,13 @@
 <div>
   <main class="container py-4">
     <div class="d-flex align-items-center justify-content-between mb-3">
-      <h1 class="page-title drop-in m-0">Keterangan Peminjaman Inventory MSU</h1>
+      <h1 class="page-title m-0">Keterangan Peminjaman Inventory MSU</h1>
     </div>
 
     <div class="row g-4">
       <!-- LEFT: Panel Barang (tabs horizontal) -->
       <aside class="col-lg-5" wire:ignore>
-        <div class="summary-card reveal-up">
+        <div class="summary-card">
           <!-- Tabs -->
           <ul class="nav nav-tabs msu-item-tabs px-3 pt-3" id="itemTabs" role="tablist">
             <!-- Diisi via JS -->
@@ -43,7 +43,7 @@
         @endforeach
 
         <!-- Form Booking -->
-        <form id="bookingForm" class="form-card reveal-up needs-validation" wire:submit.prevent="submit" novalidate>
+        <form id="bookingForm" class="form-card needs-validation" wire:submit.prevent="submit" novalidate>
           <div class="row g-3">
             <!-- NOMOR PEMINJAMAN -->
             <div class="col-md-6">
@@ -181,7 +181,7 @@
             </div>
           </div>
 
-          <div class="d-flex gap-2 justify-content-end mt-4 reveal-up">
+          <div class="d-flex gap-2 justify-content-end mt-4">
             <a class="btn btn-outline-secondary" href="{{ route('guest.catalogue.barang') }}">
               <i class="bi bi-arrow-left-circle me-1"></i>Tambah Barang
             </a>
@@ -198,7 +198,7 @@
         </form>
 
         <!-- QRIS Donasi -->
-        <div class="form-card mt-3 reveal-up" id="qrisDonation" wire:ignore>
+        <div class="form-card mt-3" id="qrisDonation" wire:ignore>
           <h5 class="mb-2"><i class="bi bi-qr-code me-1"></i> Donasi QRIS (Opsional)</h5>
           <div class="row g-3 align-items-center">
             <div class="col-md-5 text-center">
