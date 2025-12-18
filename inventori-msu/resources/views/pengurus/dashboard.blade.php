@@ -24,7 +24,7 @@
 
     <div class="user-desktop" onclick="toggleUserDropdown()">
         <div class="user-info-box">
-            <img src="{{ asset('Assets/logo.png') }}" class="user-photo">
+            <div class="user-photo" style="background-image: url('{{ asset('Assets/logo.png') }}'); background-size: cover; background-position: center;"></div>
             <div>
                 <strong>pengurus</strong><br>
                 Pengurus Side
