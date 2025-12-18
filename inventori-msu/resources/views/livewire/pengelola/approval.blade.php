@@ -447,8 +447,14 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary btn-box" data-bs-dismiss="modal">Batal</button>
-          <button type="button" class="btn btn-approve btn-box" wire:click="approveConfirmed">
-            <i class="bi bi-check-lg me-1"></i>Ya, Setuju
+          <button type="button" class="btn btn-approve btn-box" wire:click="approveConfirmed" wire:loading.attr="disabled">
+            <span wire:loading.remove wire:target="approveConfirmed">
+              <i class="bi bi-check-lg me-1"></i>Ya, Setuju
+            </span>
+            <span wire:loading wire:target="approveConfirmed">
+              <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+              Memproses...
+            </span>
           </button>
         </div>
       </div>
