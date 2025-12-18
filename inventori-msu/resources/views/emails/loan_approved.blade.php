@@ -185,8 +185,10 @@
             <p>Bandung, {{ now()->format('d F Y') }}</p>
             <p>Pengelola MSU,</p>
             <div style="margin-top: 10px; margin-bottom: 5px;">
-                <img src="{{ $message->embed(public_path('aset/ttd farhan.png')) }}" alt="Tanda Tangan"
+            <div style="margin-top: 10px; margin-bottom: 5px;">
+                <img src="{{ $message->embed(public_path('aset/ttdpengurus.png')) }}" alt="Tanda Tangan"
                     style="height: 70px; width: auto;">
+            </div>
             </div>
             <div class="signature-name" style="margin-top: 5px;">Pengelola Operasional</div>
         </div>
