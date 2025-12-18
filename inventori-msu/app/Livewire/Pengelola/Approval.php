@@ -58,6 +58,7 @@ class Approval extends Component
 
         // Kirim Email Notifikasi
         try {
+             dd('DEBUG: Masuk blok Approve. Email: ' . $req->borrower_email);
              \Illuminate\Support\Facades\Mail::to($req->borrower_email)->send(new \App\Mail\LoanApproved($req));
         } catch (\Exception $e) {
              \Illuminate\Support\Facades\Log::error("Gagal kirim email approve: " . $e->getMessage());
@@ -92,6 +93,7 @@ class Approval extends Component
 
         // Kirim Email Notifikasi
         try {
+             dd('DEBUG: Masuk blok Reject. Email: ' . $req->borrower_email);
              \Illuminate\Support\Facades\Mail::to($req->borrower_email)->send(new \App\Mail\LoanRejected($req));
         } catch (\Exception $e) {
              \Illuminate\Support\Facades\Log::error("Gagal kirim email reject: " . $e->getMessage());
