@@ -21,6 +21,7 @@ class Approval extends Component
 
     public function render()
     {
+        dd('render');
         $pendingRequests = \App\Models\LoanRequest::where('status', 'pending')
             ->with('items')
             ->latest()
@@ -40,6 +41,7 @@ class Approval extends Component
     // ===== APPROVE =====
     public function prepareApprove($id)
     {
+        dd('prepare approve');
         $this->approveId = $id;
         $this->dispatch('open-approve-modal');
     }
@@ -64,7 +66,7 @@ class Approval extends Component
              \Illuminate\Support\Facades\Log::error("Gagal kirim email approve: " . $e->getMessage());
              session()->flash('warning', 'Pengajuan disetujui, tapi email gagal terkirim.');
         }
-
+        dd('after try catch');
         $this->approveId = null;
         $this->dispatch('close-approve-modal');
     }
@@ -87,6 +89,7 @@ class Approval extends Component
         $req = \App\Models\LoanRequest::findOrFail($this->rejectId);
         $req->status = 'rejected';
         $req->rejection_reason = $this->rejectReason;
+        dd('before save');
         $req->save();
 
         session()->flash('success', 'Pengajuan berhasil ditolak.');
@@ -106,6 +109,7 @@ class Approval extends Component
     // ===== CETAK (SHOW DETAIL) =====
     public function showDetails($id)
     {
+        dd('show details');
         // Ambil data beserta relasi items
         $this->selectedRequest = \App\Models\LoanRequest::with('items')->find($id);
 
@@ -116,6 +120,7 @@ class Approval extends Component
     // ===== SHOW BORROWER DETAILS =====
     public function showBorrowerDetails($id)
     {
+        dd('show borrower details');
         $this->selectedBorrower = \App\Models\LoanRequest::findOrFail($id);
         $this->dispatch('open-borrower-modal');
     }
