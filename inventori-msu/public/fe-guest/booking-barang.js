@@ -2,31 +2,8 @@
    booking-barang.js (FULL)
    ======================= */
 
-/* ---------- Animasi ---------- */
-function markRevealTargets() {
-    document.querySelectorAll(`
-    .navbar-masjid,
-    .page-title,
-    .summary-card,
-    .form-card,
-    .badge
-  `).forEach(el => el.classList.add('reveal-up'));
-}
-function initRevealObserver() {
-    const io = new IntersectionObserver((entries, obs) => {
-        entries.forEach(e => {
-            if (e.isIntersecting) {
-                e.target.classList.add('show');
-                obs.unobserve(e.target);
-            }
-        });
-    }, { threshold: .12, rootMargin: "0px 0px -40px 0px" });
-    document.querySelectorAll('.reveal-up').forEach(el => io.observe(el));
-}
-window.addEventListener('load', () => document.querySelector('.drop-in')?.classList.add('show'));
+/* ---------- Bootstrap UI ---------- */
 window.addEventListener('DOMContentLoaded', () => {
-    markRevealTargets();
-    initRevealObserver();
     initUI(); // Initialize UI elements
 
     /* Setup Modal Konfirmasi Hapus */
@@ -66,6 +43,7 @@ window.addEventListener('DOMContentLoaded', () => {
         );
     });
 });
+
 
 /* ---------- Util ---------- */
 function toRupiah(n) { return new Intl.NumberFormat('id-ID').format(Number(n || 0)); }
