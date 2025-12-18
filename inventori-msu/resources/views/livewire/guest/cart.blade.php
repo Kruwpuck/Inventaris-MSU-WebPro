@@ -174,7 +174,7 @@
 
             <div class="col-12 mt-3">
               <label class="form-label">Deskripsi Kegiatan</label>
-5              <textarea id="longPurpose" class="form-control" rows="4" placeholder="Tuliskan detail deskripsi kegiatan..."
+              <textarea id="longPurpose" class="form-control" rows="4" placeholder="Tuliskan detail deskripsi kegiatan..."
                 required wire:model="borrower_description"></textarea>
               <div class="invalid-feedback">Wajib diisi.</div>
               @error('borrower_description') <div class="text-danger small">{{ $message }}</div> @enderror
