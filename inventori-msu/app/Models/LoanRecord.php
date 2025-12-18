@@ -12,6 +12,7 @@ class LoanRecord extends Model
         'picked_up_at',
         'returned_at',
         'is_submitted',
+        'notes',
     ];
 
     protected $casts = [
