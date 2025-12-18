@@ -21,7 +21,6 @@ class Approval extends Component
 
     public function render()
     {
-        dd('render');
         $pendingRequests = \App\Models\LoanRequest::where('status', 'pending')
             ->with('items')
             ->latest()
@@ -41,7 +40,6 @@ class Approval extends Component
     // ===== APPROVE =====
     public function prepareApprove($id)
     {
-        dd('prepare approve');
         $this->approveId = $id;
         $this->dispatch('open-approve-modal');
     }
@@ -60,13 +58,11 @@ class Approval extends Component
 
         // Kirim Email Notifikasi
         try {
-             dd('DEBUG: Masuk blok Approve. Email: ' . $req->borrower_email);
-             \Illuminate\Support\Facades\Mail::to($req->borrower_email)->send(new \App\Mail\LoanApproved($req));
+            \Illuminate\Support\Facades\Mail::to($req->borrower_email)->send(new \App\Mail\LoanApproved($req));
         } catch (\Exception $e) {
-             \Illuminate\Support\Facades\Log::error("Gagal kirim email approve: " . $e->getMessage());
-             session()->flash('warning', 'Pengajuan disetujui, tapi email gagal terkirim.');
+            \Illuminate\Support\Facades\Log::error("Gagal kirim email approve: " . $e->getMessage());
+            session()->flash('warning', 'Pengajuan disetujui, tapi email gagal terkirim.');
         }
-        dd('after try catch');
         $this->approveId = null;
         $this->dispatch('close-approve-modal');
     }
@@ -89,15 +85,13 @@ class Approval extends Component
         $req = \App\Models\LoanRequest::findOrFail($this->rejectId);
         $req->status = 'rejected';
         $req->rejection_reason = $this->rejectReason;
-        dd('before save');
         $req->save();
 
         session()->flash('success', 'Pengajuan berhasil ditolak.');
 
         // Kirim Email Notifikasi
         try {
-             dd('DEBUG: Masuk blok Reject. Email: ' . $req->borrower_email);
-             \Illuminate\Support\Facades\Mail::to($req->borrower_email)->send(new \App\Mail\LoanRejected($req));
+            \Illuminate\Support\Facades\Mail::to($req->borrower_email)->send(new \App\Mail\LoanRejected($req));
         } catch (\Exception $e) {
              \Illuminate\Support\Facades\Log::error("Gagal kirim email reject: " . $e->getMessage());
              session()->flash('warning', 'Pengajuan ditolak, tapi email gagal terkirim.');
@@ -109,7 +103,6 @@ class Approval extends Component
     // ===== CETAK (SHOW DETAIL) =====
     public function showDetails($id)
     {
-        dd('show details');
         // Ambil data beserta relasi items
         $this->selectedRequest = \App\Models\LoanRequest::with('items')->find($id);
 
@@ -120,7 +113,6 @@ class Approval extends Component
     // ===== SHOW BORROWER DETAILS =====
     public function showBorrowerDetails($id)
     {
-        dd('show borrower details');
         $this->selectedBorrower = \App\Models\LoanRequest::findOrFail($id);
         $this->dispatch('open-borrower-modal');
     }

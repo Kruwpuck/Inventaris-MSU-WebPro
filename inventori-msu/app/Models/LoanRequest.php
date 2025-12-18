@@ -25,6 +25,7 @@ class LoanRequest extends Model
         'status',
         'rejection_reason',
         'donation_amount', // ✅ Baru
+        'duration', // ✅ Added
     ];
 
     protected $casts = [
