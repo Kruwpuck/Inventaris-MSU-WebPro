@@ -29,6 +29,7 @@ class Booking extends Component
 
     public function submitBooking()
     {
+        dd('CEK 1: Berhasil Masuk Fungsi Submit');
         $this->validate();
 
         // Upload Proposal
