@@ -840,26 +840,31 @@ function buildMailtoURL({ to, subject, body, cc = '', bcc = '' }) {
     }
 
     // Load meta booking (tanggal, sesi) dari localStorage (std: msu_dates_v2)
-    // Load meta booking dari localStorage (std: msu_dates_v2)
-    try {
-        const meta = JSON.parse(localStorage.getItem('msu_dates_v2') || '{}');
-        if (meta.startDate) {
-            const el = document.getElementById('loanDate');
-            if (el) el.value = meta.startDate;
-        }
-        if (meta.startTime) {
-            const el = document.getElementById('loanTimeStart');
-            if (el) el.value = meta.startTime;
-        }
-        if (meta.endDate) {
-            const el = document.getElementById('loanDateEnd');
-            if (el) el.value = meta.endDate;
-        }
-        if (meta.endTime) {
-            const el = document.getElementById('loanTimeEnd');
-            if (el) el.value = meta.endTime;
-        }
-    } catch (e) { }
+    function restoreDates() {
+        try {
+            const meta = JSON.parse(localStorage.getItem('msu_dates_v2') || '{}');
+            const map = {
+                'loanDate': meta.startDate,
+                'loanTimeStart': meta.startTime,
+                'loanDateEnd': meta.endDate,
+                'loanTimeEnd': meta.endTime
+            };
+            Object.keys(map).forEach(id => {
+                if (map[id]) {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.value = map[id];
+                        el.dispatchEvent(new Event('input')); // Sync with Livewire
+                        el.dispatchEvent(new Event('change'));
+                    }
+                }
+            });
+        } catch (e) { console.error("Error loading stored dates", e); }
+    }
+
+    restoreDates();
+    document.addEventListener('livewire:init', () => { setTimeout(restoreDates, 200); });
+    document.addEventListener('livewire:navigated', restoreDates);
 
     // initial
     validateForm();

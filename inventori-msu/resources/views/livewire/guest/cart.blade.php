@@ -165,8 +165,8 @@
                    </div>
                    <div class="col-md-6">
                        <label class="form-label small fw-bold">Identitas Peminjam (KTM/KTP/SIM)</label>
-                       <input type="file" class="form-control" id="ktpUpload" required wire:model="ktp_file" />
-                       <div class="form-text">Bebas tipe atau format file.</div>
+                       <input type="file" class="form-control" id="ktpUpload" accept="image/png, image/jpeg, image/jpg" required wire:model="ktp_file" />
+                       <div class="form-text">Wajib format gambar (JPG, PNG).</div>
                        @error('ktp_file') <div class="text-danger small">{{ $message }}</div> @enderror
                    </div>
                </div>
@@ -263,9 +263,13 @@
           <p class="text-muted mb-4">Pastikan data yang Anda input sudah benar. Lanjutkan pengiriman?</p>
           <div class="d-flex justify-content-center gap-2">
             <button type="button" class="btn btn-light px-4 fw-bold" data-bs-dismiss="modal"
-              style="border-radius:12px">Cek Lagi</button>
-            <button type="button" class="btn btn-primary px-4 fw-bold" id="btnRealSubmit" style="border-radius:12px" wire:click="submit" wire:loading.attr="disabled">
-              Ya, Kirim
+              style="border-radius:12px" wire:loading.attr="disabled" wire:target="submit">Cek Lagi</button>
+            <button type="button" class="btn btn-primary px-4 fw-bold" id="btnRealSubmit" style="border-radius:12px" wire:click="submit" wire:loading.attr="disabled" wire:target="submit">
+              <span wire:loading.remove wire:target="submit">Ya, Kirim</span>
+              <span wire:loading wire:target="submit">
+                <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                Memproses...
+              </span>
             </button>
           </div>
         </div>
