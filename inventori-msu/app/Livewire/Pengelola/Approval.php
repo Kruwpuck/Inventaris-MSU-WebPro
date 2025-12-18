@@ -56,6 +56,14 @@ class Approval extends Component
 
         session()->flash('success', 'Pengajuan berhasil disetujui.');
 
+        // Kirim Email Notifikasi
+        try {
+             \Illuminate\Support\Facades\Mail::to($req->borrower_email)->send(new \App\Mail\LoanApproved($req));
+        } catch (\Exception $e) {
+             \Illuminate\Support\Facades\Log::error("Gagal kirim email approve: " . $e->getMessage());
+             session()->flash('warning', 'Pengajuan disetujui, tapi email gagal terkirim.');
+        }
+
         $this->approveId = null;
         $this->dispatch('close-approve-modal');
     }
@@ -81,6 +89,15 @@ class Approval extends Component
         $req->save();
 
         session()->flash('success', 'Pengajuan berhasil ditolak.');
+
+        // Kirim Email Notifikasi
+        try {
+             \Illuminate\Support\Facades\Mail::to($req->borrower_email)->send(new \App\Mail\LoanRejected($req));
+        } catch (\Exception $e) {
+             \Illuminate\Support\Facades\Log::error("Gagal kirim email reject: " . $e->getMessage());
+             session()->flash('warning', 'Pengajuan ditolak, tapi email gagal terkirim.');
+        }
+
         $this->dispatch('close-reject-modal');
     }
 
