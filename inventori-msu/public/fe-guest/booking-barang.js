@@ -872,24 +872,33 @@ function buildMailtoURL({ to, subject, body, cc = '', bcc = '' }) {
     });
 
     // Restore Data form LocalStorage (msu_dates_v2) if available
-    try {
-        const meta = JSON.parse(localStorage.getItem('msu_dates_v2') || '{}');
-        const map = {
-            'loanDate': meta.startDate,
-            'loanTimeStart': meta.startTime,
-            'loanDateEnd': meta.endDate,
-            'loanTimeEnd': meta.endTime
-        };
-        Object.keys(map).forEach(id => {
-            if (map[id]) {
-                const el = document.getElementById(id);
-                if (el) {
-                    el.value = map[id];
-                    el.dispatchEvent(new Event('input')); // Sync with Livewire
+    function restoreDates() {
+        try {
+            const meta = JSON.parse(localStorage.getItem('msu_dates_v2') || '{}');
+            const map = {
+                'loanDate': meta.startDate,
+                'loanTimeStart': meta.startTime,
+                'loanDateEnd': meta.endDate,
+                'loanTimeEnd': meta.endTime
+            };
+            Object.keys(map).forEach(id => {
+                if (map[id]) {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.value = map[id];
+                        el.dispatchEvent(new Event('input')); // Sync with Livewire
+                        el.dispatchEvent(new Event('change')); // Also dispatch change
+                    }
                 }
-            }
-        });
-    } catch (e) { console.error("Error loading stored dates", e); }
+            });
+        } catch (e) { console.error("Error loading stored dates", e); }
+    }
+
+    restoreDates();
+    document.addEventListener('livewire:init', () => {
+        setTimeout(restoreDates, 200); // Small delay to be sure
+    });
+    document.addEventListener('livewire:navigated', restoreDates); // For SPA mode if used
 
 })();
 
