@@ -33,6 +33,7 @@ class Cart extends Component
     // file proposal/dokumen dari guest
     public $document_file;
     public $ktp_file; // New
+    public $agree_terms; // New T&C Checkbox
 
     protected $listeners = ['cart-updated' => '$refresh'];
 
@@ -61,6 +62,7 @@ class Cart extends Component
         'document_file' => 'required|file|mimes:pdf|max:10240', // 10MB, PDF only
         'ktp_file' => 'required|file|max:10240',
         'borrower_description' => 'required',
+        'agree_terms' => 'accepted', // Must be checked
     ];
 
     public function messages()
@@ -84,6 +86,7 @@ class Cart extends Component
             'ktp_file.required' => 'Dokumen identitas (KTM/KTP) wajib diunggah.',
             'ktp_file.max' => 'Ukuran file maksimal 10MB.',
             'borrower_description.required' => 'Deskripsi kegiatan wajib diisi.',
+            'agree_terms.accepted' => 'Anda wajib menyetujui Syarat & Ketentuan.',
         ];
     }
 
