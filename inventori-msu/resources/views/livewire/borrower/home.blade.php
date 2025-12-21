@@ -119,12 +119,14 @@
           </div>
           <div class="col-12 d-flex align-items-end mt-3 gap-2">
             <div class="text-muted small js-daterange me-auto">Silakan tentukan waktu peminjaman dulu.</div>
-            <button id="btnShowCalendar" class="btn btn-outline-secondary" type="button" title="Lihat Jadwal Harian">
-              <i class="bi bi-calendar3"></i>
-            </button>
-            <button id="btnSetDates" class="btn btn-success">
-              <i class="bi bi-search me-1"></i> Cek Ketersediaan
-            </button>
+            <div class="d-flex align-items-stretch gap-2">
+              <button id="btnShowCalendar" class="btn btn-outline-secondary" type="button" title="Lihat Jadwal Harian">
+                <i class="bi bi-calendar3"></i>
+              </button>
+              <button id="btnSetDates" class="btn btn-success">
+                <i class="bi bi-search me-1"></i> Cek Ketersediaan
+              </button>
+            </div>
           </div>
         </div>
       </div>
