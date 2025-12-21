@@ -1,5 +1,11 @@
 @push('styles')
 <link rel="stylesheet" href="{{ asset('fe-guest/booking-barang.css') }}" />
+<style>
+  .navbar-masjid {
+    height: 60px !important;
+    padding: 0 !important;
+  }
+</style>
 @endpush
 
 <div>
