@@ -40,6 +40,7 @@ Route::get('/ruangan', Catalogue::class)->name('guest.catalogue.ruangan');
 Route::get('/booking-barang', Cart::class)->name('guest.cart');
 Route::redirect('/cart', '/booking-barang');
 Route::get('/success', Success::class)->name('guest.success');
+Route::get('/syarat-dan-ketentuan', \App\Livewire\Guest\TermsConditions::class)->name('guest.terms');
 
 
 // =====================
