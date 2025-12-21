@@ -22,6 +22,15 @@
       object-fit: contain;
       display: block;
     }
+
+    #btnShowCalendar {
+      height: 48px !important;
+      width: 48px !important;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
   </style>
 </head>
 
