@@ -1,3 +1,7 @@
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('fe-guest/ruangan.css') }}">
+@endpush
+
 <main class="container py-5">
     <div class="row justify-content-center">
         <div class="col-lg-8">
