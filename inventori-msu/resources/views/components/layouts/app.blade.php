@@ -67,7 +67,7 @@
   {{ $slot }}
 
   <!-- FAB Checkout -->
-  @unless(request()->routeIs('guest.cart') || request()->routeIs('guest.success'))
+  @unless(request()->routeIs('guest.cart') || request()->routeIs('guest.success') || request()->routeIs('guest.terms'))
   <a href="{{ route('guest.cart') }}" id="fabCheckout" class="fab-checkout" aria-label="Checkout" style="text-decoration:none">
     <i class="bi bi-bag-check"></i>
     <span id="fabCount" class="fab-count">0</span>
