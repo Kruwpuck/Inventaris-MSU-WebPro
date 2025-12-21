@@ -191,6 +191,17 @@
               <div class="invalid-feedback">Wajib diisi.</div>
               @error('borrower_description') <div class="text-danger small">{{ $message }}</div> @enderror
             </div>
+
+            <!-- Syarat & Ketentuan -->
+            <div class="col-12 mt-3">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="agreeTerms" wire:model="agree_terms">
+                    <label class="form-check-label small" for="agreeTerms">
+                        Saya menyetujui <a href="{{ route('guest.terms') }}" target="_blank" class="text-decoration-underline fw-bold">Syarat & Ketentuan</a> serta memberikan izin kepada MSU untuk mengelola data saya untuk keperluan pelacakan inventaris.
+                    </label>
+                </div>
+                @error('agree_terms') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+            </div>
           </div>
 
           <div class="d-flex gap-2 justify-content-end mt-4">
