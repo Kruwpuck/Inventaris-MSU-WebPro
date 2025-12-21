@@ -5,12 +5,13 @@ namespace App\Livewire\Pengelola;
 use Livewire\Component;
 use App\Models\LoanRequest;
 use Carbon\Carbon;
+use Livewire\WithPagination;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 class Laporan extends Component
 {
-    use Livewire\WithPagination;
-    use Illuminate\Pagination\LengthAwarePaginator;
-    use Illuminate\Support\Collection;
+    use WithPagination;
 
     protected $paginationTheme = 'bootstrap';
 
