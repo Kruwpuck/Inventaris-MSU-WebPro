@@ -888,4 +888,3 @@
     });
     document.addEventListener("livewire:navigated", () => filterTable());
   </script>
-@endpush
