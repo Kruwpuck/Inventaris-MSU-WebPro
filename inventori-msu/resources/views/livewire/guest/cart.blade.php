@@ -5,6 +5,12 @@
     height: 60px !important;
     padding: 0 !important;
   }
+  .navbar-masjid .navbar-brand {
+    padding: 0 !important;
+    height: 56px !important;
+    display: flex;
+    align-items: center;
+  }
 </style>
 @endpush
 
