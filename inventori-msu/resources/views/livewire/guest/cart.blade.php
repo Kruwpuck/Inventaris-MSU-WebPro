@@ -2,7 +2,7 @@
 <link rel="stylesheet" href="{{ asset('fe-guest/booking-barang.css') }}" />
 <style>
   .navbar-masjid {
-    height: 60px !important;
+    height: 66.21px !important;
     padding: 0 !important;
   }
   .navbar-masjid .navbar-brand {
