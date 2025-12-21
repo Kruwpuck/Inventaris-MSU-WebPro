@@ -12,7 +12,7 @@
 .navbar-masjid {
   background: var(--green-1) !important;
   border-bottom: 1px solid rgba(0, 0, 0, .06);
-  padding: .30rem 0;
+  padding: 0;
 }
 
 .navbar-masjid .logo {
