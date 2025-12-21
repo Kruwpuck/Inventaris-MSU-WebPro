@@ -15,10 +15,12 @@
   @livewireStyles
   <style>
     /* Default Navbar Style (Fallback for pages without specific CSS) */
+
     .navbar-masjid .logo {
-      height: 56px;
+      height: 56px !important;
       width: auto;
       object-fit: contain;
+      display: block;
     }
   </style>
 </head>
