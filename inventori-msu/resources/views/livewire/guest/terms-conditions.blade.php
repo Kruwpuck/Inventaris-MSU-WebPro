@@ -1,5 +1,16 @@
 @push('styles')
     <link rel="stylesheet" href="{{ asset('fe-guest/ruangan.css') }}">
+    <style>
+        .fab-contact {
+            bottom: 22px !important;
+        }
+        @media (max-width: 575px) {
+            .fab-contact {
+                bottom: 16px !important;
+                right: 16px !important;
+            }
+        }
+    </style>
 @endpush
 
 <main class="container py-5">
