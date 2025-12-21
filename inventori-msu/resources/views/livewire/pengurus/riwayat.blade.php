@@ -240,8 +240,8 @@
                                 <th>MULAI PEMINJAMAN</th>
                                 <th>SELESAI PEMINJAMAN</th>
                                 <th>FASILITAS</th>
-                                <th class="text-center">CANCEL</th>
-                                <th class="text-center">SUBMIT</th>
+                                <th class="text-center">BATAL</th>
+                                <th class="text-center">KIRIM</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -271,14 +271,14 @@
                                         <button class="btn btn-outline-danger btn-sm rounded-pill px-3" 
                                                 onclick="confirmCancel({{ $d->id }})"
                                                 {{ optional($d->loanRecord)->is_submitted ? 'disabled' : '' }}>
-                                            <i class="bi bi-x-circle me-1"></i> Cancel
+                                            <i class="bi bi-x-circle me-1"></i> Batal
                                         </button>
                                     </td>
                                     <td class="text-center">
                                         <button class="btn btn-outline-success btn-sm rounded-pill px-3" 
                                                 onclick="confirmSubmit({{ $d->id }})"
                                                 {{ optional($d->loanRecord)->is_submitted ? 'disabled' : '' }}>
-                                            <i class="bi bi-check-circle me-1"></i> Submit
+                                            <i class="bi bi-check-circle me-1"></i> Kirim
                                         </button>
                                     </td>
                                 </tr>
