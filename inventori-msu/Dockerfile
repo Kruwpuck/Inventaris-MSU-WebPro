@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install pdo pdo_mysql gd zip
 
 # ✅ Tambahan permanen untuk limit upload (Livewire butuh ini)
-RUN echo "upload_max_filesize=10M\npost_max_size=12M\nmemory_limit=256M" \
+RUN echo "upload_max_filesize=20M\npost_max_size=25M\nmemory_limit=256M" \
     > /usr/local/etc/php/conf.d/uploads.ini
 
 # Install Composer
