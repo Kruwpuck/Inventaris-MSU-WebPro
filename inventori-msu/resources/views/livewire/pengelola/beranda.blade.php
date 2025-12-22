@@ -116,7 +116,7 @@
         </section>
 
         {{-- GRID BARANG --}}
-        @if($activeTab === 'barang')
+        @if($activeTab === 'barang' || $q !== '')
             <section class="mt-4 pb-5">
                 <div class="row g-4 justify-content-center">
                     @forelse($barangs as $b)
@@ -167,7 +167,7 @@
         @endif
 
         {{-- GRID RUANGAN --}}
-        @if($activeTab === 'ruangan')
+        @if($activeTab === 'ruangan' || $q !== '')
             <section class="mt-4 pb-5">
                 <div class="row g-4 justify-content-center">
                     @forelse($fasilitas as $f)
