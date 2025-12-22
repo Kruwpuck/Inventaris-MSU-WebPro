@@ -25,22 +25,24 @@
 
       <!-- Simple Status Timeline -->
       <div class="position-relative d-flex justify-content-between text-center mb-5 px-4">
-         <div class="position-absolute top-50 start-0 translate-middle-y w-100 bg-light" style="height: 4px; z-index: 0;"></div>
-         <div class="position-absolute top-50 start-0 translate-middle-y w-50 bg-success bg-opacity-25" style="height: 4px; z-index: 0;"></div>
+         <!-- Background Line (Gray) -->
+         <div class="position-absolute start-0 w-100 bg-light" style="height: 4px; top: 16px; transform: translateY(-50%); z-index: 0;"></div>
+         <!-- Active Line (Green) - 50% width (up to Step 2) -->
+         <div class="position-absolute start-0 w-50 bg-success bg-opacity-25" style="height: 4px; top: 16px; transform: translateY(-50%); z-index: 0;"></div>
 
-         <div class="position-relative z-1">
+         <div class="position-relative z-1 bg-white rounded-circle p-1"> <!-- Added bg-white wrapper to hide line behind circle if transparent -->
              <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center mx-auto mb-2 shadow-sm" style="width: 32px; height: 32px;">
                  <i class="bi bi-check"></i>
              </div>
              <div class="small fw-bold text-success" style="font-size: 0.75rem;">Diajukan</div>
          </div>
-         <div class="position-relative z-1">
+         <div class="position-relative z-1 bg-white rounded-circle p-1">
              <div class="rounded-circle bg-warning text-white d-flex align-items-center justify-content-center mx-auto mb-2 shadow-sm" style="width: 32px; height: 32px;">
                  <i class="bi bi-hourglass-split"></i>
              </div>
              <div class="small fw-bold text-warning" style="font-size: 0.75rem;">Menunggu Review</div>
          </div>
-         <div class="position-relative z-1">
+         <div class="position-relative z-1 bg-white rounded-circle p-1">
              <div class="rounded-circle bg-light text-muted d-flex align-items-center justify-content-center mx-auto mb-2 border" style="width: 32px; height: 32px;">
                  <i class="bi bi-check-all"></i>
              </div>
