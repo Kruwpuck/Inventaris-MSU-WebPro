@@ -75,15 +75,16 @@
         @endif
 
         {{-- SEARCH (tanpa tombol X; kalau input dikosongkan, otomatis balik normal) --}}
-        <form wire:submit.prevent="search" class="row align-items-center justify-content-center gx-2 gy-2">
-            <div class="col-12 col-md-6 col-lg-5">
-                <div class="input-group">
-                    <input wire:model.debounce.500ms="q" type="text" class="form-control rounded-pill py-2"
+        <form wire:submit.prevent="search" class="row justify-content-center mt-4">
+            <div class="col-11 col-md-8 col-lg-6">
+                <div class="input-group shadow-sm rounded-pill p-1 bg-white border">
+                    <input wire:model.debounce.500ms="q" type="text"
+                        class="form-control border-0 rounded-pill shadow-none ps-4 bg-transparent"
                         placeholder="Cari barang atau fasilitas..." />
 
-                    <button class="btn btn-success rounded-pill px-4 ms-2" type="submit"
-                        style="background-color:#0b492c;border-color:#0b492c">
-                        <i class="bi bi-search me-1"></i>Cari
+                    <button class="btn btn-success rounded-pill px-4" type="submit"
+                        style="background-color:#0b492c; border-color:#0b492c;">
+                        <i class="bi bi-search me-1"></i> Cari
                     </button>
                 </div>
 
