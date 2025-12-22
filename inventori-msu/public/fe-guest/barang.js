@@ -100,12 +100,21 @@ function initScheduleFilter() {
     isScheduleFixed = true;
     toggleItemButtons(true);
 
-    // Update UI text
-    const dStr = new Date(sDate).toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-    let timeInfo = `Jam ${sTime}`;
-    if (eTime) timeInfo += ` s/d ${eTime}`;
+    // Format: (hour:menit) dd-mm-yyyy
+    const fmt = (date, time) => {
+      if (!date || !time) return '';
+      const [yyyy, mm, dd] = date.split('-');
+      return `(${time}) ${dd}-${mm}-${yyyy}`;
+    };
 
-    resultText.innerHTML = `<span class="text-success fw-bold"><i class="bi bi-check-circle me-1"></i>Jadwal dipilih:</span> ${dStr} (${timeInfo})`;
+    let rangeStr = fmt(sDate, sTime);
+    if (eDate && eTime) {
+      rangeStr += ` → ${fmt(eDate, eTime)}`;
+    } else if (eTime) {
+      rangeStr += ` → ${fmt(sDate, eTime)}`;
+    }
+
+    resultText.innerHTML = `<span class="text-success fw-bold"><i class="bi bi-check-circle me-1"></i>Jadwal dipilih:</span> ${rangeStr}`;
     resultText.classList.remove('text-muted');
 
     // Save meta
