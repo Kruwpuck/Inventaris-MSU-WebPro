@@ -54,10 +54,15 @@
 
 <div>
     {{-- HERO --}}
-    <section class="d-flex justify-content-center align-items-start position-relative w-100" style="padding-top:55px;height:70vh;background-image:url('{{ asset('aset/ramadhan.png') }}');
-        background-size:contain;background-position:center;background-repeat:no-repeat;">
-        <img src="{{ asset('aset/MSU.png') }}" alt="Syamsul Ulum" class="shadow-strong rounded-3 mt-5"
-            style="width:100%; max-width:1100px; height:auto; object-fit:cover; z-index:2;" />
+    <section class="position-relative w-100" style="padding-top:55px;">
+        {{-- Background Image --}}
+        <img src="{{ asset('aset/ramadhan.png') }}" alt="Background" class="w-100 h-auto" style="display:block;">
+
+        {{-- Overlay Content --}}
+        <div class="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-start">
+            <img src="{{ asset('aset/MSU.png') }}" alt="Syamsul Ulum" class="shadow-strong rounded-3 mt-5"
+                style="width:90%; max-width:1100px; height:auto; object-fit:cover; z-index:2;" />
+        </div>
     </section>
 
     <div class="container">
