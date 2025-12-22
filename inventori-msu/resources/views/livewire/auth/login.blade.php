@@ -184,7 +184,7 @@
                     <!-- Images Container -->
                     <div class="w-100 h-100 position-relative">
                         <!-- Pengelola Image -->
-                        <img src="{{ asset('aset/pengelola.png') }}" class="role-image"
+                        <img src="{{ asset('aset/pengelola_v2.jpg') }}" class="role-image"
                             :class="role === 'pengelola' ? 'active' : 'inactive-left'" alt="Pengelola">
 
                         <!-- Pengurus Image -->
