@@ -1,36 +1,169 @@
+{{-- resources/views/livewire/pengelola/laporan.blade.php --}}
+
 @push('head')
   <style>
-    /* ... existing styles ... */
-    body { background: #fff; font-family: "Poppins", sans-serif; }
-    .toolbar .btn, .toolbar .form-select, .toolbar .form-control, .toolbar .input-group-text { border-radius: 9999px; }
-    .toolbar .btn-pill { border-radius: 9999px; border: 1px solid #0b492c; color: #0b492c; background: #fff; }
-    .toolbar .btn-pill:hover, .toolbar .btn-pill:focus { color: #0b492c; background: #f5fbf7; border-color: #0b492c; }
-    .toolbar .dropdown-menu { border-radius: 14px; border: 1px solid #0b492c; box-shadow: 0 10px 24px rgba(0, 0, 0, .1); padding: 6px 0; min-width: 100%; }
-    .toolbar .dropdown-item { padding: .5rem 1rem; border-radius: 10px; }
-    .toolbar .dropdown-item.active, .toolbar .dropdown-item:hover { background: #e9f6ef; color: #0b492c; }
-    .table-wrapper { background: #fff; border-radius: 18px; box-shadow: 0 6px 18px rgba(0, 0, 0, .06); padding: 16px; }
-    .table thead th { color: #5f6b77; font-weight: 700; font-size: .9rem; white-space: nowrap; vertical-align: middle; background: #f7f8fa; border-bottom: 2px solid #b7c1cc !important; }
-    .table-bordered { border: 1.5px solid #b7c1cc !important; }
-    .table-bordered> :not(caption)>* { border-width: 1.5px 0; }
-    .table-bordered> :not(caption)>*>* { border-color: #b7c1cc !important; padding: .8rem .75rem; vertical-align: middle; font-size: .95rem; }
-    .badge-status { display: inline-block; min-width: 130px; text-align: center; border-radius: 9999px; padding: .35rem .6rem; font-weight: 600; font-size: .8rem; white-space: nowrap; }
-    .status-sedang { background: #f3f7cf; color: #6a7b00; }
-    .status-sudah { background: #d9f3e7; color: #0b492c; }
-    .status-terlambat { background: #7a2c2c; color: #fff; }
-    .status-pending { background: #fff3cd; color: #856404; }
-    .status-approved { background: #cff4fc; color: #055160; }
-    .status-ditolak { background: #f8d7da; color: #721c24; }
-    .status-selesai { background: #28a745; color: #fff; }
-    .status-menunggu-submit { background: #e2e3e5; color: #383d41; }
-    #fSearch:focus { border-color: #000; box-shadow: none; outline: none; }
+    body {
+      background: #fff;
+      font-family: "Poppins", sans-serif;
+    }
+
+    .toolbar .btn,
+    .toolbar .form-select,
+    .toolbar .form-control,
+    .toolbar .input-group-text {
+      border-radius: 9999px;
+    }
+
+    .toolbar .btn-pill {
+      border-radius: 9999px;
+      border: 1px solid #0b492c;
+      color: #0b492c;
+      background: #fff;
+    }
+
+    .toolbar .btn-pill:hover,
+    .toolbar .btn-pill:focus {
+      color: #0b492c;
+      background: #f5fbf7;
+      border-color: #0b492c;
+    }
+
+    .toolbar .dropdown-menu {
+      border-radius: 14px;
+      border: 1px solid #0b492c;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, .1);
+      padding: 6px 0;
+      min-width: 100%;
+    }
+
+    .toolbar .dropdown-item {
+      padding: .5rem 1rem;
+      border-radius: 10px;
+    }
+
+    .toolbar .dropdown-item.active,
+    .toolbar .dropdown-item:hover {
+      background: #e9f6ef;
+      color: #0b492c;
+    }
+
+    .table-wrapper {
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, .06);
+      padding: 16px;
+    }
+
+    .table thead th {
+      color: #5f6b77;
+      font-weight: 700;
+      font-size: .9rem;
+      white-space: nowrap;
+      vertical-align: middle;
+      background: #f7f8fa;
+      border-bottom: 2px solid #b7c1cc !important;
+    }
+
+    .table-bordered {
+      border: 1.5px solid #b7c1cc !important;
+    }
+
+    .table-bordered> :not(caption)>* {
+      border-width: 1.5px 0;
+    }
+
+    .table-bordered> :not(caption)>*>* {
+      border-color: #b7c1cc !important;
+      padding: .8rem .75rem;
+      vertical-align: middle;
+      font-size: .95rem;
+    }
+
+    .badge-status {
+      display: inline-block;
+      min-width: 130px;
+      text-align: center;
+      border-radius: 9999px;
+      padding: .35rem .6rem;
+      font-weight: 600;
+      font-size: .8rem;
+      white-space: nowrap;
+    }
+
+    .status-sedang {
+      background: #f3f7cf;
+      color: #6a7b00;
+    }
+
+    .status-sudah {
+      background: #d9f3e7;
+      color: #0b492c;
+    }
+
+    .status-terlambat {
+      background: #7a2c2c;
+      color: #fff;
+    }
+
+    .status-pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .status-approved {
+      background: #cff4fc;
+      color: #055160;
+    }
+
+    .status-ditolak {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .status-selesai {
+      background: #28a745;
+      color: #fff;
+    }
+
+    .status-menunggu-submit {
+      background: #e2e3e5;
+      color: #383d41;
+    }
+
+    #fSearch:focus {
+      border-color: #000;
+      box-shadow: none;
+      outline: none;
+    }
+
     @media print {
-      .shadow-soft, .shadow-strong, .table-wrapper { box-shadow: none !important; }
-      .table thead th { background: #eee !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-      .table-bordered { border: 2px solid #000 !important; }
-      .table-bordered> :not(caption)>*>* { border-color: #000 !important; }
-      .navbar { display: none; }
+
+      .shadow-soft,
+      .shadow-strong,
+      .table-wrapper {
+        box-shadow: none !important;
+      }
+
+      .table thead th {
+        background: #eee !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .table-bordered {
+        border: 2px solid #000 !important;
+      }
+
+      .table-bordered> :not(caption)>*>* {
+        border-color: #000 !important;
+      }
+
+      .navbar {
+        display: none;
+      }
     }
   </style>
+
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 @endpush
 
@@ -43,16 +176,17 @@
     <div class="d-flex flex-column flex-md-row gap-3 flex-grow-1">
       {{-- Export Group --}}
       <div class="btn-group w-100 w-md-auto">
-        <button type="button" class="btn btn-outline-success px-4 d-flex align-items-center" style="border-color:#0b492c;color:#0b492c" onclick="downloadLaporan('xlsx')">
+        <button type="button" class="btn btn-outline-success px-4 d-flex align-items-center" style="border-color:#0b492c;color:#0b492c" 
+            onclick="downloadLaporan('xlsx', '{{ $q }}', '{{ $vKategori }}', '{{ $vStatus }}', '{{ $dateFrom }}', '{{ $dateTo }}')">
           <i class="bi bi-download me-2"></i><span>Unduh</span>
         </button>
         <button type="button" class="btn btn-outline-success dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" style="border-color:#0b492c;color:#0b492c">
           <span class="visually-hidden">Toggle Dropdown</span>
         </button>
         <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="#" onclick="downloadLaporan('xlsx')">.XLSX</a></li>
-          <li><a class="dropdown-item" href="#" onclick="downloadLaporan('csv')">.CSV</a></li>
-          <li><a class="dropdown-item" href="#" onclick="downloadLaporan('pdf')">.PDF</a></li>
+          <li><a class="dropdown-item" href="#" onclick="downloadLaporan('xlsx', '{{ $q }}', '{{ $vKategori }}', '{{ $vStatus }}', '{{ $dateFrom }}', '{{ $dateTo }}')">.XLSX</a></li>
+          <li><a class="dropdown-item" href="#" onclick="downloadLaporan('csv', '{{ $q }}', '{{ $vKategori }}', '{{ $vStatus }}', '{{ $dateFrom }}', '{{ $dateTo }}')">.CSV</a></li>
+          <li><a class="dropdown-item" href="#" onclick="downloadLaporan('pdf', '{{ $q }}', '{{ $vKategori }}', '{{ $vStatus }}', '{{ $dateFrom }}', '{{ $dateTo }}')">.PDF</a></li>
         </ul>
       </div>
 
@@ -202,27 +336,17 @@
     const exportBase = @json(route('pengelola.laporan.export', ['format' => '__fmt__']));
     let chartTop = null;
 
-    function downloadLaporan(format) {
-      // For export, we might need to modify the controller to accept params.
-      // But for now, we'll try to grab current Livewire props if possible, 
-      // or just redirect assuming the export controller uses session or query params.
-      // Since Livewire runs XHR, getting current state to a GET request is tricky.
-      // Simplest: Construct URL from DOM inputs (which we bound to livewire).
-      // WARN: The previous JS logic built the URL manually. Let's keep a simplified version.
-      
-      const q = @json($q);
-      const vKategori = @json($vKategori);
-      const vStatus = @json($vStatus);
-      const dateFrom = @json($dateFrom);
-      const dateTo = @json($dateTo);
-
+    function downloadLaporan(format, q, k, s, from, to) {
       const urlBase = exportBase.replace('__fmt__', format);
       const url = new URL(urlBase, window.location.origin);
+      
       if(q) url.searchParams.set('q', q);
-      if(vKategori && vKategori !== 'all') url.searchParams.set('kategori', vKategori);
-      if(vStatus && vStatus !== 'all') url.searchParams.set('status', vStatus);
-      if(dateFrom) url.searchParams.set('from', dateFrom);
-      if(dateTo) url.searchParams.set('to', dateTo);
+      if(k && k !== 'all') url.searchParams.set('kategori', k);
+      if(s && s !== 'all') url.searchParams.set('status', s);
+      if(from) url.searchParams.set('from', from);
+      if(to) url.searchParams.set('to', to);
+      
+      // Mark as custom so controller knows to look for from/to
       url.searchParams.set('periode', 'custom');
 
       window.location.href = url.toString();
@@ -274,26 +398,11 @@
     // Listen for livewire updates via dispatch
     document.addEventListener('livewire:initialized', () => {
         Livewire.on('chartUpdate', (data) => {
-            // data might be wrapped in array depending on how it's sent
-            // dispatch('x', [...]) -> data is the object/array directly (Livewire 3)
-            // or data[0] if it comes as args list.
-            // verifying: Livewire 3 dispatch sends params directly to handler.
-            // If sent as [ ... ], then 'data' is that array.
-            // Let's assume data is the object passed in dispatch.
-            // However, usually it comes as the first argument.
             const payload = Array.isArray(data) ? data[0] : data;
             if(payload && payload.labels) {
                 initChart(payload.labels, payload.values, payload.isDummy);
             }
         });
     });
-  </script>
-  
-  <script>
-    // Separate script to handle dynamic updates via events if needed, 
-    // OR primarily rely on the fact that Livewire replaces the DOM. 
-    // If Livewire replaces the script tag, it runs again.
-    // But `push` stacks are usually outside the livewire root.
-    // So we need to listen to an event from PHP component.
   </script>
 @endpush
