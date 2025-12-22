@@ -53,21 +53,15 @@
 @endpush
 
 <div>
-    {{-- HERO (BAGIAN YANG DIUPDATE AGAR RESPONSIVE) --}}
-    {{-- Menggunakan height: 50vh agar tinggi selalu 50% dari layar, dengan batas minimal 400px --}}
-    <section class="position-relative w-100 overflow-hidden"
-        style="margin-top: 80px; height: 50vh; min-height: 400px; max-height: 700px;">
+    {{-- HERO --}}
+    <section class="position-relative w-100" style="margin-top: 80px;">
+        {{-- Background Image: Scales naturally with width --}}
+        <img src="{{ asset('aset/ramadhan.png') }}" alt="Background" class="w-100 h-auto d-block">
 
-        {{-- Background Image --}}
-        {{-- object-fit: cover membuat gambar mengisi area tanpa gepeng --}}
-        <img src="{{ asset('aset/ramadhan.png') }}" alt="Background" class="w-100 h-100 position-absolute top-0 start-0"
-            style="object-fit: cover; z-index: 0;">
-
-        {{-- Overlay Content (Logo Syamsul Ulum) --}}
-        <div class="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center"
-            style="z-index: 2;">
+        {{-- Overlay Content --}}
+        <div class="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center">
             <img src="{{ asset('aset/MSU.png') }}" alt="Syamsul Ulum" class="shadow-strong rounded-3"
-                style="width:90%; max-width:1100px; height:auto; object-fit:cover;" />
+                style="width: 80%; max-width: 900px; height: auto; object-fit: contain;">
         </div>
     </section>
 
