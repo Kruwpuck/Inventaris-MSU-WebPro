@@ -14,169 +14,153 @@ class LaporanExportController extends Controller
 {
     public function export(Request $request, string $format)
     {
-        // ambil filter dari query string (dikirim JS)
-        $periode  = $request->query('periode', '1m');
+        // 1. Get Filters from Query String
+        // Note: 'periode' param is legacy/ignored if using from/to, but kept for compatibility
         $kategori = $request->query('kategori', 'all');
         $status   = $request->query('status', 'all');
         $q        = $request->query('q', '');
+        
+        $dateFrom = $request->query('from'); // YYYY-MM-DD
+        $dateTo   = $request->query('to');   // YYYY-MM-DD
 
-        // khusus custom range
-        $fromParam = $request->query('from'); // YYYY-MM-DD
-        $toParam   = $request->query('to');   // YYYY-MM-DD
+        // 2. Base Query & Date Filter (Match Laporan.php)
+        $query = LoanRequest::with(['items', 'loanRecord'])->orderByDesc('id');
 
-        // NOTE: loanRecord dipakai di mapping status -> wajib di-load
-        $requests = LoanRequest::with(['items', 'loanRecord'])
-            ->orderByDesc('id')
-            ->get();
+        if ($dateFrom) {
+            $query->whereDate('loan_date_start', '>=', $dateFrom);
+        }
+        if ($dateTo) {
+            $query->whereDate('loan_date_start', '<=', $dateTo);
+        }
 
+        $requests = $query->get();
         $today = Carbon::today();
 
-        // flatten loan_request -> item
+        // 3. Transform & Map (Match Laporan.php)
         $rows = $requests->flatMap(function ($lr) use ($today) {
             return $lr->items->map(function ($inv) use ($lr, $today) {
 
                 $tglPinjam  = Carbon::parse($lr->loan_date_start);
                 $jatuhTempo = Carbon::parse($lr->loan_date_end);
+                
+                $startTime = $lr->start_time ?? '00:00:00';
+                $endTime   = $lr->end_time ?? '00:00:00';
 
-                // map backend -> UI status
+                // Format: d/m/Y | H:i
+                $waktuPinjamStr = $tglPinjam->format('d/m/Y') . ' | ' . Carbon::parse($startTime)->format('H:i');
+                $jatuhTempoStr  = $jatuhTempo->format('d/m/Y') . ' | ' . Carbon::parse($endTime)->format('H:i');
+
+                // Status Logic
                 $statusUi = 'Unknown';
-                $tglKembali = '-';
+                $waktuKembaliStr = '-';
 
                 switch ($lr->status) {
                     case 'returned':
-                        if ($lr->loanRecord && $lr->loanRecord->is_submitted) {
-                            $statusUi = 'Sudah Kembali';
-                        } else {
-                            $statusUi = 'Menunggu Submit';
-                        }
-
+                        $waktuKembaliStr = '-';
+                        $actualReturn = null;
                         if ($lr->loanRecord && $lr->loanRecord->returned_at) {
-                            $tglKembali = Carbon::parse($lr->loanRecord->returned_at)->format('m/d/Y');
+                            $actualReturn = Carbon::parse($lr->loanRecord->returned_at);
+                            $waktuKembaliStr = $actualReturn->format('d/m/Y | H:i');
                         } else {
-                            $tglKembali = $jatuhTempo->format('m/d/Y');
+                            $waktuKembaliStr = $jatuhTempo->format('d/m/Y | H:i'); 
+                        }
+                        
+                        if ($lr->loanRecord && $lr->loanRecord->is_submitted) {
+                            if ($actualReturn && $actualReturn->gt($jatuhTempo)) {
+                                $statusUi = 'Terlambat';
+                            } else {
+                                $statusUi = 'Selesai';
+                            }
+                        } else {
+                             $statusUi = 'Sudah Kembali';
                         }
                         break;
-
+                    
                     case 'handed_over':
                         $statusUi = $today->gt($jatuhTempo) ? 'Terlambat' : 'Sedang Dipinjam';
-                        $tglKembali = '-';
                         break;
 
                     case 'approved':
                         $statusUi = 'Siap Diambil';
-                        $tglKembali = '-';
                         break;
 
                     case 'pending':
                         $statusUi = 'Menunggu Approve';
-                        $tglKembali = '-';
                         break;
 
                     case 'rejected':
                         $statusUi = 'Ditolak';
-                        $tglKembali = '-';
                         break;
 
                     default:
                         $statusUi = $today->gt($jatuhTempo) ? 'Terlambat' : 'Sedang Dipinjam';
-                        $tglKembali = '-';
                         break;
                 }
 
                 $kategoriUi = $inv->category === 'ruangan' ? 'Ruangan' : 'Barang';
 
                 return [
-                    'nama_item'   => $inv->name,
-                    'kategori'    => $kategoriUi,
-                    'peminjam'    => $lr->borrower_name,
-                    'tgl_pinjam'  => $tglPinjam,   // Carbon
-                    'jatuh_tempo' => $jatuhTempo,  // Carbon
-                    'tgl_kembali' => $tglKembali,
-                    'jumlah'      => (int) ($inv->pivot->quantity ?? 1),
-                    'status'      => $statusUi,
+                    'nama_item'        => $inv->name,
+                    'kategori'         => $kategoriUi,
+                    'peminjam'         => $lr->borrower_name,
+                    
+                    // Display
+                    'waktu_pinjam'     => $waktuPinjamStr,
+                    'jatuh_tempo'      => $jatuhTempoStr,
+                    'waktu_kembali'    => $waktuKembaliStr,
+
+                    'jumlah'           => (int) ($inv->pivot->quantity ?? 1),
+                    'status'           => $statusUi,
+                    'keterangan'       => optional($lr->loanRecord)->notes ?? '-'
                 ];
             });
         })->values();
 
-        // ✅ FILTER: hanya status yang ada di dropdown laporan
-        $allowedStatuses = ['Sedang Dipinjam', 'Sudah Kembali', 'Terlambat', 'Siap Diambil'];
-        $rows = $rows->filter(fn ($r) => in_array($r['status'], $allowedStatuses, true))->values();
+        // 4. In-Memory Filtering (Match Laporan.php)
+        
+        // Strict Allowed Statuses
+        $allowedStatuses = ['Sedang Dipinjam', 'Sudah Kembali', 'Terlambat', 'Siap Diambil', 'Selesai'];
+        $rows = $rows->filter(fn ($r) => in_array($r['status'], $allowedStatuses, true));
 
-        /**
-         * ==========================
-         * FILTER BERDASARKAN PERIODE
-         * ==========================
-         */
-        [$from, $to, $periodeLabel] = $this->resolvePeriode($periode, $fromParam, $toParam);
-        if ($from && $to) {
-            // inclusive (tanggal awal & akhir ikut)
-            $rows = $rows->filter(fn ($r) => $r['tgl_pinjam']->betweenIncluded($from, $to))->values();
-        }
-
-        /**
-         * ==========================
-         * FILTER KATEGORI
-         * ==========================
-         */
+        // Filter Category
         if ($kategori !== 'all') {
-            $rows = $rows->filter(fn ($r) => $r['kategori'] === $kategori)->values();
+            $rows = $rows->filter(fn ($r) => $r['kategori'] === $kategori);
         }
 
-        /**
-         * ==========================
-         * FILTER STATUS
-         * ==========================
-         */
+        // Filter Status
         if ($status !== 'all') {
-            $rows = $rows->filter(fn ($r) => $r['status'] === $status)->values();
+            $rows = $rows->filter(fn ($r) => $r['status'] === $status);
         }
 
-        /**
-         * ==========================
-         * SEARCH TEXT
-         * ==========================
-         */
+        // Search
         if ($q) {
             $qLower = strtolower($q);
-
             $rows = $rows->filter(function ($r) use ($qLower) {
-                $blob =
-                    strtolower($r['nama_item']) . ' ' .
-                    strtolower($r['kategori']) . ' ' .
-                    strtolower($r['peminjam']) . ' ' .
-                    strtolower($r['status']) . ' ' .
-                    $r['tgl_pinjam']->format('m/d/Y') . ' ' .
-                    $r['jatuh_tempo']->format('m/d/Y') . ' ' .
-                    strtolower((string) $r['tgl_kembali']) . ' ' .
-                    (string) $r['jumlah'];
-
-                return str_contains($blob, $qLower);
-            })->values();
+                return str_contains(strtolower($r['nama_item']), $qLower)
+                    || str_contains(strtolower($r['kategori']), $qLower)
+                    || str_contains(strtolower($r['peminjam']), $qLower)
+                    || str_contains(strtolower($r['status']), $qLower);
+            });
         }
+        
+        $rows = $rows->values();
 
-        $filename = 'laporan_peminjaman_' . now()->format('Ymd_His');
+        // 5. Generate Export
+        $filename = 'laporan_peminjaman_' . now()->format('dmY_His');
+        $periodeLabel = ($dateFrom ? Carbon::parse($dateFrom)->format('d/m/Y') : '...') . ' - ' . ($dateTo ? Carbon::parse($dateTo)->format('d/m/Y') : '...');
+        if (!$dateFrom && !$dateTo) $periodeLabel = 'Semua Waktu';
 
-        /**
-         * ==========================
-         * EXPORT PDF
-         * ==========================
-         */
         if ($format === 'pdf') {
             $pdf = Pdf::loadView('exports.laporan-pdf', [
                 'rows'          => $rows,
                 'periode_label' => $periodeLabel,
-                'kategori'      => $kategori,
-                'status'        => $status,
+                'kategori'      => $kategori === 'all' ? 'Semua Kategori' : $kategori,
+                'status'        => $status === 'all' ? 'Semua Status' : $status,
             ])->setPaper('a4', 'landscape');
 
             return $pdf->download($filename . '.pdf');
         }
 
-        /**
-         * ==========================
-         * EXPORT XLSX / CSV
-         * ==========================
-         */
         if ($format === 'csv') {
             return Excel::download(
                 new LaporanExport($rows),
@@ -186,60 +170,5 @@ class LaporanExportController extends Controller
         }
 
         return Excel::download(new LaporanExport($rows), $filename . '.xlsx');
-    }
-
-    /**
-     * resolve periode preset + custom (from/to)
-     */
-    private function resolvePeriode(string $periode, ?string $fromParam = null, ?string $toParam = null): array
-    {
-        $today = Carbon::today();
-
-        if ($periode === 'custom') {
-            if ($fromParam && $toParam) {
-                try {
-                    $from = Carbon::parse($fromParam)->startOfDay();
-                    $to   = Carbon::parse($toParam)->endOfDay();
-
-                    if ($from->gt($to)) {
-                        [$from, $to] = [$to, $from];
-                    }
-
-                    return [
-                        $from,
-                        $to,
-                        $from->format('m/d/Y') . ' - ' . $to->format('m/d/Y'),
-                    ];
-                } catch (\Throwable $e) {
-                    return [null, null, 'Semua Waktu'];
-                }
-            }
-
-            return [null, null, 'Semua Waktu'];
-        }
-
-        return match ($periode) {
-            '2w' => [
-                $today->copy()->subDays(13)->startOfDay(),
-                $today->copy()->endOfDay(),
-                '2 Minggu Terakhir'
-            ],
-            '1m' => [
-                $today->copy()->startOfMonth()->startOfDay(),
-                $today->copy()->endOfMonth()->endOfDay(),
-                'Bulan Ini'
-            ],
-            'prev1m' => [
-                $today->copy()->subMonthNoOverflow()->startOfMonth()->startOfDay(),
-                $today->copy()->subMonthNoOverflow()->endOfMonth()->endOfDay(),
-                'Bulan Lalu'
-            ],
-            'all' => [null, null, 'Semua Waktu'],
-            default => [
-                $today->copy()->startOfMonth()->startOfDay(),
-                $today->copy()->endOfMonth()->endOfDay(),
-                'Bulan Ini'
-            ],
-        };
     }
 }
