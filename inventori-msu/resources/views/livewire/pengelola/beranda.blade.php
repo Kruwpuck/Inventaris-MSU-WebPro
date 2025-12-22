@@ -105,7 +105,17 @@
                 <div class="dropdown d-inline-block">
                     <button class="btn btn-success dropdown-toggle rounded-pill px-4 py-2" type="button"
                         data-bs-toggle="dropdown" style="background-color:#0b492c;border-color:#0b492c">
-                        {{ ucfirst($activeTab) }}
+                        @if($q === '')
+                            {{ ucfirst($activeTab) }}
+                        @else
+                            @if($barangs->isNotEmpty() && $fasilitas->isEmpty())
+                                Barang
+                            @elseif($barangs->isEmpty() && $fasilitas->isNotEmpty())
+                                Ruangan
+                            @else
+                                Semua
+                            @endif
+                        @endif
                     </button>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="#" wire:click.prevent="setTab('barang')">Barang</a></li>
