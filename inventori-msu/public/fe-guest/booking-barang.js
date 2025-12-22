@@ -40,7 +40,7 @@ window.addEventListener('DOMContentLoaded', () => {
             el = document.getElementById('valModal');
         }
         document.getElementById('valModalMsg').textContent = msg;
-        
+
         // Fix: Use getOrCreateInstance to avoid multiple backdrops
         const modal = bootstrap.Modal.getOrCreateInstance(el);
         modal.show();
@@ -917,7 +917,7 @@ function buildMailtoURL({ to, subject, body, cc = '', bcc = '' }) {
         if (!el) return;
         el.addEventListener('change', () => {
             if (el.files[0] && el.files[0].size > max) {
-                alert('Ukuran file maksimal 10MB.');
+                showValidationModal('Ukuran file maksimal 10MB.');
                 el.value = '';
                 validateForm();
             }
