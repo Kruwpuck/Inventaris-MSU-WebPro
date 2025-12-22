@@ -40,7 +40,10 @@ window.addEventListener('DOMContentLoaded', () => {
             el = document.getElementById('valModal');
         }
         document.getElementById('valModalMsg').textContent = msg;
-        new bootstrap.Modal(el).show();
+        
+        // Fix: Use getOrCreateInstance to avoid multiple backdrops
+        const modal = bootstrap.Modal.getOrCreateInstance(el);
+        modal.show();
     };
     // Global helper agar bisa dipanggil di mana saja
     window.openDelConfirm = function (title, msg, onConfirm) {
