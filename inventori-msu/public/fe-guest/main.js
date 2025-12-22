@@ -47,8 +47,13 @@ window.MSUDates = (function () {
   function formatRange() {
     const d = get();
     if (!d.startDate) return '';
-    // Format: "2025-12-17 (08:00) → 2025-12-18 (10:00)"
-    return `${d.startDate} (${d.startTime}) → ${d.endDate} (${d.endTime})`;
+    // Format requested: (hour:menit) dd-mm-yyyy
+    const fmt = (date, time) => {
+      if (!date || !time) return '';
+      const [yyyy, mm, dd] = date.split('-');
+      return `(${time}) ${dd}-${mm}-${yyyy}`;
+    };
+    return `${fmt(d.startDate, d.startTime)} → ${fmt(d.endDate, d.endTime)}`;
   }
 
   function getDetails() {
