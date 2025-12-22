@@ -4,12 +4,12 @@
     <meta charset="utf-8">
     <title>Laporan Peminjaman</title>
     <style>
-        body { font-family: sans-serif; font-size: 12px; }
+        body { font-family: sans-serif; font-size: 10px; }
         h2,h4 { margin: 0 0 8px 0; }
         table { width: 100%; border-collapse: collapse; margin-top: 8px; }
-        th, td { border: 1px solid #000; padding: 6px 5px; }
+        th, td { border: 1px solid #000; padding: 4px 4px; }
         th { background: #eee; }
-        .meta { margin-bottom: 6px; }
+        .meta { margin-bottom: 6px; font-size: 12px; }
     </style>
 </head>
 <body>
@@ -23,29 +23,31 @@
     <table>
         <thead>
             <tr>
-                <th style="width:30px">No</th>
+                <th style="width:25px">No</th>
                 <th>Nama</th>
                 <th>Kategori</th>
                 <th>Peminjam</th>
-                <th>Tgl Pinjam</th>
+                <th>Waktu Pinjam</th>
                 <th>Jatuh Tempo</th>
-                <th>Tgl Kembali</th>
-                <th style="width:60px">Jumlah</th>
+                <th>Waktu Kembali</th>
+                <th style="width:40px">Jml</th>
                 <th>Status</th>
+                <th>Keterangan</th>
             </tr>
         </thead>
         <tbody>
             @foreach($rows as $i => $r)
                 <tr>
-                    <td>{{ $i+1 }}</td>
+                    <td style="text-align:center">{{ $i+1 }}</td>
                     <td>{{ $r['nama_item'] }}</td>
                     <td>{{ $r['kategori'] }}</td>
                     <td>{{ $r['peminjam'] }}</td>
-                    <td>{{ $r['tgl_pinjam']->format('m/d/Y') }}</td>
-                    <td>{{ $r['jatuh_tempo']->format('m/d/Y') }}</td>
-                    <td>{{ $r['tgl_kembali'] }}</td>
+                    <td>{{ $r['waktu_pinjam'] }}</td>
+                    <td>{{ $r['jatuh_tempo'] }}</td>
+                    <td>{{ $r['waktu_kembali'] }}</td>
                     <td style="text-align:center">{{ $r['jumlah'] }}</td>
                     <td>{{ $r['status'] }}</td>
+                    <td>{{ $r['keterangan'] }}</td>
                 </tr>
             @endforeach
         </tbody>

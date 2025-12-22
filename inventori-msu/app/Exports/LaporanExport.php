@@ -23,11 +23,12 @@ class LaporanExport implements FromCollection, WithHeadings, WithMapping
             'Nama',
             'Kategori',
             'Peminjam',
-            'Tgl Pinjam',
+            'Waktu Pinjam',
             'Jatuh Tempo',
-            'Tgl Kembali',
+            'Waktu Kembali',
             'Jumlah',
             'Status',
+            'Keterangan',
         ];
     }
 
@@ -41,11 +42,12 @@ class LaporanExport implements FromCollection, WithHeadings, WithMapping
             $row['nama_item'],
             $row['kategori'],
             $row['peminjam'],
-            $row['tgl_pinjam']->format('m/d/Y'),
-            $row['jatuh_tempo']->format('m/d/Y'),
-            $row['tgl_kembali'],
+            $row['waktu_pinjam'],   // Pre-formatted string
+            $row['jatuh_tempo'],    // Pre-formatted string
+            $row['waktu_kembali'],  // Pre-formatted string
             $row['jumlah'],
             $row['status'],
+            $row['keterangan'] ?? '-',
         ];
     }
 }
