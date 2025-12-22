@@ -11,6 +11,10 @@
     display: flex;
     align-items: center;
   }
+  /* Google Form style asterisk */
+  .text-danger {
+    color: #d93025 !important; 
+  }
 </style>
 @endpush
 
@@ -58,8 +62,9 @@
         <form id="bookingForm" class="form-card needs-validation" wire:submit.prevent="submit" novalidate>
           <div class="row g-3">
             <!-- NOMOR PEMINJAMAN -->
+            <!-- NOMOR PEMINJAMAN -->
             <div class="col-md-6">
-              <label class="form-label">Nomor Telepon</label>
+              <label class="form-label">Nomor Telepon <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-receipt-cutoff"></i></span>
                 <input type="text" class="form-control" id="loanNumber" placeholder="Contoh: 08123456789" required wire:model="borrower_phone" />
@@ -69,7 +74,7 @@
             </div>
 
             <div class="col-md-6">
-              <label class="form-label">Penanggung jawab</label>
+              <label class="form-label">Penanggung jawab <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
                 <input type="text" class="form-control" id="pjName" placeholder="Nama lengkap" required wire:model="borrower_name" />
@@ -79,7 +84,7 @@
             </div>
 
             <div class="col-md-6">
-              <label class="form-label">NIM/NIP</label>
+              <label class="form-label">NIM/NIP <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-hash"></i></span>
                 <input type="text" class="form-control" id="idNumber" placeholder="Contoh: 21573xxxxx" required wire:model="borrower_nim" />
@@ -89,7 +94,7 @@
             </div>
 
             <div class="col-md-6">
-              <label class="form-label">Email</label>
+              <label class="form-label">Email <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-envelope"></i></span>
                 <input type="email" class="form-control" id="email" placeholder="nama@contoh.ac.id" required wire:model="borrower_email" />
@@ -99,7 +104,7 @@
             </div>
 
             <div class="col-md-6">
-              <label class="form-label">Program Studi / Unit</label>
+              <label class="form-label">Program Studi / Unit <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-mortarboard"></i></span>
                 <input type="text" class="form-control" id="studyProgram" placeholder="Sistem Informasi / Informatika"
@@ -109,7 +114,7 @@
               @error('borrower_prodi') <div class="text-danger small">{{ $message }}</div> @enderror
             </div>
             <div class="col-md-12">
-              <label class="form-label">Kegiatan</label>
+              <label class="form-label">Kegiatan <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-clipboard-check"></i></span>
                 <input type="text" class="form-control" id="purpose" placeholder="Contoh: Kuliah Tamu / Seminar..."
@@ -120,7 +125,7 @@
             </div>
 
             <div class="col-md-12">
-              <label class="form-label">Lokasi Kegiatan</label>
+              <label class="form-label">Lokasi Kegiatan <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
                 <input type="text" class="form-control" id="location" placeholder="Masukkan lokasi kegiatan" required wire:model="location" />
@@ -131,7 +136,7 @@
 
             <!-- Start Date & Time -->
             <div class="col-md-6">
-              <label class="form-label">Tanggal Pakai</label>
+              <label class="form-label">Tanggal Pakai <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
                 <input type="date" class="form-control" id="loanDate" required wire:model="loan_date_start" />
@@ -139,7 +144,7 @@
               @error('loan_date_start') <div class="text-danger small">{{ $message }}</div> @enderror
             </div>
             <div class="col-md-6">
-              <label class="form-label">Jam Pakai</label>
+              <label class="form-label">Jam Pakai <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-clock"></i></span>
                 <input type="time" class="form-control" id="loanTimeStart" required wire:model="loan_time_start" />
@@ -149,7 +154,7 @@
 
             <!-- End Date & Time -->
             <div class="col-md-6">
-              <label class="form-label">Tanggal Kembali</label>
+              <label class="form-label">Tanggal Kembali <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
                 <input type="date" class="form-control" id="loanDateEnd" required wire:model="loan_date_end" />
@@ -157,7 +162,7 @@
               @error('loan_date_end') <div class="text-danger small">{{ $message }}</div> @enderror
             </div>
             <div class="col-md-6">
-              <label class="form-label">Jam Kembali</label>
+              <label class="form-label">Jam Kembali <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-clock"></i></span>
                 <input type="time" class="form-control" id="loanTimeEnd" required wire:model="loan_time_end" />
@@ -170,13 +175,13 @@
                <h6 class="fw-bold"><i class="bi bi-cloud-upload me-2"></i>Upload Dokumen</h6>
                <div class="row g-3">
                    <div class="col-md-6">
-                       <label class="form-label small fw-bold">Proposal Kegiatan</label>
+                       <label class="form-label small fw-bold">Proposal Kegiatan <span class="text-danger">*</span></label>
                        <input type="file" class="form-control" id="requirements" accept=".pdf" required wire:model="document_file" />
                        <div class="form-text">Wajib PDF (max 10MB).</div>
                        @error('document_file') <div class="text-danger small">{{ $message }}</div> @enderror
                    </div>
                    <div class="col-md-6">
-                       <label class="form-label small fw-bold">Identitas Peminjam (KTM/KTP/SIM)</label>
+                       <label class="form-label small fw-bold">Identitas Peminjam (KTM/KTP/SIM) <span class="text-danger">*</span></label>
                        <input type="file" class="form-control" id="ktpUpload" accept="image/png, image/jpeg, image/jpg" required wire:model="ktp_file" />
                        <div class="form-text">Wajib format gambar (JPG, PNG).</div>
                        @error('ktp_file') <div class="text-danger small">{{ $message }}</div> @enderror
@@ -185,7 +190,7 @@
             </div>
 
             <div class="col-12 mt-3">
-              <label class="form-label">Deskripsi Kegiatan</label>
+              <label class="form-label">Deskripsi Kegiatan <span class="text-danger">*</span></label>
               <textarea id="longPurpose" class="form-control" rows="4" placeholder="Tuliskan detail deskripsi kegiatan..."
                 required wire:model="borrower_description"></textarea>
               <div class="invalid-feedback">Wajib diisi.</div>
