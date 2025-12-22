@@ -49,6 +49,19 @@
   background: var(--green-2)
 }
 
+/* Fix Mobile Navbar */
+@media (max-width: 991.98px) {
+  .navbar-masjid .navbar-collapse {
+    background: var(--green-1);
+    /* Match navbar background */
+    padding: 1rem;
+    border-radius: 0 0 16px 16px;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+    margin-top: 0.5rem;
+  }
+}
+
 body {
   background: #f6f8f7;
   color: #121816;
