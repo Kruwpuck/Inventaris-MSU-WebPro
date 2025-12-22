@@ -121,9 +121,30 @@
             text-align: center;
         }
         .empty-icon {
-            font-size: 4rem;
             color: #ced4da; /* Light gray for icon */
             margin-bottom: 1rem;
+        }
+
+        /* Pagination Customization to Match Green Theme */
+        .pagination {
+            --bs-pagination-color: #198754;
+            --bs-pagination-hover-color: #0f5132;
+            --bs-pagination-active-bg: #198754;
+            --bs-pagination-active-border-color: #198754;
+            --bs-pagination-focus-box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
+        }
+        .page-link {
+            color: #198754;
+        }
+        .page-link:hover {
+            color: #0f5132;
+            background-color: #e9ecef;
+            border-color: #dee2e6;
+        }
+        .page-item.active .page-link {
+            background-color: #198754;
+            border-color: #198754;
+            color: white;
         }
     </style>
 
