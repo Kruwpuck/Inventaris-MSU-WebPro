@@ -3,11 +3,14 @@
 namespace App\Livewire\Pengelola;
 
 use Livewire\Component;
+use Livewire\Attributes\Url;
 use App\Models\Inventory;
 
 class Beranda extends Component
 {
     public $q = '';
+
+    #[Url(keep: true)]
     public $activeTab = 'barang'; // 'barang' atau 'ruangan'
 
     // ===== MODAL EDIT =====
