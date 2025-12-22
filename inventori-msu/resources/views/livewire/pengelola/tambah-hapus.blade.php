@@ -112,7 +112,11 @@
 
             @error('image') 
                 <div class="text-danger small mt-1">
-                    {{ $message === 'The image failed to upload.' ? 'Gagal mengupload. Pastikan format JPG/PNG dan ukuran < 5MB.' : $message }}
+                    @if ($message === 'The image failed to upload.')
+                        Ukuran gambar tidak boleh lebih dari 5MB.
+                    @else
+                        {{ $message }}
+                    @endif
                 </div> 
             @enderror
 
