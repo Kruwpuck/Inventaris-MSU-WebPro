@@ -57,7 +57,7 @@
     <section class="d-flex justify-content-center align-items-start position-relative w-100" style="padding-top:55px;height:70vh;background-image:url('{{ asset('aset/ramadhan.png') }}');
         background-size:contain;background-position:center;background-repeat:no-repeat;">
         <img src="{{ asset('aset/MSU.png') }}" alt="Syamsul Ulum" class="shadow-strong rounded-3 mt-5"
-            style="width:1100px; height:230px; object-fit:cover; z-index:2; max-width: none;" />
+            style="width:100%; max-width:1100px; height:auto; object-fit:cover; z-index:2;" />
     </section>
 
     <div class="container">
