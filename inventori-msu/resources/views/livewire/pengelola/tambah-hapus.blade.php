@@ -100,17 +100,25 @@
               <img class="w-100 preview mb-3 shadow-sm" src="{{ $image->temporaryUrl() }}" alt="Preview Upload">
             @else
               <img class="w-100 preview mb-3 shadow-sm"
-                src="https://images.unsplash.com/photo-1520975922219-830a99aa20a6?q=80&w=1600&auto=format&fit=crop"
-                alt="Preview Default">
+                src="https://images.unsplash.com/photo-1594322436404-5a0526db4d13?q=80&w=800&auto=format&fit=crop"
+                alt="Preview Default" onerror="this.src='https://via.placeholder.com/400x300?text=No+Image'">
             @endif
 
             <label class="btn btn-outline-secondary pill w-100">
               <i class="bi bi-upload me-2"></i> Pilih Foto
-              <input type="file" class="d-none" accept="image/*" wire:model="image">
+              <input type="file" class="d-none" accept="image/png, image/jpeg, image/jpg" wire:model="image">
             </label>
             <small class="text-muted d-block mt-2 text-center">Format JPG/PNG, maksimal 5MB.</small>
 
-            @error('image') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+            @error('image') 
+                <div class="text-danger small mt-1">
+                    @if ($message === 'The image failed to upload.')
+                        Ukuran gambar tidak boleh lebih dari 5MB.
+                    @else
+                        {{ $message }}
+                    @endif
+                </div> 
+            @enderror
 
             <div wire:loading wire:target="image" class="text-center small text-primary mt-2">
               <span class="spinner-border spinner-border-sm" role="status"></span> Mengunggah...

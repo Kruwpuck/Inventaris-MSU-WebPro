@@ -5,6 +5,7 @@
 /* ---------- Bootstrap UI ---------- */
 window.addEventListener('DOMContentLoaded', () => {
     initUI(); // Initialize UI elements
+    initDateConstraints(); // Validation logic
 
     /* Setup Modal Konfirmasi Hapus */
     const delModalEl = document.getElementById('confirmDeleteModal');
@@ -17,6 +18,30 @@ window.addEventListener('DOMContentLoaded', () => {
             delModalInst.hide();
         });
     }
+
+    // Modal Validation (Dynamic Inject)
+    window.showValidationModal = function (msg) {
+        let el = document.getElementById('valModal');
+        if (!el) {
+            const html = `
+            <div class="modal fade" id="valModal" tabindex="-1" style="z-index:9999">
+               <div class="modal-dialog modal-dialog-centered modal-sm">
+                 <div class="modal-content border-0 shadow-lg rounded-4">
+                   <div class="modal-body text-center p-4">
+                     <div class="text-danger mb-2"><i class="bi bi-exclamation-circle" style="font-size:3rem"></i></div>
+                     <h5 class="fw-bold">Perhatian</h5>
+                     <p class="text-muted small mb-4" id="valModalMsg"></p>
+                     <button type="button" class="btn btn-danger w-100 rounded-pill" data-bs-dismiss="modal">Mengerti</button>
+                   </div>
+                 </div>
+               </div>
+            </div>`;
+            document.body.insertAdjacentHTML('beforeend', html);
+            el = document.getElementById('valModal');
+        }
+        document.getElementById('valModalMsg').textContent = msg;
+        new bootstrap.Modal(el).show();
+    };
     // Global helper agar bisa dipanggil di mana saja
     window.openDelConfirm = function (title, msg, onConfirm) {
         if (!delModalInst) {
@@ -44,6 +69,38 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+
+/* ---------- Date Logic ---------- */
+function initDateConstraints() {
+    // 1. Get Today in Local YYYY-MM-DD
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, '0');
+    const d = String(now.getDate()).padStart(2, '0');
+    const today = `${y}-${m}-${d}`;
+
+    const setMin = (el, val) => { if (el) el.min = val; };
+
+    // 2. Set Min Date
+    setMin(loanDate, today);
+    setMin(loanDateEnd, today);
+
+    // 3. Logic: EndDate >= StartDate
+    if (loanDate) {
+        loanDate.addEventListener('change', () => {
+            if (loanDateEnd) {
+                // Dimatikan tanggal sebelum StartDate
+                loanDateEnd.min = loanDate.value;
+                // Jika EndDate jadi invalid (sebelum Start), reset/samakan
+                if (loanDateEnd.value && loanDateEnd.value < loanDate.value) {
+                    loanDateEnd.value = loanDate.value;
+                }
+            }
+            // Trigger check
+            if (typeof checkRealtimeAvailability === 'function') checkRealtimeAvailability();
+        });
+    }
+}
 
 /* ---------- Util ---------- */
 function toRupiah(n) { return new Intl.NumberFormat('id-ID').format(Number(n || 0)); }
@@ -585,7 +642,7 @@ async function checkRealtimeAvailability() {
     const startDateTime = new Date(`${sDate}T${sTime}`);
     const now = new Date();
     if (startDateTime < now) {
-        alert("ERROR: Waktu tidak valid. Tanggal/Jam peminjaman sudah terlewat.");
+        showValidationModal("Tanggal/Jam peminjaman sudah terlewat.");
 
         // Reset Inputs
         if (loanDate) loanDate.value = '';
@@ -600,7 +657,7 @@ async function checkRealtimeAvailability() {
     if (eDate && eTime) {
         const endDateTime = new Date(`${eDate}T${eTime}`);
         if (startDateTime >= endDateTime) {
-            alert("ERROR: Waktu tidak valid. Jam Berakhir harus lebih lambat dari Jam Mulai.");
+            showValidationModal("Jam Berakhir harus lebih lambat dari Jam Mulai.");
 
             // Reset Inputs
             if (loanDate) loanDate.value = '';
