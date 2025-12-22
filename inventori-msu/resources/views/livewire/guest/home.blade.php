@@ -148,9 +148,9 @@
               </div>
             </div>
             <div class="item-body">
-              <div class="item-title fw-bold">{{ $item->name }}</div>
-              <div class="item-desc text-muted small mb-2">{{ $item->description }}</div>
-              <div class="item-meta">Sisa : <span class="sisa">{{ $item->stock }}</span></div>
+              <div class="item-title fw-bold fs-5">{{ $item->name }}</div>
+              <div class="item-desc text-muted small mb-2" style="font-size: 0.8rem;">{{ $item->description }}</div>
+              <div class="item-meta fw-bold">Sisa : <span class="sisa">{{ $item->stock }}</span></div>
             </div>
           </article>
         </div>
@@ -185,9 +185,10 @@
               </div>
             </div>
             <div class="item-body">
-              <div class="item-title fw-bold">{{ $item->name }}</div>
-              <div class="item-desc text-muted small mb-2">{{ $item->description }}</div>
-              <div class="item-meta">Sisa : <span class="sisa">1</span></div>
+              <div class="item-title fw-bold fs-5">{{ $item->name }}</div>
+              <div class="item-desc text-muted small mb-1" style="font-size: 0.75rem;">{{ $item->description }}</div>
+              <div class="item-capacity text-muted small mb-2" style="font-size: 0.85rem;">Kapasitas : {{ $item->capacity ?? '-' }}</div>
+              <div class="item-meta fw-bold">Sisa : <span class="sisa">1</span></div>
             </div>
           </article>
         </div>
