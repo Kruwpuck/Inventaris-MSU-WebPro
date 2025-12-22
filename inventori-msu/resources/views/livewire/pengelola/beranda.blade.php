@@ -53,11 +53,22 @@
 @endpush
 
 <div>
-    {{-- HERO --}}
-    <section class="d-flex justify-content-center align-items-start position-relative w-100" style="padding-top:55px;height:70vh;background-image:url('{{ asset('aset/ramadhan.png') }}');
-        background-size:contain;background-position:center;background-repeat:no-repeat;">
-        <img src="{{ asset('aset/MSU.png') }}" alt="Syamsul Ulum" class="shadow-strong rounded-3 mt-5"
-            style="width:1100px; height:230px; object-fit:cover; z-index:2; max-width: none;" />
+    {{-- HERO (BAGIAN YANG DIUPDATE AGAR RESPONSIVE) --}}
+    {{-- Menggunakan height: 50vh agar tinggi selalu 50% dari layar, dengan batas minimal 400px --}}
+    <section class="position-relative w-100 overflow-hidden"
+        style="margin-top: 80px; height: 50vh; min-height: 400px; max-height: 700px;">
+
+        {{-- Background Image --}}
+        {{-- object-fit: cover membuat gambar mengisi area tanpa gepeng --}}
+        <img src="{{ asset('aset/ramadhan.png') }}" alt="Background" class="w-100 h-100 position-absolute top-0 start-0"
+            style="object-fit: cover; z-index: 0;">
+
+        {{-- Overlay Content (Logo Syamsul Ulum) --}}
+        <div class="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center"
+            style="z-index: 2;">
+            <img src="{{ asset('aset/MSU.png') }}" alt="Syamsul Ulum" class="shadow-strong rounded-3"
+                style="width:90%; max-width:1100px; height:auto; object-fit:cover;" />
+        </div>
     </section>
 
     <div class="container">
