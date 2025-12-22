@@ -78,7 +78,7 @@
         <form wire:submit.prevent="search" class="row justify-content-center mt-4">
             <div class="col-11 col-md-8 col-lg-6">
                 <div class="input-group shadow-sm rounded-pill p-1 bg-white border">
-                    <input wire:model.debounce.500ms="q" type="text"
+                    <input wire:model.live.debounce.300ms="q" type="text"
                         class="form-control border-0 rounded-pill shadow-none ps-4 bg-transparent"
                         placeholder="Cari barang atau fasilitas..." />
 
