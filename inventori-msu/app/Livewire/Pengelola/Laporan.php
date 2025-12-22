@@ -30,20 +30,21 @@ class Laporan extends Component
     public function updatingVKategori() { $this->resetPage(); }
     public function updatingVStatus() { $this->resetPage(); }
     public function updatingPerPage() { $this->resetPage(); }
-    public function updatingDateFrom() { $this->resetPage(); }
-    public function updatingDateTo() { $this->resetPage(); }
+
+    public function applyDateFilter()
+    {
+        $this->resetPage();
+    }
 
     public function render()
     {
         // 1. Base Query
         $query = LoanRequest::with(['items', 'loanRecord'])->orderByDesc('id');
 
-        // Filter Date Range at Query Level (Optimization)
-        if ($this->dateFrom) {
-            $query->whereDate('loan_date_start', '>=', $this->dateFrom);
-        }
-        if ($this->dateTo) {
-            $query->whereDate('loan_date_start', '<=', $this->dateTo);
+        // Filter Date Range (Only if BOTH are set)
+        if ($this->dateFrom && $this->dateTo) {
+            $query->whereDate('loan_date_start', '>=', $this->dateFrom)
+                  ->whereDate('loan_date_start', '<=', $this->dateTo);
         }
 
         $requests = $query->get();
