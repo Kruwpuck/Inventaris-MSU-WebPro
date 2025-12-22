@@ -191,13 +191,26 @@
                 <p class="page-subtitle mb-0">Arsip semua aktivitas peminjaman fasilitas.</p>
             </div>
             
-            <div class="input-group" style="width: 100%; max-width: 300px;">
-                <span class="input-group-text bg-white border-end-0 rounded-start-pill ps-3">
-                    <i class="bi bi-search text-secondary"></i>
-                </span>
-                <input type="text" class="form-control border-start-0 rounded-end-pill ps-0" 
-                       placeholder="Cari..." 
-                       wire:model.live.debounce.300ms="search">
+            <div class="d-flex flex-column flex-sm-row gap-3 align-items-center">
+                <div class="d-flex align-items-center gap-2 text-secondary">
+                    <span>Show</span>
+                    <select class="form-select form-select-sm border-secondary-subtle rounded-3" style="min-width: 70px;" wire:model.live="perPage">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                    <span>data</span>
+                </div>
+
+                <div class="input-group" style="width: 100%; max-width: 300px;">
+                    <span class="input-group-text bg-white border-end-0 rounded-start-pill ps-3">
+                        <i class="bi bi-search text-secondary"></i>
+                    </span>
+                    <input type="text" class="form-control border-start-0 rounded-end-pill ps-0" 
+                           placeholder="Cari..." 
+                           wire:model.live.debounce.300ms="search">
+                </div>
             </div>
         </div>
 
@@ -268,14 +281,14 @@
                                         </div>
                                     </td>
                                     <td class="text-center">
-                                        <button class="btn btn-outline-danger btn-sm rounded-pill px-3" 
+                                        <button class="btn btn-sm rounded-pill px-3 {{ optional($d->loanRecord)->is_submitted ? 'btn-secondary' : 'btn-outline-danger' }}" 
                                                 onclick="confirmCancel({{ $d->id }})"
                                                 {{ optional($d->loanRecord)->is_submitted ? 'disabled' : '' }}>
                                             <i class="bi bi-x-circle me-1"></i> Batal
                                         </button>
                                     </td>
                                     <td class="text-center">
-                                        <button class="btn btn-outline-success btn-sm rounded-pill px-3" 
+                                        <button class="btn btn-sm rounded-pill px-3 {{ optional($d->loanRecord)->is_submitted ? 'btn-secondary' : 'btn-outline-success' }}" 
                                                 onclick="confirmSubmit({{ $d->id }})"
                                                 {{ optional($d->loanRecord)->is_submitted ? 'disabled' : '' }}>
                                             <i class="bi bi-check-circle me-1"></i> Kirim
@@ -285,6 +298,9 @@
                             @endforeach
                         </tbody>
                     </table>
+                </div>
+                <div class="p-4 border-top">
+                    {{ $data->links() }}
                 </div>
             @endif
         </div>
