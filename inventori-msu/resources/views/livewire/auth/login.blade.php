@@ -48,8 +48,8 @@
                 top: 50%;
                 left: 50%;
                 transform: translate(-50%, -50%);
-                max-width: 80%;
-                max-height: 80%;
+                max-width: 100%;
+                max-height: 90%;
                 opacity: 0;
                 transition: all 0.6s ease;
             }
@@ -149,6 +149,15 @@
                                 required :readonly="isLoading">
                         </div>
 
+                        <div class="mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="remember" id="remember">
+                                <label class="form-check-label small text-secondary" for="remember">
+                                    Remember me
+                                </label>
+                            </div>
+                        </div>
+
                         <div class="d-flex align-items-center justify-content-between mt-5">
                             <div class="d-flex align-items-center gap-2 switch-role-btn" @click="toggleRole()"
                                 :class="{ 'opacity-50': isLoading }" :style="isLoading ? 'cursor: not-allowed;' : ''">
@@ -179,7 +188,7 @@
                             :class="role === 'pengelola' ? 'active' : 'inactive-left'" alt="Pengelola">
 
                         <!-- Pengurus Image -->
-                        <img src="{{ asset('aset/pengurus.png') }}" class="role-image"
+                        <img src="{{ asset('aset/pengurus_v2.jpg') }}" class="role-image"
                             :class="role === 'pengurus' ? 'active' : 'inactive-right'" alt="Pengurus">
                     </div>
 
