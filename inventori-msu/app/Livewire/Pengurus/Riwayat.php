@@ -5,9 +5,19 @@ namespace App\Livewire\Pengurus;
 use Livewire\Component;
 use App\Models\LoanRequest;
 
+use Livewire\WithPagination;
+
 class Riwayat extends Component
 {
+    use WithPagination;
+
     public $search = '';
+    public $perPage = 10;
+
+    public function updatedSearch()
+    {
+        $this->resetPage();
+    }
 
     public function render()
     {
@@ -30,7 +40,7 @@ class Riwayat extends Component
             })
             ->with(['items', 'loanRecord'])
             ->latest('created_at')
-            ->get();
+            ->paginate($this->perPage);
 
         return view('livewire.pengurus.riwayat', [
             'data' => $data
