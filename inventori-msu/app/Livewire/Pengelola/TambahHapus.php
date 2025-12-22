@@ -31,8 +31,35 @@ class TambahHapus extends Component
             'stock' => $this->category === 'Barang' ? 'required|integer|min:0' : 'nullable',
             'capacity' => $this->category === 'Ruangan' ? 'required|integer|min:1' : 'nullable',
 
-            'image' => 'nullable|image|max:5120', // Maks 5 MB
+            // Validasi Gambar (Strict JPG/PNG, Max 5MB)
+            'image' => 'nullable|mimes:jpg,jpeg,png|max:5120', 
         ];
+    }
+
+    // Custom Error Messages (Indonesian)
+    protected function messages()
+    {
+        return [
+            'image.mimes' => 'Format gambar harus JPG atau PNG.',
+            'image.max'   => 'Ukuran gambar tidak boleh lebih dari 5MB.',
+            'image.image' => 'File yang diupload harus berupa gambar.',
+            // Validation messages for other fields
+            'required' => 'Kolom ini wajib diisi.',
+            'integer'  => 'Harus berupa angka.',
+            'min'      => 'Nilai minimal tidak valid.',
+        ];
+    }
+
+    // Real-time validation saat gambar dipilih
+    public function updatedImage()
+    {
+        try {
+            $this->validateOnly('image');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Reset image on error so the invalid file doesn't persist
+            $this->image = null;
+            throw $e;
+        }
     }
 
     // Fungsi Reset Form (Tombol Bersihkan)
