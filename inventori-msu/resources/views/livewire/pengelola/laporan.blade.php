@@ -193,8 +193,8 @@
       {{-- Date Range --}}
       <div class="dropdown w-100 w-md-auto">
         <button class="btn btn-pill dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" id="btnPeriode">
-            @if($dateFrom || $dateTo)
-                {{ $dateFrom ? \Carbon\Carbon::parse($dateFrom)->format('d/m/Y') : '...' }} - {{ $dateTo ? \Carbon\Carbon::parse($dateTo)->format('d/m/Y') : '...' }}
+            @if($dateFrom && $dateTo)
+                {{ \Carbon\Carbon::parse($dateFrom)->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($dateTo)->format('d/m/Y') }}
             @else
                 Pilih Tanggal
             @endif
@@ -204,14 +204,16 @@
           <div class="row g-2">
             <div class="col-6">
               <label class="form-label small mb-1">Dari</label>
-              <input type="date" class="form-control" wire:model.live="dateFrom">
+              <input type="date" class="form-control" wire:model="dateFrom">
             </div>
             <div class="col-6">
               <label class="form-label small mb-1">Sampai</label>
-              <input type="date" class="form-control" wire:model.live="dateTo">
+              <input type="date" class="form-control" wire:model="dateTo">
             </div>
           </div>
-          <button class="btn btn-success w-100 mt-3 btn-sm" wire:click="$set('dateFrom', null); $set('dateTo', null)" style="background-color:#0b492c;border-color:#0b492c">Reset</button>
+          <button class="btn btn-success w-100 mt-3 btn-sm" wire:click="applyDateFilter" style="background-color:#0b492c;border-color:#0b492c">
+            Terapkan
+          </button>
         </div>
       </div>
 
