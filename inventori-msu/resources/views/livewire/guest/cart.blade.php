@@ -359,16 +359,24 @@
 
         if(link) link.addEventListener('click', (e) => { e.preventDefault(); openTerms(); });
         if(labelText) labelText.addEventListener('click', (e) => {
-            // Prevent default label behavior toggle if we want strict flow
-            // But usually label click toggles checkbox. 
-            // Since Checkbox is disabled, we handle it manually via modal
-            e.preventDefault();
-            openTerms();
+            if (chk.checked) {
+                // If already checked, let it uncheck (default behavior)
+                // But we still need to manage the disabled state/visuals if we want strict control
+                // For now, let the default behavior happen (it will toggle the checkbox)
+                // Do NOT preventDefault here if we want it to uncheck.
+            } else {
+                // If unchecked, prevent default check and show modal
+                e.preventDefault();
+                openTerms();
+            }
         });
         
         // Checkbox wrapper click
         chk.parentElement.addEventListener('click', (e) => {
-             // If clicking the div/gap, trigger modal if not checked
+             // Don't trigger if clicked directly on checkbox or link
+             if (e.target === chk || e.target === link) return;
+             
+             // If unchecked, open modal. If checked, do nothing (let label/input handle it)
              if (!chk.checked) openTerms();
         });
 
