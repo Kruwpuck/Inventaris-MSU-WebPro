@@ -18,6 +18,30 @@ window.addEventListener('DOMContentLoaded', () => {
             delModalInst.hide();
         });
     }
+
+    // Modal Validation (Dynamic Inject)
+    window.showValidationModal = function (msg) {
+        let el = document.getElementById('valModal');
+        if (!el) {
+            const html = `
+            <div class="modal fade" id="valModal" tabindex="-1" style="z-index:9999">
+               <div class="modal-dialog modal-dialog-centered modal-sm">
+                 <div class="modal-content border-0 shadow-lg rounded-4">
+                   <div class="modal-body text-center p-4">
+                     <div class="text-danger mb-2"><i class="bi bi-exclamation-circle" style="font-size:3rem"></i></div>
+                     <h5 class="fw-bold">Perhatian</h5>
+                     <p class="text-muted small mb-4" id="valModalMsg"></p>
+                     <button type="button" class="btn btn-danger w-100 rounded-pill" data-bs-dismiss="modal">Mengerti</button>
+                   </div>
+                 </div>
+               </div>
+            </div>`;
+            document.body.insertAdjacentHTML('beforeend', html);
+            el = document.getElementById('valModal');
+        }
+        document.getElementById('valModalMsg').textContent = msg;
+        new bootstrap.Modal(el).show();
+    };
     // Global helper agar bisa dipanggil di mana saja
     window.openDelConfirm = function (title, msg, onConfirm) {
         if (!delModalInst) {
@@ -618,7 +642,7 @@ async function checkRealtimeAvailability() {
     const startDateTime = new Date(`${sDate}T${sTime}`);
     const now = new Date();
     if (startDateTime < now) {
-        alert("ERROR: Waktu tidak valid. Tanggal/Jam peminjaman sudah terlewat.");
+        showValidationModal("Tanggal/Jam peminjaman sudah terlewat.");
 
         // Reset Inputs
         if (loanDate) loanDate.value = '';
@@ -633,7 +657,7 @@ async function checkRealtimeAvailability() {
     if (eDate && eTime) {
         const endDateTime = new Date(`${eDate}T${eTime}`);
         if (startDateTime >= endDateTime) {
-            alert("ERROR: Waktu tidak valid. Jam Berakhir harus lebih lambat dari Jam Mulai.");
+            showValidationModal("Jam Berakhir harus lebih lambat dari Jam Mulai.");
 
             // Reset Inputs
             if (loanDate) loanDate.value = '';
