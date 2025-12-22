@@ -5,6 +5,7 @@
 /* ---------- Bootstrap UI ---------- */
 window.addEventListener('DOMContentLoaded', () => {
     initUI(); // Initialize UI elements
+    initDateConstraints(); // Validation logic
 
     /* Setup Modal Konfirmasi Hapus */
     const delModalEl = document.getElementById('confirmDeleteModal');
@@ -44,6 +45,38 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+
+/* ---------- Date Logic ---------- */
+function initDateConstraints() {
+    // 1. Get Today in Local YYYY-MM-DD
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, '0');
+    const d = String(now.getDate()).padStart(2, '0');
+    const today = `${y}-${m}-${d}`;
+
+    const setMin = (el, val) => { if (el) el.min = val; };
+
+    // 2. Set Min Date
+    setMin(loanDate, today);
+    setMin(loanDateEnd, today);
+
+    // 3. Logic: EndDate >= StartDate
+    if (loanDate) {
+        loanDate.addEventListener('change', () => {
+            if (loanDateEnd) {
+                // Dimatikan tanggal sebelum StartDate
+                loanDateEnd.min = loanDate.value;
+                // Jika EndDate jadi invalid (sebelum Start), reset/samakan
+                if (loanDateEnd.value && loanDateEnd.value < loanDate.value) {
+                    loanDateEnd.value = loanDate.value;
+                }
+            }
+            // Trigger check
+            if (typeof checkRealtimeAvailability === 'function') checkRealtimeAvailability();
+        });
+    }
+}
 
 /* ---------- Util ---------- */
 function toRupiah(n) { return new Intl.NumberFormat('id-ID').format(Number(n || 0)); }
