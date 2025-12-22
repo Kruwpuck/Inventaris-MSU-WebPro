@@ -11,6 +11,8 @@ class Riwayat extends Component
 {
     use WithPagination;
 
+    protected $paginationTheme = 'bootstrap';
+
     public $search = '';
     public $perPage = 10;
 
