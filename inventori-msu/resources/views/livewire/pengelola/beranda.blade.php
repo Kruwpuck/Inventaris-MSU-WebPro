@@ -103,115 +103,119 @@
 
             <div class="text-start">
                 <div class="dropdown d-inline-block">
-                    <button id="kategoriBtn" class="btn btn-success dropdown-toggle rounded-pill px-4 py-2"
-                        type="button" data-bs-toggle="dropdown" style="background-color:#0b492c;border-color:#0b492c">
-                        Barang
+                    <button class="btn btn-success dropdown-toggle rounded-pill px-4 py-2" type="button"
+                        data-bs-toggle="dropdown" style="background-color:#0b492c;border-color:#0b492c">
+                        {{ ucfirst($activeTab) }}
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#" data-switch="barang">Barang</a></li>
-                        <li><a class="dropdown-item" href="#" data-switch="ruangan">Ruangan</a></li>
+                        <li><a class="dropdown-item" href="#" wire:click.prevent="setTab('barang')">Barang</a></li>
+                        <li><a class="dropdown-item" href="#" wire:click.prevent="setTab('ruangan')">Ruangan</a></li>
                     </ul>
                 </div>
             </div>
         </section>
 
         {{-- GRID BARANG --}}
-        <section id="gridBarang" class="mt-4 pb-5">
-            <div class="row g-4 justify-content-center">
-                @forelse($barangs as $b)
-                    <div class="col-12 col-sm-6 col-md-4 col-lg-3" wire:key="barang-{{ $b->id }}">
-                        <div class="card h-100 border-0 rounded-4 shadow-strong mx-auto position-relative {{ !($b->is_active ?? true) ? 'item-disabled' : '' }}"
-                            style="max-width:16rem">
+        @if($activeTab === 'barang')
+            <section class="mt-4 pb-5">
+                <div class="row g-4 justify-content-center">
+                    @forelse($barangs as $b)
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3" wire:key="barang-{{ $b->id }}">
+                            <div class="card h-100 border-0 rounded-4 shadow-strong mx-auto position-relative {{ !($b->is_active ?? true) ? 'item-disabled' : '' }}"
+                                style="max-width:16rem">
 
-                            {{-- titik 3 hapus --}}
-                            <button class="btn-menu-3dot position-absolute top-0 end-0 m-2" type="button"
-                                wire:click.stop="confirmDelete({{ $b->id }})" title="Hapus">
-                                <i class="bi bi-three-dots-vertical fs-5"></i>
-                            </button>
-
-                            @php
-                                $imgSrc = asset('aset/default.png');
-                                if ($b->image_path) {
-                                    if (file_exists(public_path('aset/' . $b->image_path))) {
-                                        $imgSrc = asset('aset/' . $b->image_path);
-                                    } else {
-                                        $imgSrc = asset('storage/' . $b->image_path);
-                                    }
-                                }
-                            @endphp
-                            <img src="{{ $imgSrc }}" class="card-img-top" alt="{{ $b->name }}"
-                                style="height:160px;object-fit:cover" />
-
-                            <div class="card-body py-3 px-3">
-                                <h6 class="card-title fw-semibold mb-1">{{ $b->name }}</h6>
-                                <p class="card-text text-muted small mb-2">{{ $b->description }}</p>
-                                <p class="item-stok text-secondary small mb-3">
-                                    Stok: <b>{{ $b->stock }} unit</b>
-                                </p>
-
-                                <button class="btn btn-sm rounded-pill px-3 py-1 btn-edit-msu"
-                                    wire:click="openEdit({{ $b->id }})">
-                                    Edit
+                                {{-- titik 3 hapus --}}
+                                <button class="btn-menu-3dot position-absolute top-0 end-0 m-2" type="button"
+                                    wire:click.stop="confirmDelete({{ $b->id }})" title="Hapus">
+                                    <i class="bi bi-three-dots-vertical fs-5"></i>
                                 </button>
+
+                                @php
+                                    $imgSrc = asset('aset/default.png');
+                                    if ($b->image_path) {
+                                        if (file_exists(public_path('aset/' . $b->image_path))) {
+                                            $imgSrc = asset('aset/' . $b->image_path);
+                                        } else {
+                                            $imgSrc = asset('storage/' . $b->image_path);
+                                        }
+                                    }
+                                @endphp
+                                <img src="{{ $imgSrc }}" class="card-img-top" alt="{{ $b->name }}"
+                                    style="height:160px;object-fit:cover" />
+
+                                <div class="card-body py-3 px-3">
+                                    <h6 class="card-title fw-semibold mb-1">{{ $b->name }}</h6>
+                                    <p class="card-text text-muted small mb-2">{{ $b->description }}</p>
+                                    <p class="item-stok text-secondary small mb-3">
+                                        Stok: <b>{{ $b->stock }} unit</b>
+                                    </p>
+
+                                    <button class="btn btn-sm rounded-pill px-3 py-1 btn-edit-msu"
+                                        wire:click="openEdit({{ $b->id }})">
+                                        Edit
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                @empty
-                    <p class="text-center text-muted mt-4">
-                        {{ $q ? 'Tidak ada barang yang cocok dengan pencarian.' : 'Belum ada data barang.' }}
-                    </p>
-                @endforelse
-            </div>
-        </section>
+                    @empty
+                        <p class="text-center text-muted mt-4">
+                            {{ $q ? 'Tidak ada barang yang cocok dengan pencarian.' : 'Belum ada data barang.' }}
+                        </p>
+                    @endforelse
+                </div>
+            </section>
+        @endif
 
         {{-- GRID RUANGAN --}}
-        <section id="gridRuangan" class="mt-4 pb-5 d-none">
-            <div class="row g-4 justify-content-center">
-                @forelse($fasilitas as $f)
-                    <div class="col-12 col-sm-6 col-md-4 col-lg-3" wire:key="ruangan-{{ $f->id }}">
-                        <div class="card h-100 border-0 rounded-4 shadow-strong mx-auto position-relative {{ !($f->is_active ?? true) ? 'item-disabled' : '' }}"
-                            style="max-width:16rem">
+        @if($activeTab === 'ruangan')
+            <section class="mt-4 pb-5">
+                <div class="row g-4 justify-content-center">
+                    @forelse($fasilitas as $f)
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3" wire:key="ruangan-{{ $f->id }}">
+                            <div class="card h-100 border-0 rounded-4 shadow-strong mx-auto position-relative {{ !($f->is_active ?? true) ? 'item-disabled' : '' }}"
+                                style="max-width:16rem">
 
-                            {{-- titik 3 hapus --}}
-                            <button class="btn-menu-3dot position-absolute top-0 end-0 m-2" type="button"
-                                wire:click.stop="confirmDelete({{ $f->id }})" title="Hapus">
-                                <i class="bi bi-three-dots-vertical fs-5"></i>
-                            </button>
-
-                            @php
-                                $imgSrc = asset('aset/default.png');
-                                if ($f->image_path) {
-                                    if (file_exists(public_path('aset/' . $f->image_path))) {
-                                        $imgSrc = asset('aset/' . $f->image_path);
-                                    } else {
-                                        $imgSrc = asset('storage/' . $f->image_path);
-                                    }
-                                }
-                            @endphp
-                            <img src="{{ $imgSrc }}" class="card-img-top" alt="{{ $f->name }}"
-                                style="height:160px;object-fit:cover" />
-
-                            <div class="card-body py-3 px-3">
-                                <h6 class="card-title fw-semibold mb-1">{{ $f->name }}</h6>
-                                <p class="card-text text-muted small mb-2">{{ $f->description }}</p>
-                                <p class="item-stok text-secondary small mb-3">
-                                    Kapasitas: <b>{{ $f->capacity }} orang</b>
-                                </p>
-
-                                <button class="btn btn-sm rounded-pill px-3 py-1 btn-edit-msu"
-                                    wire:click="openEdit({{ $f->id }})">
-                                    Edit
+                                {{-- titik 3 hapus --}}
+                                <button class="btn-menu-3dot position-absolute top-0 end-0 m-2" type="button"
+                                    wire:click.stop="confirmDelete({{ $f->id }})" title="Hapus">
+                                    <i class="bi bi-three-dots-vertical fs-5"></i>
                                 </button>
+
+                                @php
+                                    $imgSrc = asset('aset/default.png');
+                                    if ($f->image_path) {
+                                        if (file_exists(public_path('aset/' . $f->image_path))) {
+                                            $imgSrc = asset('aset/' . $f->image_path);
+                                        } else {
+                                            $imgSrc = asset('storage/' . $f->image_path);
+                                        }
+                                    }
+                                @endphp
+                                <img src="{{ $imgSrc }}" class="card-img-top" alt="{{ $f->name }}"
+                                    style="height:160px;object-fit:cover" />
+
+                                <div class="card-body py-3 px-3">
+                                    <h6 class="card-title fw-semibold mb-1">{{ $f->name }}</h6>
+                                    <p class="card-text text-muted small mb-2">{{ $f->description }}</p>
+                                    <p class="item-stok text-secondary small mb-3">
+                                        Kapasitas: <b>{{ $f->capacity }} orang</b>
+                                    </p>
+
+                                    <button class="btn btn-sm rounded-pill px-3 py-1 btn-edit-msu"
+                                        wire:click="openEdit({{ $f->id }})">
+                                        Edit
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                @empty
-                    <p class="text-center text-muted mt-4">
-                        {{ $q ? 'Tidak ada ruangan/fasilitas yang cocok dengan pencarian.' : 'Belum ada data fasilitas/ruangan.' }}
-                    </p>
-                @endforelse
-            </div>
-        </section>
+                    @empty
+                        <p class="text-center text-muted mt-4">
+                            {{ $q ? 'Tidak ada ruangan/fasilitas yang cocok dengan pencarian.' : 'Belum ada data fasilitas/ruangan.' }}
+                        </p>
+                    @endforelse
+                </div>
+            </section>
+        @endif
     </div>
 
     {{-- MODAL EDIT --}}
@@ -314,28 +318,6 @@
             });
         });
 
-        // dropdown switch (barang/ruangan)
-        document.addEventListener('DOMContentLoaded', function () {
-            document.body.addEventListener('click', function (e) {
-                const item = e.target.closest('[data-switch]');
-                if (!item) return;
-                e.preventDefault();
 
-                const tipe = item.getAttribute('data-switch');
-                const gridBarang = document.getElementById('gridBarang');
-                const gridRuangan = document.getElementById('gridRuangan');
-                const kategoriBtn = document.getElementById('kategoriBtn');
-
-                if (tipe === 'barang') {
-                    gridBarang.classList.remove('d-none');
-                    gridRuangan.classList.add('d-none');
-                    kategoriBtn.textContent = 'Barang';
-                } else {
-                    gridBarang.classList.add('d-none');
-                    gridRuangan.classList.remove('d-none');
-                    kategoriBtn.textContent = 'Ruangan';
-                }
-            });
-        });
     </script>
 @endpush
