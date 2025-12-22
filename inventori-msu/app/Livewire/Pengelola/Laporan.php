@@ -188,9 +188,9 @@ class Laporan extends Component
     {
         if ($collection->isEmpty()) {
             return [
-                'labels' => ["Proyektor", "Meja", "Speaker", "Terpal", "Sofa", "Hijab", "Ruang Utama", "Selasar", "Zoom", "Ruang VIP"],
-                'values' => [12, 10, 9, 8, 7, 6, 5, 4, 3, 2],
-                'isDummy' => true
+                'labels' => [],
+                'values' => [],
+                'isDummy' => false
             ];
         }
 
