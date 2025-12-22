@@ -108,9 +108,9 @@
                         @if($q === '')
                             {{ ucfirst($activeTab) }}
                         @else
-                            @if($barangs->isNotEmpty() && $fasilitas->isEmpty())
+                            @if($barangs->count() > 0 && $fasilitas->count() === 0)
                                 Barang
-                            @elseif($barangs->isEmpty() && $fasilitas->isNotEmpty())
+                            @elseif($barangs->count() === 0 && $fasilitas->count() > 0)
                                 Ruangan
                             @else
                                 Semua
