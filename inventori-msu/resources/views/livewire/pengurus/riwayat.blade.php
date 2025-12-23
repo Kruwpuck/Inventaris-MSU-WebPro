@@ -333,16 +333,16 @@
                                                 </div>
                                             </td>
                                             <td class="text-center">
-                                                <button class="btn btn-sm rounded-pill px-4 btn-outline-danger" 
+                                                <button class="btn btn-sm rounded-pill px-4 btn-outline-danger d-inline-flex align-items-center gap-2" 
                                                         onclick="confirmCancel({{ $d->id }})">
-                                                    <i class="bi bi-x-circle me-1"></i> Batal
+                                                    <i class="bi bi-x-circle"></i> Batal
                                                 </button>
                                             </td>
                                             <td class="text-center">
                                                 @if(optional($d->loanRecord)->returned_at)
-                                                    <button class="btn btn-sm rounded-pill px-4 btn-outline-success" 
+                                                    <button class="btn btn-sm rounded-pill px-4 btn-outline-success d-inline-flex align-items-center gap-2" 
                                                             onclick="confirmSubmit({{ $d->id }})">
-                                                        <i class="bi bi-send me-1"></i> Kirim
+                                                        <i class="bi bi-send"></i> Kirim
                                                     </button>
                                                 @endif
                                             </td>
@@ -422,9 +422,32 @@
                                                 </div>
                                             </td>
                                             <td class="text-center">
-                                                <span class="badge bg-success rounded-pill px-3">
-                                                    <i class="bi bi-check-circle me-1"></i> Selesai
-                                                </span>
+                                                @php
+                                                    // Calculate Due Date
+                                                    $dueAt = $d->loan_date_end->copy();
+                                                    if ($d->end_time) {
+                                                        try {
+                                                            $dueAt->setTimeFromTimeString($d->end_time);
+                                                        } catch (\Exception $e) {
+                                                            $dueAt->endOfDay();
+                                                        }
+                                                    } else {
+                                                        $dueAt->endOfDay();
+                                                    }
+
+                                                    $returnedAt = optional($d->loanRecord)->returned_at;
+                                                    $isLate = $returnedAt ? $returnedAt->gt($dueAt) : false;
+                                                @endphp
+
+                                                @if($isLate)
+                                                    <span class="badge bg-danger rounded-pill px-3">
+                                                        <i class="bi bi-exclamation-circle me-1"></i> Terlambat
+                                                    </span>
+                                                @else
+                                                    <span class="badge bg-success rounded-pill px-3">
+                                                        <i class="bi bi-check-circle me-1"></i> Selesai
+                                                    </span>
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach
