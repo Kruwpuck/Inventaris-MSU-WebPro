@@ -4,7 +4,7 @@ namespace App\Livewire\Guest;
 
 use Livewire\Component;
 use Livewire\WithFileUploads;
-use App\Livewire\Borrower\HandlesCart;
+// use App\Livewire\Borrower\HandlesCart; (Removed)
 
 class Cart extends Component
 {
