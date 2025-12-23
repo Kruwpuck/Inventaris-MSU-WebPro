@@ -155,6 +155,14 @@ window.MSUDates = (function () {
     }
 
     // Basic validation
+    const startDt = new Date(`${sDate}T${sTime}`);
+    const now = new Date();
+    // Gunakan setSeconds(0,0) agar jika pilih menit yg sama dengan sekarang tetap dianggap valid
+    if (startDt < new Date(now.setSeconds(0, 0))) {
+      showToastInfo('Jam pakai tidak boleh waktu yang sudah lewat.');
+      return;
+    }
+
     if (eDate < sDate) {
       showToastInfo('Tanggal kembali tidak boleh kurang dari tanggal pakai.');
       return;
