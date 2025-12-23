@@ -280,7 +280,7 @@
   <div class="mb-5">
     <section class="text-center mb-4">
       <p class="mb-1 fw-semibold" style="letter-spacing:.06em;color:#2a6a55">PENGELOLAAN</p>
-      <h2 class="fw-bolder text-uppercase" style="color:#32435a">Daftar Pengajuan (Pending)</h2>
+      <h3 class="fw-bold text-uppercase" style="color:#32435a">Daftar Pengajuan (Pending)</h3>
       <div class="mx-auto" style="width:120px;height:3px;background:#2a6a55;border-radius:2px"></div>
     </section>
 
@@ -392,7 +392,7 @@
   <div class="mb-5">
     <section class="text-center mb-4">
       <p class="mb-1 fw-semibold" style="letter-spacing:.06em;color:#2a6a55">ARSIP DATA</p>
-      <h2 class="fw-bolder text-uppercase" style="color:#32435a">Riwayat Keputusan</h2>
+      <h3 class="fw-bold text-uppercase" style="color:#32435a">Riwayat Keputusan</h3>
       <div class="mx-auto" style="width:120px;height:3px;background:#2a6a55;border-radius:2px"></div>
     </section>
 
