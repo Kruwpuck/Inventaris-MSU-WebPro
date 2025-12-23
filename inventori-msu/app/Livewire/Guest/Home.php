@@ -3,7 +3,7 @@
 namespace App\Livewire\Guest;
 
 use Livewire\Component;
-use App\Livewire\Borrower\HandlesCart; // Re-use trait if possible, or copy it. 
+// Trait HandlesCart is now in current namespace App\Livewire\Guest 
 
 // Note: HandlesCart is likely in 'app/Livewire/Borrower/HandlesCart.php'
 // I can just change use statement if I move it, or keep using it.

@@ -3,7 +3,7 @@
 namespace App\Livewire\Guest;
 
 use Livewire\Component;
-use App\Livewire\Borrower\HandlesCart;
+// use App\Livewire\Borrower\HandlesCart; (Removed)
 
 class Catalogue extends Component
 {

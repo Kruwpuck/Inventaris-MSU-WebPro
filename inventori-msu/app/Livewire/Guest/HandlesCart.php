@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Borrower;
+namespace App\Livewire\Guest;
 
 use App\Models\Inventory;
 use Illuminate\Support\Facades\Session;
