@@ -373,7 +373,7 @@
               <th style="min-width: 200px;">Item</th>
               <th style="width: 180px;">Jadwal</th>
               <th style="width: 100px;">Status</th>
-              <th style="min-width: 150px;">Catatan</th>
+              <th style="width: 220px;">Catatan</th>
               <th style="width: 80px;" class="text-center">Cetak</th>
             </tr>
           </thead>
@@ -418,7 +418,27 @@
                     <span class="badge-box badge-rejected">Rejected</span>
                   @endif
                 </td>
-                <td class="small text-muted">{{ $hist->rejection_reason ?? '-' }}</td>
+                <td class="small text-muted" style="max-width: 220px; white-space: normal;">
+                  @php
+                      $reasonCheck = $hist->rejection_reason ?? '-';
+                      $limitChar = 60;
+                  @endphp
+                  
+                  @if(strlen($reasonCheck) > $limitChar)
+                      <div x-data="{ expanded: false }">
+                          <span x-show="!expanded">
+                              {{ \Illuminate\Support\Str::limit($reasonCheck, $limitChar) }}
+                              <a href="#" @click.prevent="expanded = true" class="fw-bold text-primary text-decoration-none" style="font-size: 0.75rem;">Lihat</a>
+                          </span>
+                          <span x-show="expanded">
+                              {{ $reasonCheck }}
+                              <a href="#" @click.prevent="expanded = false" class="fw-bold text-secondary text-decoration-none ms-1" style="font-size: 0.75rem;">Tutup</a>
+                          </span>
+                      </div>
+                  @else
+                      {{ $reasonCheck }}
+                  @endif
+                </td>
                 <td class="text-center">
                   <button class="btn-icon shadow-sm" type="button" wire:click="showDetails({{ $hist->id }})" title="Cetak Bukti">
                     <i class="bi bi-printer"></i>
