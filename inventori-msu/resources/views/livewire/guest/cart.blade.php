@@ -228,32 +228,14 @@
         </form>
 
         <!-- QRIS Donasi -->
-        <div class="form-card mt-3" id="qrisDonation" wire:ignore>
-          <h5 class="mb-2"><i class="bi bi-qr-code me-1"></i> Donasi QRIS (Opsional)</h5>
-          <div class="row g-3 align-items-center">
-            <div class="col-md-5 text-center">
-              <img src="{{ asset('fe-guest/qris msu.jpg') }}" alt="QRIS" class="qris-img">
-              <div class="form-text mt-2">Scan untuk donasi. Terima kasih 🙏</div>
-            </div>
-            <div class="col-md-7">
-              <label class="form-label">Nominal Donasi</label>
-              <div class="d-flex flex-wrap gap-2 mb-2">
-                <button type="button" class="btn btn-outline-success btn-sm btn-donasi"
-                  data-amt="10000">Rp10.000</button>
-                <button type="button" class="btn btn-outline-success btn-sm btn-donasi"
-                  data-amt="20000">Rp20.000</button>
-                <button type="button" class="btn btn-outline-success btn-sm btn-donasi"
-                  data-amt="50000">Rp50.000</button>
-                <button type="button" class="btn btn-outline-success btn-sm btn-donasi"
-                  data-amt="100000">Rp100.000</button>
-              </div>
-              <div class="input-group">
-                <span class="input-group-text">Rp</span>
-                <input type="number" min="0" step="1000" class="form-control" id="donationAmount"
-                  placeholder="Nominal lain (opsional)" wire:model="donation_amount">
-              </div>
-              <small class="text-muted">Nominal donasi akan ikut tercatat saat submit (simulasi front-end).</small>
-            </div>
+        <div class="form-card mt-3 text-center" id="qrisDonation" wire:ignore>
+          <div class="d-flex justify-content-center align-items-center mb-3">
+              <i class="bi bi-qr-code fs-4 me-2"></i>
+              <h5 class="m-0 fw-normal">Donasi QRIS (Opsional)</h5>
+          </div>
+          <div class="d-flex justify-content-center flex-column align-items-center">
+              <img src="{{ asset('fe-guest/qris msu.jpg') }}" alt="QRIS" class="qris-img shadow-sm rounded" style="max-width: 250px;">
+              <div class="form-text mt-3 fw-bold text-muted" style="font-size: 0.95rem;">Scan QRIS di atas untuk berdonasi seikhlasnya. Terima kasih 🙏</div>
           </div>
         </div>
       </section>
