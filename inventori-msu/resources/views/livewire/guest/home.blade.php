@@ -139,8 +139,18 @@
         @foreach($items as $item)
         <div class="col-6 col-md-4 col-lg-2-4">
           <article class="item-card tap-anim reveal-up h-100" data-type="barang" data-max="{{ $item->stock }}">
+            @php
+                $imgSrc = asset('aset/default.png');
+                if ($item->image_path) {
+                    if (file_exists(public_path('aset/' . $item->image_path))) {
+                        $imgSrc = asset('aset/' . $item->image_path);
+                    } else {
+                        $imgSrc = asset('storage/' . $item->image_path);
+                    }
+                }
+            @endphp
             <div class="item-thumb">
-              <img src="{{ asset('fe-guest/' . $item->image_path) }}" alt="{{ $item->name }}" class="img-fluid" onerror="this.onerror=null; this.src='{{ asset('fe-guest/' . $item->image_path) }}'; this.onerror=function(){this.src='https://placehold.co/400';}">
+              <img src="{{ $imgSrc }}" alt="{{ $item->name }}" class="img-fluid" onerror="this.onerror=null; this.src='https://placehold.co/400';">
               <span class="badge-status">Active</span>
               <div class="qty-actions">
                 <button type="button" class="qty-btn" data-action="inc">−</button>
@@ -176,8 +186,18 @@
         @foreach($facilities as $item)
         <div class="col-6 col-md-4 col-lg-2-4">
           <article class="item-card tap-anim reveal-up h-100" data-type="ruang" data-max="1">
+            @php
+                $imgSrc = asset('aset/default.png');
+                if ($item->image_path) {
+                    if (file_exists(public_path('aset/' . $item->image_path))) {
+                        $imgSrc = asset('aset/' . $item->image_path);
+                    } else {
+                        $imgSrc = asset('storage/' . $item->image_path);
+                    }
+                }
+            @endphp
             <div class="item-thumb">
-              <img src="{{ asset('fe-guest/' . $item->image_path) }}" alt="{{ $item->name }}" class="img-fluid" onerror="this.onerror=null; this.src='{{ asset('fe-guest/' . $item->image_path) }}'; this.onerror=function(){this.src='https://placehold.co/400';}">
+              <img src="{{ $imgSrc }}" alt="{{ $item->name }}" class="img-fluid" onerror="this.onerror=null; this.src='https://placehold.co/400';">
               <span class="badge-status">Active</span>
               <div class="qty-actions">
                 <button type="button" class="qty-btn" data-action="inc">−</button>
@@ -195,7 +215,7 @@
         @endforeach
 
         <!-- CTA Card -->
-        <div class="col-6 col-md-4 col-lg-2-4">
+        <div class="col-12 col-md-4 col-lg-2-4">
           <a href="{{ route('guest.catalogue.ruangan') }}" class="cta-card tap-anim reveal-up h-100 text-decoration-none">
             <div class="cta-plus">+</div>
             <div>Cari Ruang</div>
