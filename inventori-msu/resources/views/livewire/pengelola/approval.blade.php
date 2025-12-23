@@ -143,6 +143,33 @@
     }
 
     /* =========================================
+         CSS KHUSUS PREVIEW (LAYAR)
+         Agar tidak terlalu nge-zoom/besar di modal
+       ========================================= */
+    @media screen {
+      #areaCetak {
+        padding: 20px !important;
+      }
+      #areaCetak h2 {
+        font-size: 16px !important;
+      }
+      #areaCetak h3 {
+        font-size: 14px !important;
+      }
+      #areaCetak p,
+      #areaCetak td,
+      #areaCetak li,
+      #areaCetak span,
+      #areaCetak div {
+        font-size: 12px !important;
+      }
+      #areaCetak .kop-logo {
+        height: 50px !important;
+        width: auto !important;
+      }
+    }
+
+    /* =========================================
          CSS KHUSUS PRINT (LAYOUT SURAT RESMI A4)
          ========================================= */
     @media print {
