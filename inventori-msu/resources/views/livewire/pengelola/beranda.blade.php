@@ -75,29 +75,30 @@
         @endif
 
         {{-- HEADER + DROPDOWN --}}
-        <section class="text-center mt-5">
+        {{-- SEARCH (Tetap di atas, tapi diberi margin agar turun sedikit) --}}
+        <form wire:submit.prevent="search" class="row justify-content-center mt-5 mb-0">
+            <div class="col-11 col-md-8 col-lg-6">
+                <div class="input-group shadow-sm rounded-pill p-1 bg-white border">
+                    <input wire:model.live.debounce.300ms="q" type="text"
+                        class="form-control border-0 rounded-pill shadow-none ps-4 bg-transparent"
+                        placeholder="Cari barang atau fasilitas..." />
+
+                    <button class="btn btn-success rounded-pill px-4" type="submit"
+                        style="background-color:#0b492c; border-color:#0b492c;">
+                        <i class="bi bi-search me-1"></i> Cari
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        {{-- HEADER + DROPDOWN --}}
+        <section class="text-center mt-3">
             <h4 class="fw-light mb-2">
                 Satu langkah menuju <b class="text-success">kemudahan beraktivitas</b> di MSU
             </h4>
-            <p class="text-muted mb-2">
+            <p class="text-muted mb-3">
                 Semua urusan peminjaman dan perizinan kini bisa dilakukan secara online.
             </p>
-
-            {{-- SEARCH (Pindah ke sini agar lebih dekat dengan tulisan) --}}
-            <form wire:submit.prevent="search" class="row justify-content-center mt-2 mb-4">
-                <div class="col-11 col-md-8 col-lg-6">
-                    <div class="input-group shadow-sm rounded-pill p-1 bg-white border">
-                        <input wire:model.live.debounce.300ms="q" type="text"
-                            class="form-control border-0 rounded-pill shadow-none ps-4 bg-transparent"
-                            placeholder="Cari barang atau fasilitas..." />
-
-                        <button class="btn btn-success rounded-pill px-4" type="submit"
-                            style="background-color:#0b492c; border-color:#0b492c;">
-                            <i class="bi bi-search me-1"></i> Cari
-                        </button>
-                    </div>
-                </div>
-            </form>
 
             <div class="text-start">
                 <div class="dropdown d-inline-block">
