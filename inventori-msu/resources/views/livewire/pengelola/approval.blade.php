@@ -278,10 +278,12 @@
   PENDING SECTION
   ========================= --}}
   <div class="mb-5">
-    <div class="mb-4">
-      <div class="section-title">Daftar Pengajuan (Pending)</div>
-      <div class="section-subtitle">Tinjau pengajuan peminjaman barang dan fasilitas yang masih tertunda.</div>
-    </div>
+    <section class="text-center mb-4">
+      <p class="mb-1 fw-semibold" style="letter-spacing:.06em;color:#2a6a55">PENGELOLAAN</p>
+      <h2 class="fw-bolder text-uppercase" style="color:#32435a">Daftar Pengajuan (Pending)</h2>
+      <div class="mx-auto" style="width:120px;height:3px;background:#2a6a55;border-radius:2px"></div>
+      <p class="text-muted mt-2">Tinjau pengajuan peminjaman barang dan fasilitas yang masih tertunda.</p>
+    </section>
 
     <div class="card-soft">
       <div class="table-responsive">
@@ -388,9 +390,12 @@
   {{-- =========================
   HISTORY SECTION
   ========================= --}}
-  <div class="mb-5">
-    <div class="section-title">Riwayat Keputusan</div>
-    <div class="section-subtitle mb-3">Daftar pengajuan yang telah disetujui atau ditolak.</div>
+    <section class="text-center mb-4">
+      <p class="mb-1 fw-semibold" style="letter-spacing:.06em;color:#2a6a55">ARSIP DATA</p>
+      <h2 class="fw-bolder text-uppercase" style="color:#32435a">Riwayat Keputusan</h2>
+      <div class="mx-auto" style="width:120px;height:3px;background:#2a6a55;border-radius:2px"></div>
+      <p class="text-muted mt-2">Daftar pengajuan yang telah disetujui atau ditolak.</p>
+    </section>
 
     <div class="card-soft">
       <div class="table-responsive">
