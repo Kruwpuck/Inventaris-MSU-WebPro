@@ -42,6 +42,14 @@ Route::redirect('/cart', '/booking-barang');
 Route::get('/success', Success::class)->name('guest.success');
 Route::get('/syarat-dan-ketentuan', \App\Livewire\Guest\TermsConditions::class)->name('guest.terms');
 
+// Handle GET logout for fallback/direct access
+Route::get('/logout', function (\Illuminate\Http\Request $request) {
+    \Illuminate\Support\Facades\Auth::guard('web')->logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+    return redirect('/');
+});
+
 
 // =====================
 // DASHBOARD + SETTINGS (USER LOGIN UMUM)
@@ -102,7 +110,7 @@ Route::prefix('pengurusinventoryMSU')->name('pengurus.')->middleware(['auth'])->
 // =====================
 // API CART (SESSION BASED FOR FE GUEST)
 // =====================
-Route::prefix('api/cart')->group(function() {
+Route::prefix('api/cart')->group(function () {
     Route::get('/', [\App\Http\Controllers\Api\CartController::class, 'index']);
     Route::post('/add', [\App\Http\Controllers\Api\CartController::class, 'add']);
     Route::post('/update', [\App\Http\Controllers\Api\CartController::class, 'update']);
@@ -112,7 +120,7 @@ Route::prefix('api/cart')->group(function() {
 // =====================
 // API BOOKING (SESSION BASED FOR FE GUEST)
 // =====================
-Route::prefix('api/peminjaman')->group(function() {
+Route::prefix('api/peminjaman')->group(function () {
     Route::get('/', [\App\Http\Controllers\Api\LoanController::class, 'index']);
     Route::post('/', [\App\Http\Controllers\Api\LoanController::class, 'store']);
     Route::get('/check', [\App\Http\Controllers\Api\LoanController::class, 'check']);
