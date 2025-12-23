@@ -94,8 +94,13 @@ class Beranda extends Component
 
         $item->save();
 
-        session()->flash('success', 'Data berhasil diperbarui!');
+        // session()->flash('success', 'Data berhasil diperbarui!');
         $this->dispatch('close-edit-modal');
+        $this->dispatch(
+            'swal:success',
+            title: 'Berhasil!',
+            text: "Data '{$item->name}' berhasil diperbarui."
+        );
 
         $this->reset([
             'editId',

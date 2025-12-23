@@ -365,6 +365,19 @@
                 const modal = bootstrap.Modal.getInstance(el);
                 modal?.hide();
             });
+
+            Livewire.on('swal:success', (data) => {
+                Swal.fire({
+                    title: data.title,
+                    text: data.text,
+                    icon: 'success',
+                    timer: 2000,
+                    showConfirmButton: false,
+                    customClass: {
+                        popup: 'rounded-4 shadow-lg border-0'
+                    }
+                });
+            });
         });
 
 
