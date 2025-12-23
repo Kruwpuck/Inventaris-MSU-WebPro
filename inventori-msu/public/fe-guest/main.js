@@ -65,6 +65,7 @@ window.MSUDates = (function () {
 
 // ====== Render & set DateBar ======
 (function initDateBar() {
+  initHomeDateConstraints(); // Add constraint logic
   const inpStart = document.getElementById('dateStart') || document.getElementById('filterDateStart');
   const inpStartTime = document.getElementById('timeStart') || document.getElementById('filterTimeStart');
 
@@ -196,6 +197,31 @@ window.MSUDates = (function () {
   }
 
 })();
+
+// ====== Home Page Date Constraints ======
+function initHomeDateConstraints() {
+  const inpStart = document.getElementById('dateStart');
+  const inpEnd = document.getElementById('dateEnd');
+
+  if (!inpStart && !inpEnd) return;
+
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, '0');
+  const d = String(now.getDate()).padStart(2, '0');
+  const today = `${y}-${m}-${d}`;
+
+  if (inpStart) {
+    inpStart.min = today;
+    inpStart.addEventListener('change', () => {
+      if (inpEnd) {
+        inpEnd.min = inpStart.value;
+        if (inpEnd.value && inpEnd.value < inpStart.value) inpEnd.value = inpStart.value;
+      }
+    });
+  }
+  if (inpEnd) inpEnd.min = today;
+}
 
 // ====== Setup stok awal ======
 function initCards() {
