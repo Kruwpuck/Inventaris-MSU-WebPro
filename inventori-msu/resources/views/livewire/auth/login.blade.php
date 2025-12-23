@@ -136,13 +136,18 @@
                         <input type="hidden" name="role_context" x-model="role">
 
                         <div class="mb-4">
+                            @error('email')
+                                <div class="alert alert-danger border-0 d-flex align-items-center mb-3" role="alert" style="background-color: #f8d7da; color: #842029;">
+                                    <i class="bi bi-exclamation-octagon-fill me-2"></i>
+                                    <div>
+                                        {{ $message }}
+                                    </div>
+                                </div>
+                            @enderror
                             <label class="form-label small fw-bold text-secondary text-uppercase ls-1">Email
                                 Address</label>
                             <input type="email" name="email" class="form-control form-control-lg bg-light border-0"
                                 placeholder="name@example.com" required autofocus :readonly="isLoading">
-                            @error('email')
-                                <div class="text-danger small mt-1 fw-bold">{{ $message }}</div>
-                            @enderror
                         </div>
 
                         <div class="mb-4">
