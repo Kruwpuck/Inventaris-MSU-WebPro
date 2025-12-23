@@ -4,8 +4,14 @@ namespace App\Livewire\Pengelola;
 
 use Livewire\Component;
 
+use Livewire\WithPagination;
+
 class Approval extends Component
 {
+    use WithPagination;
+
+    protected $paginationTheme = 'bootstrap';
+
     // Modal Reject
     public $rejectId;
     public $rejectReason;
@@ -24,12 +30,12 @@ class Approval extends Component
         $pendingRequests = \App\Models\LoanRequest::where('status', 'pending')
             ->with('items')
             ->latest()
-            ->get();
+            ->paginate(10, ['*'], 'pendingPage');
 
         $historyRequests = \App\Models\LoanRequest::whereIn('status', ['approved', 'rejected'])
             ->with('items')
             ->latest()
-            ->get();
+            ->paginate(10, ['*'], 'historyPage');
 
         return view('livewire.pengelola.approval', [
             'pendingRequests' => $pendingRequests,
