@@ -30,12 +30,12 @@
             </div>
 
             <div class="mt-4">
-                @if(Auth::user()->role === 'pengelola')
+                @if(strtolower(Auth::user()->role) === 'pengelola')
                     <a href="{{ route('pengelola.beranda') }}"
                         class="btn btn-success btn-lg px-5 rounded-pill shadow-sm w-100 mb-3">
                         <i class="bi bi-arrow-left-circle me-2"></i> Kembali ke Beranda Pengelola
                     </a>
-                @elseif(Auth::user()->role === 'pengurus')
+                @elseif(strtolower(Auth::user()->role) === 'pengurus')
                     <a href="{{ route('pengurus.dashboard') }}"
                         class="btn btn-primary btn-lg px-5 rounded-pill shadow-sm w-100 mb-3">
                         <i class="bi bi-arrow-left-circle me-2"></i> Kembali ke Dashboard Pengurus
