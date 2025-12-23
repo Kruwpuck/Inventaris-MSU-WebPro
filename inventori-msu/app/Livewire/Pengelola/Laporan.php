@@ -67,47 +67,13 @@ class Laporan extends Component
                 $statusUi = 'Unknown';
                 $waktuKembaliStr = '-';
 
-                switch ($lr->status) {
-                    case 'returned':
-                        $waktuKembaliStr = '-';
-                        $actualReturn = null;
-                        if ($lr->loanRecord && $lr->loanRecord->returned_at) {
-                            $actualReturn = Carbon::parse($lr->loanRecord->returned_at);
-                            $waktuKembaliStr = $actualReturn->format('d/m/Y | H:i');
-                        } else {
-                            $waktuKembaliStr = $jatuhTempo->format('d/m/Y | H:i'); 
-                        }
-                        
-                        if ($lr->loanRecord && $lr->loanRecord->is_submitted) {
-                            if ($actualReturn && $actualReturn->gt($jatuhTempo)) {
-                                $statusUi = 'Terlambat';
-                            } else {
-                                $statusUi = 'Selesai';
-                            }
-                        } else {
-                             $statusUi = 'Sudah Kembali';
-                        }
-                        break;
-                    
-                    case 'handed_over':
-                        $statusUi = $today->gt($jatuhTempo) ? 'Terlambat' : 'Sedang Dipinjam';
-                        break;
+                $statusUi = $lr->status_ui; // Refactored to Model Accessor for Clean Code
 
-                    case 'approved':
-                        $statusUi = 'Siap Diambil';
-                        break;
-
-                    case 'pending':
-                        $statusUi = 'Menunggu Approve';
-                        break;
-
-                    case 'rejected':
-                        $statusUi = 'Ditolak';
-                        break;
-
-                    default:
-                        $statusUi = $today->gt($jatuhTempo) ? 'Terlambat' : 'Sedang Dipinjam';
-                        break;
+                $waktuKembaliStr = '-';
+                if ($lr->status === 'returned' && $lr->loanRecord && $lr->loanRecord->returned_at) {
+                     $waktuKembaliStr = \Carbon\Carbon::parse($lr->loanRecord->returned_at)->format('d/m/Y | H:i');
+                } elseif ($lr->status === 'returned') {
+                     $waktuKembaliStr = $jatuhTempo->format('d/m/Y | H:i');
                 }
 
                 $kategoriUi = $inv->category === 'ruangan' ? 'Ruangan' : 'Barang';

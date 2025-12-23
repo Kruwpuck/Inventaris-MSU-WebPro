@@ -51,4 +51,44 @@ class LoanRequest extends Model
     {
         return $this->hasOne(LoanRecord::class);
     }
+
+    /**
+     * Get the UI friendly status label.
+     */
+    public function getStatusUiAttribute()
+    {
+        $today = \Carbon\Carbon::today();
+        $jatuhTempo = $this->loan_date_end;
+
+        switch ($this->status) {
+            case 'returned':
+                $actualReturn = null;
+                if ($this->loanRecord && $this->loanRecord->returned_at) {
+                    $actualReturn = \Carbon\Carbon::parse($this->loanRecord->returned_at);
+                }
+                
+                if ($this->loanRecord && $this->loanRecord->is_submitted) {
+                    if ($actualReturn && $actualReturn->gt($jatuhTempo)) {
+                        return 'Terlambat';
+                    }
+                    return 'Selesai';
+                }
+                return 'Sudah Kembali';
+
+            case 'handed_over':
+                return $today->gt($jatuhTempo) ? 'Terlambat' : 'Sedang Dipinjam';
+
+            case 'approved':
+                return 'Siap Diambil';
+
+            case 'pending':
+                return 'Menunggu Approve';
+
+            case 'rejected':
+                return 'Ditolak';
+
+            default:
+                return $today->gt($jatuhTempo) ? 'Terlambat' : 'Sedang Dipinjam';
+        }
+    }
 }
