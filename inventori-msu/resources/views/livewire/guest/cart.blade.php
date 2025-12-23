@@ -197,16 +197,17 @@
               @error('borrower_description') <div class="text-danger small">{{ $message }}</div> @enderror
             </div>
 
-            <!-- Syarat & Ketentuan -->
-            <div class="col-12 mt-3">
-                <div class="form-check">
+            <!-- Syarat & Ketentuan (Highlighted) -->
+            <div class="col-12 mt-4">
+                <div class="form-check p-3 border border-2 border-warning rounded-3 bg-light-warning" style="background-color: #fff8e1;">
                     <!-- Checkbox ini akan memicu modal jika user 'klik' (via JS) -->
-                    <input class="form-check-input" type="checkbox" id="agreeTerms" wire:model="agree_terms" disabled>
-                    <label class="form-check-label small" for="agreeTerms">
-                        Saya menyetujui <a href="#" id="linkTerms" class="text-decoration-underline fw-bold">Syarat & Ketentuan</a> serta memberikan izin kepada MSU untuk mengelola data saya untuk keperluan pelacakan inventaris.
+                    <input class="form-check-input mt-1" type="checkbox" id="agreeTerms" wire:model="agree_terms" disabled
+                           style="transform: scale(1.3); margin-right: 12px; border-color: #ffc107; margin-left:1px !important; float: left;">
+                    <label class="form-check-label small fw-bold text-dark d-block" for="agreeTerms" style="margin-left: 2rem; padding-top: 2px;">
+                        Saya menyetujui <a href="#" id="linkTerms" class="text-decoration-underline text-primary fw-extrabold" style="font-size: 1.05em;">Syarat & Ketentuan</a> serta memberikan izin kepada MSU untuk mengelola data saya untuk keperluan pelacakan inventaris.
                     </label>
                 </div>
-                @error('agree_terms') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                @error('agree_terms') <div class="text-danger small mt-1 fw-bold">{{ $message }}</div> @enderror
             </div>
           </div>
 
@@ -217,7 +218,7 @@
             <button class="btn btn-outline-danger" type="button" id="btnCancel">
               <i class="bi bi-x-circle me-1"></i>Batalkan
             </button>
-            <button class="btn btn-primary btn-book" type="button" id="btnSubmit">
+            <button class="btn btn-primary btn-book disabled" type="button" id="btnSubmit" disabled style="transition: all 0.3s;">
               <span wire:loading.remove wire:target="document_file, ktp_file, submit"><i class="bi bi-check2-circle me-1"></i>Kirim Booking</span>
               <span wire:loading wire:target="document_file"><span class="spinner-border spinner-border-sm me-1"></span>Upload Prp...</span>
               <span wire:loading wire:target="ktp_file"><span class="spinner-border spinner-border-sm me-1"></span>Upload KTP...</span>
@@ -395,12 +396,44 @@
                 chk.checked = true;
                 // Trigger Livewire update manually if needed, or dispatch event
                 chk.dispatchEvent(new Event('change'));
-                // Disable again to force read? Or leave enabled?
-                // User said "otomatis ke ceklis", so leave it checked.
-                // Re-enabling allows livewire to bind.
+                // Trigger form validation check
+                validateBookingForm();
                 modal.hide();
             });
         }
+    });
+
+    // Form Validation Logic to toggle Submit Button
+    function validateBookingForm() {
+        const form = document.getElementById('bookingForm');
+        const btn = document.getElementById('btnSubmit');
+        const chk = document.getElementById('agreeTerms');
+        
+        let isValid = form.checkValidity();
+        
+        // Explicitly check terms (though required attribute might handle it, logic implies manual check)
+        if (!chk.checked) isValid = false;
+
+        if (isValid) {
+            btn.disabled = false;
+            btn.classList.remove('disabled', 'btn-secondary');
+            btn.classList.add('btn-primary');
+        } else {
+            btn.disabled = true;
+            btn.classList.add('disabled', 'btn-secondary');
+            btn.classList.remove('btn-primary');
+        }
+    }
+
+    // Initialize listeners
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('bookingForm');
+        if(form) {
+            form.addEventListener('input', validateBookingForm);
+            form.addEventListener('change', validateBookingForm);
+        }
+        // Initial check
+        validateBookingForm();
     });
 </script>
 @endpush
