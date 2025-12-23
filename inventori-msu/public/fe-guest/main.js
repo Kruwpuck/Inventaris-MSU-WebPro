@@ -606,7 +606,8 @@ window.addEventListener('load', () => {
 
         // Define styles based on status
         let statusColor, badgeClass;
-        switch (b.status) {
+        const statusUpper = String(b.status || '').toUpperCase();
+        switch (statusUpper) {
           case 'APPROVED':
             statusColor = '#198754'; // success green
             badgeClass = 'bg-success';
