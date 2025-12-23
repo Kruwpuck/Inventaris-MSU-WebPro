@@ -367,14 +367,14 @@
         <table class="table table-hover align-middle mb-0" style="min-width: 800px;">
           <thead>
             <tr>
-              <th style="width: 80px;">ID</th>
-              <th style="width: 60px;" class="text-center">Profil</th>
-              <th style="width: 180px;">Peminjam</th>
-              <th style="min-width: 200px;">Item</th>
-              <th style="width: 180px;">Jadwal</th>
+              <th style="width: 70px;">ID</th>
+              <th style="width: 50px;" class="text-center">Profil</th>
+              <th style="width: 160px;">Peminjam</th>
+              <th style="width: 240px;">Item</th>
+              <th style="width: 170px;">Jadwal</th>
               <th style="width: 100px;">Status</th>
               <th style="width: 220px;">Catatan</th>
-              <th style="width: 80px;" class="text-center">Cetak</th>
+              <th style="width: 70px;" class="text-center">Cetak</th>
             </tr>
           </thead>
           <tbody>
