@@ -93,9 +93,12 @@
                     </div>
                 </div>
                 <div class="item-body">
-                    <div class="item-title fw-bold">{{ $item->name }}</div>
-                    <div class="item-desc text-muted small mb-2">{{ $item->description ?? '-' }}</div>
-                    <div class="item-meta">
+                    <div class="item-title fw-bold fs-5">{{ $item->name }}</div>
+                    <div class="item-desc text-muted small mb-2" style="font-size: 0.8rem;">{{ $item->description ?? '-' }}</div>
+                    @if($category != 'barang')
+                        <div class="item-capacity text-muted small mb-2" style="font-size: 0.85rem;">Kapasitas : {{ $item->capacity ?? '-' }}</div>
+                    @endif
+                    <div class="item-meta fw-bold">
                         {{ $category == 'barang' ? 'Sisa' : 'Tersedia' }} : 
                         <span class="sisa">{{ $category == 'barang' ? $item->stock : 1 }}</span>
                     </div>
