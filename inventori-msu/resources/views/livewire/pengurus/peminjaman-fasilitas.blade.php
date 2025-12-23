@@ -114,7 +114,7 @@
         <div class="container">
             <!-- Logo -->
             <a class="navbar-brand" href="{{ route('pengurus.dashboard') }}">
-                <img src="{{ asset('aset/logo.png') }}" alt="Logo">
+                <img src="{{ asset('aset/loogoo.png') }}" alt="Logo">
             </a>
 
             <!-- Toggle for Mobile -->
@@ -235,7 +235,11 @@
                                 <tr wire:key="{{ $d->id }}">
                                     <td>{{ $loop->iteration }}</td>
                                     <td class="fw-semibold">{{ $d->borrower_name }}</td>
-                                    <td>{{ $d->borrower_phone }}</td>
+                                    <td>
+                                        <a href="https://wa.me/{{ $d->borrower_phone }}" target="_blank" class="text-decoration-none text-dark hover-opacity">
+                                            {{ $d->borrower_phone }}
+                                        </a>
+                                    </td>
                                     <td class="text-secondary">
                                         {{ $d->loan_date_start ? $d->loan_date_start->format('d M Y') : '-' }} | 
                                         {{ $d->start_time ? \Carbon\Carbon::parse($d->start_time)->format('H:i') : '00:00' }}
