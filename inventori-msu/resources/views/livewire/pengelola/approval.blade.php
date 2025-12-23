@@ -418,12 +418,13 @@
                     <span class="badge-box badge-rejected">Rejected</span>
                   @endif
                 </td>
-                <td class="small text-muted" style="max-width: 220px; white-space: normal; word-wrap: break-word; word-break: break-word;">
+                <td class="small text-muted" style="max-width: 220px; white-space: normal; word-wrap: break-word; word-break: break-all;">
                   @php
                       $reasonCheck = $hist->rejection_reason ?? '-';
-                      // Limit 10 words
-                      $truncated = \Illuminate\Support\Str::words($reasonCheck, 10, '...');
-                      $isLong = $reasonCheck !== $truncated;
+                      // Limit characters to handle long single words
+                      $limit = 50;
+                      $truncated = \Illuminate\Support\Str::limit($reasonCheck, $limit, '...');
+                      $isLong = strlen($reasonCheck) > $limit;
                   @endphp
                   
                   @if($isLong)
