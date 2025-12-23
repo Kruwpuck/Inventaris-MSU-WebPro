@@ -603,8 +603,32 @@ window.addEventListener('load', () => {
 
       const renderCard = (b) => {
         const timeLabel = `${b.startTime?.slice(0, 5) || '??:??'} - ${b.endTime?.slice(0, 5) || '??:??'}`;
-        const statusColor = (b.status === 'APPROVED' || b.status === 'COMPLETED') ? '#198754' : '#ffc107';
-        const textStatus = (b.status === 'APPROVED' || b.status === 'COMPLETED') ? 'text-success' : 'text-warning';
+
+        // Define styles based on status
+        let statusColor, badgeClass;
+        switch (b.status) {
+          case 'APPROVED':
+            statusColor = '#198754'; // success green
+            badgeClass = 'bg-success';
+            break;
+          case 'COMPLETED':
+            statusColor = '#0dcaf0'; // info cyan
+            badgeClass = 'bg-info text-dark';
+            break;
+          case 'REJECTED':
+            statusColor = '#dc3545'; // danger red
+            badgeClass = 'bg-danger';
+            break;
+          case 'RETURNED':
+            statusColor = '#6c757d'; // secondary gray
+            badgeClass = 'bg-secondary';
+            break;
+          case 'PENDING':
+          default:
+            statusColor = '#ffc107'; // warning yellow
+            badgeClass = 'bg-warning text-dark';
+            break;
+        }
 
         const itemsHTML = (b.items || []).map(it => `
             <span class="badge bg-light text-dark border fw-normal me-1 mb-1">
@@ -620,7 +644,7 @@ window.addEventListener('load', () => {
                     <div class="fw-bold text-dark mb-1" style="font-size:1rem;">${b.description || 'Kegiatan'}</div>
                     <div class="text-muted small"><i class="bi bi-clock me-1"></i>${timeLabel}</div>
                  </div>
-                 <span class="badge ${b.status === 'APPROVED' ? 'bg-success' : 'bg-warning text-dark'} text-uppercase" style="font-size:0.7rem">${b.status}</span>
+                 <span class="badge ${badgeClass} text-uppercase shadow-sm" style="font-size:0.7rem; letter-spacing:0.5px;">${b.status}</span>
               </div>
               
               <div class="d-flex flex-wrap align-items-center gap-1 mb-2">
