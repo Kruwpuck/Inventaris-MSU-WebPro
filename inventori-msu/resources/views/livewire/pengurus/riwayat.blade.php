@@ -314,7 +314,11 @@
                                         <tr wire:key="unsub-{{ $d->id }}" class="{{ $isLate ? 'table-danger' : '' }}">
                                             <td>{{ ($unsubmitted->currentPage() - 1) * $unsubmitted->perPage() + $loop->iteration }}</td>
                                             <td class="fw-bold">{{ $d->borrower_name }}</td>
-                                            <td>{{ $d->borrower_phone }}</td>
+                                            <td>
+                                                <a href="https://wa.me/{{ $d->borrower_phone }}" target="_blank" class="text-decoration-none text-dark hover-opacity">
+                                                    {{ $d->borrower_phone }}
+                                                </a>
+                                            </td>
                                             <td class="text-secondary">
                                                 <i class="bi bi-calendar4 me-2"></i> 
                                                 {{ optional($d->loanRecord)->picked_up_at ? $d->loanRecord->picked_up_at->format('d M Y | H:i') : '-' }}
@@ -352,7 +356,7 @@
                             </table>
                         </div>
                         <div class="p-4 border-top">
-                            {{ $unsubmitted->links() }}
+                            {{ $unsubmitted->links(data: ['scrollTo' => false]) }}
                         </div>
                     @endif
                 </div>
@@ -403,7 +407,11 @@
                                         <tr wire:key="sub-{{ $d->id }}">
                                             <td>{{ ($submitted->currentPage() - 1) * $submitted->perPage() + $loop->iteration }}</td>
                                             <td class="fw-bold">{{ $d->borrower_name }}</td>
-                                            <td>{{ $d->borrower_phone }}</td>
+                                            <td>
+                                                <a href="https://wa.me/{{ $d->borrower_phone }}" target="_blank" class="text-decoration-none text-dark hover-opacity">
+                                                    {{ $d->borrower_phone }}
+                                                </a>
+                                            </td>
                                             <td class="text-secondary">
                                                 <i class="bi bi-calendar4 me-2"></i> 
                                                 {{ optional($d->loanRecord)->picked_up_at ? $d->loanRecord->picked_up_at->format('d M Y | H:i') : '-' }}
@@ -455,7 +463,7 @@
                             </table>
                         </div>
                         <div class="p-4 border-top">
-                            {{ $submitted->links() }}
+                            {{ $submitted->links(data: ['scrollTo' => false]) }}
                         </div>
                     @endif
                 </div>
