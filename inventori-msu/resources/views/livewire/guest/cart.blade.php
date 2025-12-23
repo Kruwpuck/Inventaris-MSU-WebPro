@@ -228,15 +228,34 @@
         </form>
 
         <!-- QRIS Donasi -->
-        <div class="form-card mt-3 text-center" id="qrisDonation" wire:ignore>
-          <h5 class="mb-3"><i class="bi bi-qr-code me-1"></i> Donasi QRIS (Opsional)</h5>
-          <div class="d-flex justify-content-center flex-column align-items-center">
-              <img src="{{ asset('fe-guest/qris msu.jpg') }}" alt="QRIS" class="qris-img shadow-sm rounded" style="max-width: 250px;">
-              <div class="form-text mt-2 fw-bold text-muted">Scan QRIS di atas untuk berdonasi seikhlasnya. Terima kasih 🙏</div>
+        <div class="form-card mt-3" id="qrisDonation" wire:ignore>
+          <h5 class="mb-2"><i class="bi bi-qr-code me-1"></i> Donasi QRIS (Opsional)</h5>
+          <div class="row g-3 align-items-center">
+            <div class="col-md-5 text-center">
+              <img src="{{ asset('fe-guest/qris msu.jpg') }}" alt="QRIS" class="qris-img">
+              <div class="form-text mt-2">Scan untuk donasi. Terima kasih 🙏</div>
+            </div>
+            <div class="col-md-7">
+              <label class="form-label">Nominal Donasi</label>
+              <div class="d-flex flex-wrap gap-2 mb-2">
+                <button type="button" class="btn btn-outline-success btn-sm btn-donasi"
+                  data-amt="10000">Rp10.000</button>
+                <button type="button" class="btn btn-outline-success btn-sm btn-donasi"
+                  data-amt="20000">Rp20.000</button>
+                <button type="button" class="btn btn-outline-success btn-sm btn-donasi"
+                  data-amt="50000">Rp50.000</button>
+                <button type="button" class="btn btn-outline-success btn-sm btn-donasi"
+                  data-amt="100000">Rp100.000</button>
+              </div>
+              <div class="input-group">
+                <span class="input-group-text">Rp</span>
+                <input type="number" min="0" step="1000" class="form-control" id="donationAmount"
+                  placeholder="Nominal lain (opsional)" wire:model="donation_amount">
+              </div>
+              <small class="text-muted">Nominal donasi akan ikut tercatat saat submit (simulasi front-end).</small>
+            </div>
           </div>
         </div>
-
-
       </section>
     </div>
   </main>
@@ -337,11 +356,6 @@
               </div>
           </div>
       </div>
-  <!-- LOADING OVERLAY -->
-  <div wire:loading wire:target="submit" style="position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
-        <div class="spinner-grow text-success mb-3" style="width: 3rem; height: 3rem; border-width: 4px;" role="status"></div>
-        <h4 class="text-white fw-bold">Sedang Mengirim Data...</h4>
-        <p class="text-white-50">Mohon tunggu sebentar, jangan tutup halaman ini.</p>
   </div>
 </div>
 
