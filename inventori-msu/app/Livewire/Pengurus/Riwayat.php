@@ -13,18 +13,34 @@ class Riwayat extends Component
 
     protected $paginationTheme = 'bootstrap';
 
-    public $search = '';
     public $perPage = 10;
 
-    public function updatedSearch()
+    public $search = '';
+    public $showUnsubmitted = true;
+    public $showSubmitted = true;
+
+    public function toggleUnsubmitted()
     {
-        $this->resetPage();
+        $this->showUnsubmitted = !$this->showUnsubmitted;
+    }
+
+    public function toggleSubmitted()
+    {
+        $this->showSubmitted = !$this->showSubmitted;
     }
 
     public function render()
     {
-        $data = LoanRequest::query()
-            ->whereIn('status', ['approved', 'handed_over', 'returned', 'completed'])
+        $baseQuery = LoanRequest::query()
+            ->where(function($query) {
+                // Selesai (Returned/Completed)
+                $query->whereIn('status', ['returned', 'completed'])
+                // Atau Terlambat (Active status but date passed)
+                      ->orWhere(function($sub) {
+                          $sub->whereIn('status', ['handed_over', 'approved']) // Active/Booking
+                              ->where('loan_date_end', '<', now()); // Overdue
+                      });
+            })
             ->whereHas('loanRecord', function ($q) {
                 $q->whereNotNull('picked_up_at')
                   ->orWhereNotNull('returned_at');
@@ -40,12 +56,31 @@ class Riwayat extends Component
                         ->orWhere('loan_date_end', 'like', '%' . $this->search . '%');
                 });
             })
-            ->with(['items', 'loanRecord'])
-            ->latest('created_at')
-            ->paginate($this->perPage);
+            ->with(['items', 'loanRecord']);
+
+        // Data Belum Dikirim (Active Actions)
+        $unsubmitted = $this->showUnsubmitted 
+            ? (clone $baseQuery)
+                ->whereHas('loanRecord', function($q) {
+                    $q->where('is_submitted', false);
+                })
+                ->latest('loan_date_start') // User requested easier sorting: Loan Date is better for active items
+                ->paginate($this->perPage, ['*'], 'page_unsubmitted')
+            : [];
+
+        // Data Sudah Dikirim (Archive)
+        $submitted = $this->showSubmitted
+            ? (clone $baseQuery)
+                ->whereHas('loanRecord', function($q) {
+                    $q->where('is_submitted', true);
+                })
+                ->latest('loan_date_start') // Sort by loan date as per recommendation
+                ->paginate($this->perPage, ['*'], 'page_submitted')
+            : [];
 
         return view('livewire.pengurus.riwayat', [
-            'data' => $data
+            'unsubmitted' => $unsubmitted,
+            'submitted' => $submitted
         ])->layout('components.layouts.blank', ['title' => 'Riwayat Peminjaman']);
     }
 
