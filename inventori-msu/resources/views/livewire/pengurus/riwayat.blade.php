@@ -235,93 +235,206 @@
             </div>
         </div>
 
-        <div class="custom-table-container mt-4 position-relative" wire:loading.class="table-loading">
-            <!-- Loading Overlay -->
-            <div wire:loading.flex class="position-absolute top-0 start-0 w-100 h-100 align-items-center justify-content-center bg-white bg-opacity-50" style="z-index: 10;">
-                <div class="spinner-border text-success" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
+        <!-- SECTION: BELUM DIKIRIM -->
+        <div class="mb-5">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="fw-bold text-success mb-0 d-flex align-items-center gap-2">
+                    <i class="bi bi-hourglass-split"></i> Belum Dikirim
+                    <span class="badge bg-success rounded-pill fs-6">{{ $unsubmitted instanceof \Illuminate\Pagination\LengthAwarePaginator ? $unsubmitted->total() : count($unsubmitted) }}</span>
+                </h4>
+                <button class="btn btn-outline-secondary btn-sm rounded-pill px-3" wire:click="toggleUnsubmitted">
+                    {{ $showUnsubmitted ? 'Sembunyikan' : 'Tampilkan' }} <i class="bi {{ $showUnsubmitted ? 'bi-chevron-up' : 'bi-chevron-down' }} ms-1"></i>
+                </button>
             </div>
 
-            @if($data->isEmpty())
-                <!-- HEADER ONLY for context (consistent with previous request) -->
-                 <div class="table-responsive">
-                     <table class="table table-hover mb-0">
-                        <thead>
-                            <tr>
-                                <th>NO</th>
-                                <th>NAMA PEMINJAM</th>
-                                <th>KONTAK</th>
-                                <th>MULAI PEMINJAMAN</th>
-                                <th>SELESAI PEMINJAMAN</th>
-                                <th>FASILITAS</th>
-                                <th>STATUS</th>
-                            </tr>
-                        </thead>
-                     </table>
-                 </div>
-                 <div class="empty-state-container">
-                     <i class="bi bi-inbox empty-icon"></i> 
-                     <p class="text-muted mb-0">Belum ada riwayat peminjaman.</p>
-                 </div>
-            @else
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0 align-middle">
-                        <thead>
-                            <th>NO</th>
-                                <th>NAMA PEMINJAM</th>
-                                <th>KONTAK</th>
-                                <th>MULAI PEMINJAMAN</th>
-                                <th>SELESAI PEMINJAMAN</th>
-                                <th>FASILITAS</th>
-                                <th class="text-center">BATAL</th>
-                                <th class="text-center">KIRIM</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($data as $d)
-                                <tr wire:key="{{ $d->id }}">
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td class="fw-bold">{{ $d->borrower_name }}</td>
-                                    <td>{{ $d->borrower_phone }}</td>
-                                    <td class="text-secondary">
-                                        <i class="bi bi-calendar4 me-2"></i> 
-                                        {{ optional($d->loanRecord)->picked_up_at ? $d->loanRecord->picked_up_at->format('d M Y | H:i') : '-' }}
-                                    </td>
-                                    <td class="text-secondary">
-                                        <i class="bi bi-calendar4 me-2"></i> 
-                                        {{ optional($d->loanRecord)->returned_at ? $d->loanRecord->returned_at->format('d M Y | H:i') : '-' }}
-                                    </td>
-                                    <td>
-                                        <div class="d-flex flex-column gap-1">
-                                            @foreach($d->items as $item)
-                                                <span class="text-secondary small fw-medium text-nowrap">
-                                                    &bull; {{ $item->name }} <span class="text-muted">(x{{ $item->pivot->quantity ?? 1 }})</span>
-                                                </span>
-                                            @endforeach
-                                        </div>
-                                    </td>
-                                    <td class="text-center">
-                                        <button class="btn btn-sm rounded-pill px-4 {{ optional($d->loanRecord)->is_submitted ? 'btn-secondary' : 'btn-outline-danger' }}" 
-                                                onclick="confirmCancel({{ $d->id }})"
-                                                {{ optional($d->loanRecord)->is_submitted ? 'disabled' : '' }}>
-                                            <i class="bi bi-x-circle me-1"></i> Batal
-                                        </button>
-                                    </td>
-                                    <td class="text-center">
-                                        <button class="btn btn-sm rounded-pill px-4 {{ optional($d->loanRecord)->is_submitted ? 'btn-secondary' : 'btn-outline-success' }}" 
-                                                onclick="confirmSubmit({{ $d->id }})"
-                                                {{ optional($d->loanRecord)->is_submitted ? 'disabled' : '' }}>
-                                            <i class="bi bi-send me-1"></i> Kirim
-                                        </button>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+            @if($showUnsubmitted)
+                <div class="custom-table-container position-relative" wire:loading.class="table-loading">
+                    <!-- Legend -->
+                    <div class="d-flex justify-content-end mb-2 px-2">
+                        <div class="d-flex align-items-center gap-2 small text-secondary">
+                            <i class="bi bi-info-circle"></i>
+                            <span class="d-flex align-items-center gap-1">
+                                <span class="d-inline-block bg-danger bg-opacity-10 border border-danger rounded-1" style="width: 15px; height: 15px;"></span>
+                                Menandakan pengembalian terlambat
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Loading Overlay -->
+                    <div wire:loading.flex class="position-absolute top-0 start-0 w-100 h-100 align-items-center justify-content-center bg-white bg-opacity-50" style="z-index: 10;">
+                        <div class="spinner-border text-success" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                    @if(collect($unsubmitted->items())->isEmpty())
+                        <div class="empty-state-container py-4">
+                            <i class="bi bi-check2-all empty-icon fs-1"></i> 
+                            <p class="text-muted mb-0">Semua data sudah dikirim/diproses.</p>
+                        </div>
+                    @else
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0 align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>NO</th>
+                                        <th>NAMA PEMINJAM</th>
+                                        <th>KONTAK</th>
+                                        <th>MULAI PEMINJAMAN</th>
+                                        <th>SELESAI PEMINJAMAN</th>
+                                        <th>FASILITAS</th>
+                                        <th class="text-center">BATAL</th>
+                                        <th class="text-center">KIRIM</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($unsubmitted as $d)
+                                        @php
+                                            // Calculate Due Date
+                                            $dueAt = $d->loan_date_end->copy();
+                                            if ($d->end_time) {
+                                                try {
+                                                    $dueAt->setTimeFromTimeString($d->end_time);
+                                                } catch (\Exception $e) {
+                                                    $dueAt->endOfDay();
+                                                }
+                                            } else {
+                                                $dueAt->endOfDay();
+                                            }
+
+                                            // Check Actual Return or Current Time
+                                            $returnedAt = optional($d->loanRecord)->returned_at;
+                                            $isLate = false;
+                                            
+                                            if ($returnedAt) {
+                                                $isLate = $returnedAt->gt($dueAt);
+                                            } else {
+                                                $isLate = now()->gt($dueAt);
+                                            }
+                                        @endphp
+                                        <tr wire:key="unsub-{{ $d->id }}" class="{{ $isLate ? 'table-danger' : '' }}">
+                                            <td>{{ ($unsubmitted->currentPage() - 1) * $unsubmitted->perPage() + $loop->iteration }}</td>
+                                            <td class="fw-bold">{{ $d->borrower_name }}</td>
+                                            <td>{{ $d->borrower_phone }}</td>
+                                            <td class="text-secondary">
+                                                <i class="bi bi-calendar4 me-2"></i> 
+                                                {{ optional($d->loanRecord)->picked_up_at ? $d->loanRecord->picked_up_at->format('d M Y | H:i') : '-' }}
+                                            </td>
+                                            <td class="text-secondary">
+                                                <i class="bi bi-calendar4 me-2"></i> 
+                                                {{ optional($d->loanRecord)->returned_at ? $d->loanRecord->returned_at->format('d M Y | H:i') : '-' }}
+                                            </td>
+                                            <td>
+                                                <div class="d-flex flex-column gap-1">
+                                                    @foreach($d->items as $item)
+                                                        <span class="text-secondary small fw-medium text-nowrap">
+                                                            &bull; {{ $item->name }} <span class="text-muted">(x{{ $item->pivot->quantity ?? 1 }})</span>
+                                                        </span>
+                                                    @endforeach
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <button class="btn btn-sm rounded-pill px-4 btn-outline-danger" 
+                                                        onclick="confirmCancel({{ $d->id }})">
+                                                    <i class="bi bi-x-circle me-1"></i> Batal
+                                                </button>
+                                            </td>
+                                            <td class="text-center">
+                                                @if(optional($d->loanRecord)->returned_at)
+                                                    <button class="btn btn-sm rounded-pill px-4 btn-outline-success" 
+                                                            onclick="confirmSubmit({{ $d->id }})">
+                                                        <i class="bi bi-send me-1"></i> Kirim
+                                                    </button>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="p-4 border-top">
+                            {{ $unsubmitted->links() }}
+                        </div>
+                    @endif
                 </div>
-                <div class="p-4 border-top">
-                    {{ $data->links() }}
+            @endif
+        </div>
+
+        <!-- SECTION: SUDAH DIKIRIM -->
+        <div>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="fw-bold text-secondary mb-0 d-flex align-items-center gap-2">
+                    <i class="bi bi-archive"></i> Sudah Dikirim
+                    <span class="badge bg-secondary rounded-pill fs-6">{{ $submitted instanceof \Illuminate\Pagination\LengthAwarePaginator ? $submitted->total() : count($submitted) }}</span>
+                </h4>
+                <button class="btn btn-outline-secondary btn-sm rounded-pill px-3" wire:click="toggleSubmitted">
+                    {{ $showSubmitted ? 'Sembunyikan' : 'Tampilkan' }} <i class="bi {{ $showSubmitted ? 'bi-chevron-up' : 'bi-chevron-down' }} ms-1"></i>
+                </button>
+            </div>
+
+            @if($showSubmitted)
+                <div class="custom-table-container position-relative" wire:loading.class="table-loading">
+                    <!-- Loading Overlay -->
+                    <div wire:loading.flex class="position-absolute top-0 start-0 w-100 h-100 align-items-center justify-content-center bg-white bg-opacity-50" style="z-index: 10;">
+                        <div class="spinner-border text-success" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                    @if(collect($submitted->items())->isEmpty())
+                        <div class="empty-state-container py-4">
+                            <i class="bi bi-inbox empty-icon fs-1"></i> 
+                            <p class="text-muted mb-0">Belum ada riwayat yang tersimpan.</p>
+                        </div>
+                    @else
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0 align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>NO</th>
+                                        <th>NAMA PEMINJAM</th>
+                                        <th>KONTAK</th>
+                                        <th>MULAI PEMINJAMAN</th>
+                                        <th>SELESAI PEMINJAMAN</th>
+                                        <th>FASILITAS</th>
+                                        <th class="text-center">STATUS</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($submitted as $d)
+                                        <tr wire:key="sub-{{ $d->id }}">
+                                            <td>{{ ($submitted->currentPage() - 1) * $submitted->perPage() + $loop->iteration }}</td>
+                                            <td class="fw-bold">{{ $d->borrower_name }}</td>
+                                            <td>{{ $d->borrower_phone }}</td>
+                                            <td class="text-secondary">
+                                                <i class="bi bi-calendar4 me-2"></i> 
+                                                {{ optional($d->loanRecord)->picked_up_at ? $d->loanRecord->picked_up_at->format('d M Y | H:i') : '-' }}
+                                            </td>
+                                            <td class="text-secondary">
+                                                <i class="bi bi-calendar4 me-2"></i> 
+                                                {{ optional($d->loanRecord)->returned_at ? $d->loanRecord->returned_at->format('d M Y | H:i') : '-' }}
+                                            </td>
+                                            <td>
+                                                <div class="d-flex flex-column gap-1">
+                                                    @foreach($d->items as $item)
+                                                        <span class="text-secondary small fw-medium text-nowrap">
+                                                            &bull; {{ $item->name }} <span class="text-muted">(x{{ $item->pivot->quantity ?? 1 }})</span>
+                                                        </span>
+                                                    @endforeach
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="badge bg-success rounded-pill px-3">
+                                                    <i class="bi bi-check-circle me-1"></i> Selesai
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="p-4 border-top">
+                            {{ $submitted->links() }}
+                        </div>
+                    @endif
                 </div>
             @endif
         </div>
