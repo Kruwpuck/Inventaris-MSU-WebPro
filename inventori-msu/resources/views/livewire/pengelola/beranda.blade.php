@@ -4,25 +4,28 @@
     <style>
         /* ===== tombol titik 3 (hapus) ===== */
         .btn-menu-3dot {
-            background: transparent !important;
+            background: #ffffff !important;
             border: none !important;
             padding: 2px 4px !important;
-            width: auto;
-            height: auto;
-            box-shadow: none !important;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2) !important;
             color: #111 !important;
-            opacity: .85;
+            opacity: 1;
             transition: all .2s ease;
             line-height: 1;
             z-index: 5;
-            border-radius: 8px;
+            border-radius: 50%;
         }
 
         .btn-menu-3dot:hover {
             opacity: 1;
-            transform: scale(1.08);
-            background: rgba(255, 255, 255, 0.35);
-            backdrop-filter: blur(2px);
+            transform: scale(1.1);
+            background: #f8f9fa !important;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15) !important;
         }
 
         /* ===== tombol edit biar hover+klik ga ilang ===== */
