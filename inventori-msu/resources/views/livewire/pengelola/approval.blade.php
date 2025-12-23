@@ -379,6 +379,9 @@
           </tbody>
         </table>
       </div>
+      <div class="mt-3">
+        {{ $pendingRequests->links() }}
+      </div>
     </div>
   </div>
 
@@ -484,6 +487,9 @@
             @endforelse
           </tbody>
         </table>
+      </div>
+      <div class="mt-3">
+        {{ $historyRequests->links() }}
       </div>
     </div>
   </div>
