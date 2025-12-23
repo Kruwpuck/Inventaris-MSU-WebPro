@@ -98,10 +98,6 @@
 
             @if ($image)
               <img class="w-100 preview mb-3 shadow-sm" src="{{ $image->temporaryUrl() }}" alt="Preview Upload">
-            @else
-              <img class="w-100 preview mb-3 shadow-sm"
-                src="https://images.unsplash.com/photo-1594322436404-5a0526db4d13?q=80&w=800&auto=format&fit=crop"
-                alt="Preview Default" onerror="this.src='https://via.placeholder.com/400x300?text=No+Image'">
             @endif
 
             <label class="btn btn-outline-secondary pill w-100">
