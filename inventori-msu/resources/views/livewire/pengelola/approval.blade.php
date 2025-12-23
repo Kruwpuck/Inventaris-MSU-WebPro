@@ -538,7 +538,13 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary btn-box" data-bs-dismiss="modal">Batal</button>
-            <button type="submit" class="btn btn-danger btn-box">Kirim</button>
+            <button type="submit" class="btn btn-danger btn-box" wire:loading.attr="disabled" wire:target="reject">
+              <span wire:loading.remove wire:target="reject">Kirim</span>
+              <span wire:loading wire:target="reject">
+                <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                Mengirim...
+              </span>
+            </button>
           </div>
         </form>
       </div>
