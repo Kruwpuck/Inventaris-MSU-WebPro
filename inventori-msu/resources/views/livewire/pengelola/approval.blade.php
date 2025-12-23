@@ -418,21 +418,27 @@
                     <span class="badge-box badge-rejected">Rejected</span>
                   @endif
                 </td>
-                <td class="small text-muted" style="max-width: 220px; white-space: normal;">
+                <td class="small text-muted" style="max-width: 220px; white-space: normal; word-wrap: break-word; word-break: break-word;">
                   @php
                       $reasonCheck = $hist->rejection_reason ?? '-';
-                      $limitChar = 60;
+                      // Limit 10 words
+                      $truncated = \Illuminate\Support\Str::words($reasonCheck, 10, '...');
+                      $isLong = $reasonCheck !== $truncated;
                   @endphp
                   
-                  @if(strlen($reasonCheck) > $limitChar)
+                  @if($isLong)
                       <div x-data="{ expanded: false }">
                           <span x-show="!expanded">
-                              {{ \Illuminate\Support\Str::limit($reasonCheck, $limitChar) }}
-                              <a href="#" @click.prevent="expanded = true" class="fw-bold text-primary text-decoration-none" style="font-size: 0.75rem;">Lihat</a>
+                              {{ $truncated }}
+                              <div class="mt-1">
+                                <a href="#" @click.prevent="expanded = true" class="fw-bold text-primary text-decoration-none" style="font-size: 0.75rem;">Lihat</a>
+                              </div>
                           </span>
                           <span x-show="expanded">
                               {{ $reasonCheck }}
-                              <a href="#" @click.prevent="expanded = false" class="fw-bold text-secondary text-decoration-none ms-1" style="font-size: 0.75rem;">Tutup</a>
+                              <div class="mt-1">
+                                <a href="#" @click.prevent="expanded = false" class="fw-bold text-secondary text-decoration-none" style="font-size: 0.75rem;">Tutup</a>
+                              </div>
                           </span>
                       </div>
                   @else
