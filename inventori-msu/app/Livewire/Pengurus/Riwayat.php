@@ -33,11 +33,11 @@ class Riwayat extends Component
     {
         $baseQuery = LoanRequest::query()
             ->where(function($query) {
-                // Selesai (Returned/Completed)
-                $query->whereIn('status', ['returned', 'completed'])
-                // Atau Terlambat (Active status but date passed)
+                // Selesai (Returned/Completed) OR Sedang Dipinjam (Handed Over)
+                $query->whereIn('status', ['returned', 'completed', 'handed_over'])
+                // ATAU Booking yang Terlambat (Approved but date passed)
                       ->orWhere(function($sub) {
-                          $sub->whereIn('status', ['handed_over', 'approved']) // Active/Booking
+                          $sub->where('status', 'approved') // Only Booking
                               ->where('loan_date_end', '<', now()); // Overdue
                       });
             })
