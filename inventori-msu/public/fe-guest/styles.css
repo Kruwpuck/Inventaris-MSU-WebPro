@@ -111,7 +111,7 @@ body {
   text-transform: uppercase;
   text-align: center;
   text-shadow: 0 2px 12px rgba(0, 0, 0, .35);
-  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-size: clamp(1.4rem, 3.5vw, 2.5rem);
 }
 
 .drop-in {
@@ -275,8 +275,10 @@ body {
 
 @media (max-width: 767px) {
   .datebar-wrap {
-    grid-template-columns: 1fr;
-    grid-template-areas: "start" "end" "time" "dur" "btn";
+    /* Make datebar more compact on mobile: 2 cols, 2 rows + button below */
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: "start start" "end end" "time dur" "btn btn";
+    gap: 12px;
   }
 
   .datebar-actions {
