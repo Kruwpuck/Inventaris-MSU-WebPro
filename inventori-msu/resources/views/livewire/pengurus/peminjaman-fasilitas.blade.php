@@ -140,7 +140,7 @@
                         <div class="dropdown">
                             <!-- User Button with Full Image Fix -->
                             <button class="user-profile-btn d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img src="{{ asset('aset/logo.png') }}" alt="User" style="max-height: 40px; width: auto;">
+                                <img src="{{ asset('aset/gedung.png') }}" alt="User" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
                                 <div class="text-start lh-1">
                                     <div class="fw-bold text-dark" style="font-size: 0.9rem;">Pengurus</div>
                                     <small class="text-muted" style="font-size: 0.75rem;">Pengurus Side</small>

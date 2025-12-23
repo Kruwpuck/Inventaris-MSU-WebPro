@@ -179,7 +179,7 @@
                         <div class="dropdown">
                             <!-- User Button with Full Image Fix -->
                             <button class="user-profile-btn d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img src="{{ asset('aset/logo.png') }}" alt="User" style="max-height: 40px; width: auto;">
+                                <img src="{{ asset('aset/gedung.png') }}" alt="User" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
                                 <div class="text-start lh-1">
                                     <div class="fw-bold text-dark" style="font-size: 0.9rem;">Pengurus</div>
                                     <small class="text-muted" style="font-size: 0.75rem;">Pengurus Side</small>
@@ -302,17 +302,17 @@
                                         </div>
                                     </td>
                                     <td class="text-center">
-                                        <button class="btn btn-sm rounded-pill px-3 {{ optional($d->loanRecord)->is_submitted ? 'btn-secondary' : 'btn-outline-danger' }}" 
+                                        <button class="btn btn-sm rounded-pill px-4 {{ optional($d->loanRecord)->is_submitted ? 'btn-secondary' : 'btn-outline-danger' }}" 
                                                 onclick="confirmCancel({{ $d->id }})"
                                                 {{ optional($d->loanRecord)->is_submitted ? 'disabled' : '' }}>
                                             <i class="bi bi-x-circle me-1"></i> Batal
                                         </button>
                                     </td>
                                     <td class="text-center">
-                                        <button class="btn btn-sm rounded-pill px-3 {{ optional($d->loanRecord)->is_submitted ? 'btn-secondary' : 'btn-outline-success' }}" 
+                                        <button class="btn btn-sm rounded-pill px-4 {{ optional($d->loanRecord)->is_submitted ? 'btn-secondary' : 'btn-outline-success' }}" 
                                                 onclick="confirmSubmit({{ $d->id }})"
                                                 {{ optional($d->loanRecord)->is_submitted ? 'disabled' : '' }}>
-                                            <i class="bi bi-check-circle me-1"></i> Kirim
+                                            <i class="bi bi-send me-1"></i> Kirim
                                         </button>
                                     </td>
                                 </tr>
