@@ -175,9 +175,9 @@
                <h6 class="fw-bold"><i class="bi bi-cloud-upload me-2"></i>Upload Dokumen</h6>
                <div class="row g-3">
                    <div class="col-md-6">
-                       <label class="form-label small fw-bold">Proposal Kegiatan <span class="text-danger">*</span></label>
-                       <input type="file" class="form-control" id="requirements" accept=".pdf" required wire:model="document_file" />
-                       <div class="form-text">Wajib PDF (max 10MB).</div>
+                       <label class="form-label small fw-bold">Proposal Kegiatan</label>
+                       <input type="file" class="form-control" id="requirements" accept=".pdf" wire:model="document_file" />
+                       <div class="form-text">Format PDF (max 10MB). Opsional.</div>
                        @error('document_file') <div class="text-danger small">{{ $message }}</div> @enderror
                    </div>
                    <div class="col-md-6">

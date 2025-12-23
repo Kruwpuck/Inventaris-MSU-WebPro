@@ -59,7 +59,8 @@ class Cart extends Component
         'loan_time_start' => 'required',
         'loan_date_end' => 'required|date|after_or_equal:loan_date_start',
         'loan_time_end' => 'required',
-        'document_file' => 'required|file|mimes:pdf|max:10240', // 10MB, PDF only
+        'loan_time_end' => 'required',
+        'document_file' => 'nullable|file|mimes:pdf|max:10240', // 10MB, PDF only, Optional
         'ktp_file' => 'required|file|max:10240',
         'borrower_description' => 'required',
         'agree_terms' => 'accepted', // Must be checked
@@ -80,7 +81,7 @@ class Cart extends Component
             'loan_time_start.required' => 'Jam mulai wajib diisi.',
             'loan_date_end.required' => 'Tanggal selesai wajib diisi.',
             'loan_time_end.required' => 'Jam selesai wajib diisi.',
-            'document_file.required' => 'Dokumen proposal wajib diunggah.',
+            // 'document_file.required' => 'Dokumen proposal wajib diunggah.', // Disabled
             'document_file.mimes' => 'Proposal harus berformat PDF.',
             'document_file.max' => 'Ukuran file maksimal 10MB.',
             'document_file.uploaded' => 'Gagal mengunggah. File mungkin terlalu besar (melebihi batas server) atau koneksi terputus.',
@@ -149,7 +150,10 @@ class Cart extends Component
         if ($hasErrors) return;
 
         // Save files
-        $proposalPath = $this->document_file->store('proposals', 'public');
+        $proposalPath = $this->document_file 
+            ? $this->document_file->store('proposals', 'public')
+            : null;
+
         $ktpPath = $this->ktp_file->store('ktp', 'public');
 
         // Create Loan Request
