@@ -80,10 +80,20 @@
         @foreach($items as $item)
         <div class="col reveal-up">
             <article class="item-card tap-anim" data-type="{{ $category == 'barang' ? 'barang' : 'ruang' }}" data-max="{{ $item->stock }}">
+                @php
+                    $imgSrc = asset('aset/default.png');
+                    if ($item->image_path) {
+                        if (file_exists(public_path('aset/' . $item->image_path))) {
+                            $imgSrc = asset('aset/' . $item->image_path);
+                        } else {
+                            $imgSrc = asset('storage/' . $item->image_path);
+                        }
+                    }
+                @endphp
                 <div class="item-thumb">
-                    <img src="{{ asset('fe-guest/' . $item->image_path) }}" 
+                    <img src="{{ $imgSrc }}" 
                          alt="{{ $item->name }}"
-                         onerror="this.onerror=null; this.src='{{ asset('fe-guest/' . $item->image_path) }}'; this.onerror=function(){this.src='https://placehold.co/400';}">
+                         onerror="this.onerror=null; this.src='https://placehold.co/400';">
                     
                     <span class="badge-status">Active</span>
                     
