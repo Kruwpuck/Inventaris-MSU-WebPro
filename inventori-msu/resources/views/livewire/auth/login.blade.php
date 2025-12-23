@@ -140,6 +140,9 @@
                                 Address</label>
                             <input type="email" name="email" class="form-control form-control-lg bg-light border-0"
                                 placeholder="name@example.com" required autofocus :readonly="isLoading">
+                            @error('email')
+                                <div class="text-danger small mt-1 fw-bold">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="mb-4">

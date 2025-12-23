@@ -12,6 +12,7 @@ use Illuminate\Support\Str;
 use Laravel\Fortify\Fortify;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -40,6 +41,10 @@ class FortifyServiceProvider extends ServiceProvider
                 $user->role === $request->role_context) {
                 return $user;
             }
+
+            throw ValidationException::withMessages([
+                'email' => ['Email dan Password Salah!'],
+            ]);
         });
 
         $this->configureActions();
