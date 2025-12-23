@@ -305,6 +305,57 @@
       </div>
     </div>
   </div>
+  <!-- MODAL SYARAT & KETENTUAN -->
+  <div class="modal fade" id="termsModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" wire:ignore.self>
+      <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+          <div class="modal-content border-0 shadow-lg rounded-4">
+              <div class="modal-header bg-light border-0">
+                  <h5 class="modal-title fw-bold"><i class="bi bi-file-text me-2"></i>Syarat & Ketentuan</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body p-4 text-secondary" style="font-size: 0.95rem; line-height: 1.6;">
+                  <p class="mb-3">Selamat datang di sistem Inventaris Masjid Syamsul Ulum (MSU). Sebelum menggunakan layanan kami, mohon baca dokumen ini dengan saksama. Dengan melakukan peminjaman, Anda dianggap telah menyetujui poin-poin di bawah ini.</p>
+  
+                  <h6 class="fw-bold text-dark mt-4">1. Pengumpulan Data Pribadi</h6>
+                  <p>Pihak MSU mengumpulkan data pribadi Anda untuk keperluan administrasi peminjaman barang, yang meliputi namun tidak terbatas pada:</p>
+                  <ul>
+                      <li><strong>Identitas Diri:</strong> Nama Lengkap dan NIM (Nomor Induk Mahasiswa).</li>
+                      <li><strong>Kontak:</strong> Nomor WhatsApp/Telepon dan Email.</li>
+                      <li><strong>Data Peminjaman:</strong> Jenis barang, durasi peminjaman, dan tujuan penggunaan.</li>
+                  </ul>
+  
+                  <h6 class="fw-bold text-dark mt-4">2. Penggunaan Data (Purpose of Use)</h6>
+                  <p>Data yang Anda berikan akan digunakan oleh pengurus MSU secara bertanggung jawab untuk:</p>
+                  <ul>
+                      <li><strong>Pelacakan (Tracking):</strong> Memantau keberadaan aset masjid yang sedang dipinjam.</li>
+                      <li><strong>Komunikasi:</strong> Menghubungi peminjam jika terjadi keterlambatan pengembalian atau masalah pada barang.</li>
+                      <li><strong>Audit Internal:</strong> Sebagai laporan berkala mengenai utilitas barang inventaris MSU.</li>
+                      <li><strong>Verifikasi:</strong> Memastikan peminjam adalah civitas akademika Telkom University yang sah.</li>
+                  </ul>
+  
+                  <h6 class="fw-bold text-dark mt-4">3. Keamanan dan Penyimpanan Data</h6>
+                  <p>Data Anda disimpan secara digital dalam database sistem Inventaris MSU. Pihak MSU berkomitmen untuk menjaga kerahasiaan data tersebut dan tidak akan memberikan, menjual, atau menyebarluaskan data Anda kepada pihak ketiga di luar kepentingan internal MSU dan Telkom University.</p>
+  
+                  <h6 class="fw-bold text-dark mt-4">4. Tanggung Jawab Peminjam</h6>
+                  <p>Dengan menyetujui ketentuan ini, Anda menyatakan bahwa:</p>
+                  <ul>
+                      <li>Data yang diberikan adalah benar dan akurat.</li>
+                      <li>Bersedia dihubungi melalui media komunikasi yang didaftarkan terkait urusan peminjaman.</li>
+                      <li>Bertanggung jawab penuh atas kondisi barang yang dipinjam hingga kembali ke pihak MSU.</li>
+                  </ul>
+  
+                  <h6 class="fw-bold text-dark mt-4">5. Persetujuan (Consent)</h6>
+                  <p>Dengan melanjutkan proses peminjaman pada sistem ini, Anda memberikan persetujuan eksplisit kepada pihak pengurus MSU untuk menyimpan dan mengolah data pribadi Anda sesuai dengan tujuan yang telah disebutkan di atas.</p>
+              </div>
+              <div class="modal-footer border-0 pt-0">
+                  <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Batal</button>
+                  <button type="button" class="btn btn-primary rounded-pill px-4" id="btnAgreeTerms">
+                      <i class="bi bi-check2-circle me-2"></i>Saya Setuju
+                  </button>
+              </div>
+          </div>
+      </div>
+  </div>
 </div>
 
 @push('scripts')
@@ -353,55 +404,3 @@
     });
 </script>
 @endpush
-
-<!-- MODAL SYARAT & KETENTUAN -->
-<div class="modal fade" id="termsModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
-        <div class="modal-content border-0 shadow-lg rounded-4">
-            <div class="modal-header bg-light border-0">
-                <h5 class="modal-title fw-bold"><i class="bi bi-file-text me-2"></i>Syarat & Ketentuan</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body p-4 text-secondary" style="font-size: 0.95rem; line-height: 1.6;">
-                <p class="mb-3">Selamat datang di sistem Inventaris Masjid Syamsul Ulum (MSU). Sebelum menggunakan layanan kami, mohon baca dokumen ini dengan saksama. Dengan melakukan peminjaman, Anda dianggap telah menyetujui poin-poin di bawah ini.</p>
-
-                <h6 class="fw-bold text-dark mt-4">1. Pengumpulan Data Pribadi</h6>
-                <p>Pihak MSU mengumpulkan data pribadi Anda untuk keperluan administrasi peminjaman barang, yang meliputi namun tidak terbatas pada:</p>
-                <ul>
-                    <li><strong>Identitas Diri:</strong> Nama Lengkap dan NIM (Nomor Induk Mahasiswa).</li>
-                    <li><strong>Kontak:</strong> Nomor WhatsApp/Telepon dan Email.</li>
-                    <li><strong>Data Peminjaman:</strong> Jenis barang, durasi peminjaman, dan tujuan penggunaan.</li>
-                </ul>
-
-                <h6 class="fw-bold text-dark mt-4">2. Penggunaan Data (Purpose of Use)</h6>
-                <p>Data yang Anda berikan akan digunakan oleh pengurus MSU secara bertanggung jawab untuk:</p>
-                <ul>
-                    <li><strong>Pelacakan (Tracking):</strong> Memantau keberadaan aset masjid yang sedang dipinjam.</li>
-                    <li><strong>Komunikasi:</strong> Menghubungi peminjam jika terjadi keterlambatan pengembalian atau masalah pada barang.</li>
-                    <li><strong>Audit Internal:</strong> Sebagai laporan berkala mengenai utilitas barang inventaris MSU.</li>
-                    <li><strong>Verifikasi:</strong> Memastikan peminjam adalah civitas akademika Telkom University yang sah.</li>
-                </ul>
-
-                <h6 class="fw-bold text-dark mt-4">3. Keamanan dan Penyimpanan Data</h6>
-                <p>Data Anda disimpan secara digital dalam database sistem Inventaris MSU. Pihak MSU berkomitmen untuk menjaga kerahasiaan data tersebut dan tidak akan memberikan, menjual, atau menyebarluaskan data Anda kepada pihak ketiga di luar kepentingan internal MSU dan Telkom University.</p>
-
-                <h6 class="fw-bold text-dark mt-4">4. Tanggung Jawab Peminjam</h6>
-                <p>Dengan menyetujui ketentuan ini, Anda menyatakan bahwa:</p>
-                <ul>
-                    <li>Data yang diberikan adalah benar dan akurat.</li>
-                    <li>Bersedia dihubungi melalui media komunikasi yang didaftarkan terkait urusan peminjaman.</li>
-                    <li>Bertanggung jawab penuh atas kondisi barang yang dipinjam hingga kembali ke pihak MSU.</li>
-                </ul>
-
-                <h6 class="fw-bold text-dark mt-4">5. Persetujuan (Consent)</h6>
-                <p>Dengan melanjutkan proses peminjaman pada sistem ini, Anda memberikan persetujuan eksplisit kepada pihak pengurus MSU untuk menyimpan dan mengolah data pribadi Anda sesuai dengan tujuan yang telah disebutkan di atas.</p>
-            </div>
-            <div class="modal-footer border-0 pt-0">
-                <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Batal</button>
-                <button type="button" class="btn btn-primary rounded-pill px-4" id="btnAgreeTerms">
-                    <i class="bi bi-check2-circle me-2"></i>Saya Setuju
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
