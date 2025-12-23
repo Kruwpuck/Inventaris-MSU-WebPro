@@ -12,7 +12,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2) !important;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
             color: #111 !important;
             opacity: 1;
             transition: all .2s ease;
@@ -25,7 +25,7 @@
             opacity: 1;
             transform: scale(1.1);
             background: #f8f9fa !important;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15) !important;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
         }
 
         /* ===== tombol edit biar hover+klik ga ilang ===== */
@@ -51,6 +51,43 @@
         .btn-edit-msu:focus-visible {
             outline: none !important;
             box-shadow: 0 0 0 .2rem rgba(11, 73, 44, .25) !important;
+        }
+
+        /* ===== Card Animation ===== */
+        @keyframes floating {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-7px);
+            }
+        }
+
+        .card-anim {
+            animation: floating 4s ease-in-out infinite;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .card-anim:hover {
+            animation-play-state: paused;
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 16px 24px rgba(0, 0, 0, 0.12) !important;
+        }
+
+        /* Stagger animation based on child index (simulated with nth-child) */
+        .col-12:nth-child(2n) .card-anim {
+            animation-delay: 1s;
+        }
+
+        .col-12:nth-child(3n) .card-anim {
+            animation-delay: 2s;
+        }
+
+        .col-12:nth-child(4n) .card-anim {
+            animation-delay: 1.5s;
         }
     </style>
 @endpush
@@ -133,7 +170,7 @@
                 <div class="row g-4 justify-content-center">
                     @forelse($barangs as $b)
                         <div class="col-12 col-sm-6 col-md-4 col-lg-3" wire:key="barang-{{ $b->id }}">
-                            <div class="card h-100 border-0 rounded-4 shadow-strong mx-auto position-relative {{ !($b->is_active ?? true) ? 'item-disabled' : '' }}"
+                            <div class="card h-100 border-0 rounded-4 shadow-strong mx-auto position-relative card-anim {{ !($b->is_active ?? true) ? 'item-disabled' : '' }}"
                                 style="max-width:16rem">
 
                                 {{-- titik 3 hapus --}}
@@ -184,7 +221,7 @@
                 <div class="row g-4 justify-content-center">
                     @forelse($fasilitas as $f)
                         <div class="col-12 col-sm-6 col-md-4 col-lg-3" wire:key="ruangan-{{ $f->id }}">
-                            <div class="card h-100 border-0 rounded-4 shadow-strong mx-auto position-relative {{ !($f->is_active ?? true) ? 'item-disabled' : '' }}"
+                            <div class="card h-100 border-0 rounded-4 shadow-strong mx-auto position-relative card-anim {{ !($f->is_active ?? true) ? 'item-disabled' : '' }}"
                                 style="max-width:16rem">
 
                                 {{-- titik 3 hapus --}}
