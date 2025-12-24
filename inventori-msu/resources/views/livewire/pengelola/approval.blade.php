@@ -147,9 +147,9 @@
     }
 
     /* =========================================
-               CSS KHUSUS PREVIEW (LAYAR)
-               Agar tidak terlalu nge-zoom/besar di modal
-             ========================================= */
+                 CSS KHUSUS PREVIEW (LAYAR)
+                 Agar tidak terlalu nge-zoom/besar di modal
+               ========================================= */
     @media screen {
       #areaCetak {
         padding: 20px !important;
@@ -178,8 +178,8 @@
     }
 
     /* =========================================
-               CSS KHUSUS PRINT (LAYOUT SURAT RESMI A4)
-               ========================================= */
+                 CSS KHUSUS PRINT (LAYOUT SURAT RESMI A4)
+                 ========================================= */
     @media print {
       @page {
         size: A4;
@@ -302,7 +302,7 @@
               <th style="min-width: 200px;">Barang/Fasilitas</th>
               <th style="min-width: 180px;">Kegiatan & Lokasi</th>
               <th style="width: 180px;">Jadwal Peminjaman</th>
-              <th style="min-width: 200px;">Deskripsi</th>
+              <th style="min-width: 200px;">Deskripsi Kegiatan</th>
               <th style="width: 100px;">Status</th>
               <th style="width: 160px;">Aksi</th>
               <th style="width: 100px;">Proposal</th>
