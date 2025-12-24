@@ -147,9 +147,9 @@
     }
 
     /* =========================================
-                 CSS KHUSUS PREVIEW (LAYAR)
-                 Agar tidak terlalu nge-zoom/besar di modal
-               ========================================= */
+                   CSS KHUSUS PREVIEW (LAYAR)
+                   Agar tidak terlalu nge-zoom/besar di modal
+                 ========================================= */
     @media screen {
       #areaCetak {
         padding: 20px !important;
@@ -178,8 +178,8 @@
     }
 
     /* =========================================
-                 CSS KHUSUS PRINT (LAYOUT SURAT RESMI A4)
-                 ========================================= */
+                   CSS KHUSUS PRINT (LAYOUT SURAT RESMI A4)
+                   ========================================= */
     @media print {
       @page {
         size: A4;
@@ -362,7 +362,7 @@
                 </td>
                 <td style="max-width: 200px; white-space: normal;">
                   @php
-                    $desc = $req->activity_description ?? '-';
+                    $desc = $req->description ?? $req->activity_description ?? '-';
                     $limit = 50;
                     $isLong = strlen($desc) > $limit;
                     $showDesc = \Illuminate\Support\Str::limit($desc, $limit, '...');

@@ -39,7 +39,7 @@ class Cart extends Component
 
     public function mount()
     {
-         // Optional: Load donation presets or defaults
+        // Optional: Load donation presets or defaults
     }
 
     public function setActiveItem($id)
@@ -109,12 +109,12 @@ class Cart extends Component
             $endDateTime = \Carbon\Carbon::parse($this->loan_date_end . ' ' . $this->loan_time_end);
 
             if ($startDateTime->isPast()) {
-                 $this->addError('loan_date_start', 'Waktu peminjaman sudah terlewat.');
-                 return;
+                $this->addError('loan_date_start', 'Waktu peminjaman sudah terlewat.');
+                return;
             }
             if ($startDateTime->greaterThanOrEqualTo($endDateTime)) {
-                 $this->addError('loan_time_end', 'Waktu selesai harus lebih lambat dari waktu mulai.');
-                 return;
+                $this->addError('loan_time_end', 'Waktu selesai harus lebih lambat dari waktu mulai.');
+                return;
             }
         } catch (\Exception $e) {
             $this->addError('loan_date_start', 'Format tanggal/waktu tidak valid.');
@@ -147,10 +147,11 @@ class Cart extends Component
             }
         }
 
-        if ($hasErrors) return;
+        if ($hasErrors)
+            return;
 
         // Save files
-        $proposalPath = $this->document_file 
+        $proposalPath = $this->document_file
             ? $this->document_file->store('proposals', 'public')
             : null;
 
@@ -168,10 +169,10 @@ class Cart extends Component
                 'borrower_email' => $this->borrower_email,
                 'borrower_phone' => $this->borrower_phone,
                 'borrower_reason' => $this->borrower_reason,
-                
+
                 'nim_nip' => $this->borrower_nim,
                 'department' => $this->borrower_prodi,
-                'activity_description' => $this->borrower_description,
+                'description' => $this->borrower_description,
                 'activity_location' => $this->location,
                 'donation_amount' => $this->donation_amount ?: 0,
 
@@ -187,11 +188,13 @@ class Cart extends Component
             ]);
 
             foreach ($cart as $cartItem) {
-                 // Resolve ID again
+                // Resolve ID again
                 $inv = null;
-                if (isset($cartItem['id'])) $inv = \App\Models\Inventory::find($cartItem['id']);
-                if (!$inv && isset($cartItem['name'])) $inv = \App\Models\Inventory::where('name', $cartItem['name'])->first();
-                
+                if (isset($cartItem['id']))
+                    $inv = \App\Models\Inventory::find($cartItem['id']);
+                if (!$inv && isset($cartItem['name']))
+                    $inv = \App\Models\Inventory::where('name', $cartItem['name'])->first();
+
                 if ($inv) {
                     \App\Models\LoanItem::create([
                         'loan_request_id' => $loan->id,
