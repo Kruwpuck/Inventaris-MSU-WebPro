@@ -21,7 +21,8 @@ class LoanRequest extends Model
         'end_time',
         'ktp_path',             // ✅ Baru
         'activity_location',    // ✅ Baru
-        'activity_description', // ✅ Baru
+        'activity_description',
+        'description', // ✅ Baru
         'status',
         'rejection_reason',
         'donation_amount', // ✅ Baru
@@ -66,7 +67,7 @@ class LoanRequest extends Model
                 if ($this->loanRecord && $this->loanRecord->returned_at) {
                     $actualReturn = \Carbon\Carbon::parse($this->loanRecord->returned_at);
                 }
-                
+
                 if ($this->loanRecord && $this->loanRecord->is_submitted) {
                     if ($actualReturn && $actualReturn->gt($jatuhTempo)) {
                         return 'Terlambat';
