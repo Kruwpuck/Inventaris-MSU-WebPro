@@ -172,7 +172,7 @@ class Cart extends Component
 
                 'nim_nip' => $this->borrower_nim,
                 'department' => $this->borrower_prodi,
-                'description' => $this->borrower_description,
+                'activity_description' => $this->borrower_description,
                 'activity_location' => $this->location,
                 'donation_amount' => $this->donation_amount ?: 0,
 
