@@ -86,12 +86,14 @@
       color: #fff !important;
       transition: all 0.2s ease;
     }
+
     .btn-approve:hover {
       background: #1b5e20 !important;
       border-color: #1b5e20 !important;
       transform: translateY(-2px);
       box-shadow: 0 4px 8px rgba(46, 125, 50, 0.3);
     }
+
     .btn-approve:active {
       transform: translateY(0);
       box-shadow: 0 2px 3px rgba(46, 125, 50, 0.2);
@@ -103,12 +105,14 @@
       color: #fff !important;
       transition: all 0.2s ease;
     }
+
     .btn-reject:hover {
       background: #b71c1c !important;
       border-color: #b71c1c !important;
       transform: translateY(-2px);
       box-shadow: 0 4px 8px rgba(198, 40, 40, 0.3);
     }
+
     .btn-reject:active {
       transform: translateY(0);
       box-shadow: 0 2px 3px rgba(198, 40, 40, 0.2);
@@ -143,19 +147,22 @@
     }
 
     /* =========================================
-         CSS KHUSUS PREVIEW (LAYAR)
-         Agar tidak terlalu nge-zoom/besar di modal
-       ========================================= */
+               CSS KHUSUS PREVIEW (LAYAR)
+               Agar tidak terlalu nge-zoom/besar di modal
+             ========================================= */
     @media screen {
       #areaCetak {
         padding: 20px !important;
       }
+
       #areaCetak h2 {
         font-size: 16px !important;
       }
+
       #areaCetak h3 {
         font-size: 14px !important;
       }
+
       #areaCetak p,
       #areaCetak td,
       #areaCetak li,
@@ -163,6 +170,7 @@
       #areaCetak div {
         font-size: 12px !important;
       }
+
       #areaCetak .kop-logo {
         height: 50px !important;
         width: auto !important;
@@ -170,8 +178,8 @@
     }
 
     /* =========================================
-         CSS KHUSUS PRINT (LAYOUT SURAT RESMI A4)
-         ========================================= */
+               CSS KHUSUS PRINT (LAYOUT SURAT RESMI A4)
+               ========================================= */
     @media print {
       @page {
         size: A4;
@@ -294,6 +302,7 @@
               <th style="min-width: 200px;">Barang/Fasilitas</th>
               <th style="min-width: 180px;">Kegiatan & Lokasi</th>
               <th style="width: 180px;">Jadwal Peminjaman</th>
+              <th style="min-width: 200px;">Deskripsi</th>
               <th style="width: 100px;">Status</th>
               <th style="width: 160px;">Aksi</th>
               <th style="width: 100px;">Proposal</th>
@@ -320,7 +329,8 @@
                 </td>
                 <td>
                   <div class="fw-bold text-truncate" style="max-width: 160px;" title="{{ $req->borrower_name }}">
-                    {{ $req->borrower_name }}</div>
+                    {{ $req->borrower_name }}
+                  </div>
                   <div class="small text-muted">{{ $req->department ?? 'Umum' }}</div>
                 </td>
                 <td>
@@ -331,12 +341,14 @@
                   </ul>
                 </td>
                 <td>
-                  <div class="fw-bold text-dark text-truncate" style="max-width: 180px;" title="{{ $req->borrower_reason }}">
-                     {{ $req->borrower_reason ?? '-' }}
+                  <div class="fw-bold text-dark text-truncate" style="max-width: 180px;"
+                    title="{{ $req->borrower_reason }}">
+                    {{ $req->borrower_reason ?? '-' }}
                   </div>
                   <div class="small text-muted d-flex align-items-center mt-1">
-                      <i class="bi bi-geo-alt me-1 text-danger"></i> 
-                      <span class="text-truncate" style="max-width: 150px;">{{ $req->activity_location ?? 'Telkom University' }}</span>
+                    <i class="bi bi-geo-alt me-1 text-danger"></i>
+                    <span class="text-truncate"
+                      style="max-width: 150px;">{{ $req->activity_location ?? 'Telkom University' }}</span>
                   </div>
                 </td>
                 <td>
@@ -347,6 +359,31 @@
                     <span class="fw-semibold text-dark">{{ $end }} <span
                         class="text-muted small">{{ $endTimeV }}</span></span>
                   </div>
+                </td>
+                <td style="max-width: 200px; white-space: normal;">
+                  @php
+                    $desc = $req->activity_description ?? '-';
+                    $limit = 50;
+                    $isLong = strlen($desc) > $limit;
+                    $showDesc = \Illuminate\Support\Str::limit($desc, $limit, '...');
+                  @endphp
+
+                  @if($isLong)
+                    <div x-data="{ expanded: false }">
+                      <span x-show="!expanded">
+                        {{ $showDesc }}
+                        <a href="#" @click.prevent="expanded = true"
+                          class="fw-bold text-primary text-decoration-none small d-block mt-1">Lihat Selengkapnya</a>
+                      </span>
+                      <span x-show="expanded">
+                        {{ $desc }}
+                        <a href="#" @click.prevent="expanded = false"
+                          class="fw-bold text-secondary text-decoration-none small d-block mt-1">Tutup</a>
+                      </span>
+                    </div>
+                  @else
+                    {{ $desc }}
+                  @endif
                 </td>
                 <td><span class="badge-box badge-pending">Pending</span></td>
                 <td>
@@ -420,7 +457,9 @@
                   </button>
                 </td>
                 <td>
-                    <div class="fw-bold text-truncate" style="max-width: 160px;" title="{{ $hist->borrower_name }}">{{ $hist->borrower_name }}</div>
+                  <div class="fw-bold text-truncate" style="max-width: 160px;" title="{{ $hist->borrower_name }}">
+                    {{ $hist->borrower_name }}
+                  </div>
                 </td>
                 <td>
                   <ul class="items-list small">
@@ -433,14 +472,16 @@
                   @php
                     $hStart = optional($hist->loan_date_start)->format('d M Y') ?? '-';
                     $hEnd = optional($hist->loan_date_end)->format('d M Y') ?? '-';
-                    
+
                     $hStartTimeV = $hist->start_time ? "({$hist->start_time})" : "";
-                    $hEndTimeV   = $hist->end_time ? "({$hist->end_time})" : "";
+                    $hEndTimeV = $hist->end_time ? "({$hist->end_time})" : "";
                   @endphp
                   <div class="d-flex flex-column" style="font-size: 0.85rem;">
-                    <span class="fw-semibold text-dark">{{ $hStart }} <span class="text-muted small">{{ $hStartTimeV }}</span></span>
+                    <span class="fw-semibold text-dark">{{ $hStart }} <span
+                        class="text-muted small">{{ $hStartTimeV }}</span></span>
                     <span class="text-muted small my-0" style="line-height:1;">s/d</span>
-                    <span class="fw-semibold text-dark">{{ $hEnd }} <span class="text-muted small">{{ $hEndTimeV }}</span></span>
+                    <span class="fw-semibold text-dark">{{ $hEnd }} <span
+                        class="text-muted small">{{ $hEndTimeV }}</span></span>
                   </div>
                 </td>
                 <td>
@@ -450,42 +491,48 @@
                     <span class="badge-box badge-rejected">Rejected</span>
                   @endif
                 </td>
-                <td class="small text-muted" style="max-width: 220px; white-space: normal; word-wrap: break-word; word-break: break-all;">
+                <td class="small text-muted"
+                  style="max-width: 220px; white-space: normal; word-wrap: break-word; word-break: break-all;">
                   @php
-                      $reasonCheck = $hist->rejection_reason ?? '-';
-                      // Limit characters to handle long single words
-                      $limit = 50;
-                      $truncated = \Illuminate\Support\Str::limit($reasonCheck, $limit, '...');
-                      $isLong = strlen($reasonCheck) > $limit;
+                    $reasonCheck = $hist->rejection_reason ?? '-';
+                    // Limit characters to handle long single words
+                    $limit = 50;
+                    $truncated = \Illuminate\Support\Str::limit($reasonCheck, $limit, '...');
+                    $isLong = strlen($reasonCheck) > $limit;
                   @endphp
-                  
+
                   @if($isLong)
-                      <div x-data="{ expanded: false }">
-                          <span x-show="!expanded">
-                              {{ $truncated }}
-                              <div class="mt-1">
-                                <a href="#" @click.prevent="expanded = true" class="fw-bold text-primary text-decoration-none" style="font-size: 0.75rem;">Lihat</a>
-                              </div>
-                          </span>
-                          <span x-show="expanded">
-                              {{ $reasonCheck }}
-                              <div class="mt-1">
-                                <a href="#" @click.prevent="expanded = false" class="fw-bold text-secondary text-decoration-none" style="font-size: 0.75rem;">Tutup</a>
-                              </div>
-                          </span>
-                      </div>
+                    <div x-data="{ expanded: false }">
+                      <span x-show="!expanded">
+                        {{ $truncated }}
+                        <div class="mt-1">
+                          <a href="#" @click.prevent="expanded = true" class="fw-bold text-primary text-decoration-none"
+                            style="font-size: 0.75rem;">Lihat</a>
+                        </div>
+                      </span>
+                      <span x-show="expanded">
+                        {{ $reasonCheck }}
+                        <div class="mt-1">
+                          <a href="#" @click.prevent="expanded = false" class="fw-bold text-secondary text-decoration-none"
+                            style="font-size: 0.75rem;">Tutup</a>
+                        </div>
+                      </span>
+                    </div>
                   @else
-                      {{ $reasonCheck }}
+                    {{ $reasonCheck }}
                   @endif
                 </td>
                 <td class="text-center">
-                  <button class="btn-icon shadow-sm" type="button" wire:click="showDetails({{ $hist->id }})" title="Cetak Bukti">
+                  <button class="btn-icon shadow-sm" type="button" wire:click="showDetails({{ $hist->id }})"
+                    title="Cetak Bukti">
                     <i class="bi bi-printer"></i>
                   </button>
                 </td>
               </tr>
             @empty
-              <tr><td colspan="8" class="p-5 text-center text-muted">Belum ada riwayat.</td></tr>
+              <tr>
+                <td colspan="8" class="p-5 text-center text-muted">Belum ada riwayat.</td>
+              </tr>
             @endforelse
           </tbody>
         </table>
@@ -509,7 +556,8 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary btn-box" data-bs-dismiss="modal">Batal</button>
-          <button type="button" class="btn btn-approve btn-box" wire:click="approveConfirmed" wire:loading.attr="disabled">
+          <button type="button" class="btn btn-approve btn-box" wire:click="approveConfirmed"
+            wire:loading.attr="disabled">
             <span wire:loading.remove wire:target="approveConfirmed">
               <i class="bi bi-check-lg me-1"></i>Ya, Setuju
             </span>

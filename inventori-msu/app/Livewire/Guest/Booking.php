@@ -29,7 +29,7 @@ class Booking extends Component
 
     public function submitBooking()
     {
-        dd('CEK 1: Berhasil Masuk Fungsi Submit');
+        // dd('CEK 1: Berhasil Masuk Fungsi Submit');
         $this->validate();
 
         // Upload Proposal
@@ -51,12 +51,11 @@ class Booking extends Component
             // --- BAGIAN PENTING YANG KURANG ---
             'start_time' => $this->start_time, // Simpan Jam
             'duration' => $this->duration,   // Simpan Durasi
+            'activity_description' => $this->description, // Simpan Deskripsi
             // ----------------------------------
 
             'proposal_path' => $path,
             'status' => 'pending',
-            // Simpan deskripsi jika ada kolomnya, misal 'notes' atau digabung ke purpose
-            // 'notes'        => $this->description 
         ]);
 
         // ... logic simpan items/barang (attach pivot) ...
