@@ -201,7 +201,6 @@
 
                     <form method="POST" action="{{ route('login.store') }}" @submit="isLoading = true">
                         @csrf
-                        <input type="hidden" name="role_context" x-model="role">
 
                         <div class="mb-4 anim-delay-2">
                             @error('email')
