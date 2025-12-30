@@ -48,18 +48,32 @@ class Laporan extends Component
         }
 
         $requests = $query->get();
-        $today = Carbon::today();
+        $now = Carbon::now();
 
         // 2. Transform & Map Logic (Existing Logic)
         /** @var Collection $mappedCollection */
-        $mappedCollection = $requests->flatMap(function ($lr) use ($today) {
-            return $lr->items->map(function ($inv) use ($lr, $today) {
+        $mappedCollection = $requests->flatMap(function ($lr) use ($now) {
+            return $lr->items->map(function ($inv) use ($lr, $now) {
                 // ... (Logic pemetaan status UI, sama seperti sebelumnya) ...
                 $tglPinjam = Carbon::parse($lr->loan_date_start);
                 $jatuhTempo = Carbon::parse($lr->loan_date_end);
 
                 $startTime = $lr->start_time ?? '00:00:00';
                 $endTime   = $lr->end_time ?? '00:00:00';
+
+                // Set specific times
+                try {
+                    $tglPinjam->setTimeFromTimeString($startTime);
+                    
+                    if ($lr->end_time) {
+                        $jatuhTempo->setTimeFromTimeString($endTime);
+                    } else {
+                        $jatuhTempo->endOfDay();
+                    }
+                } catch (\Exception $e) {
+                    // Fallback if formatting fails
+                    $jatuhTempo->endOfDay();
+                }
 
                 $waktuPinjamStr = $tglPinjam->format('d/m/Y') . ' | ' . \Carbon\Carbon::parse($startTime)->format('H:i');
                 $jatuhTempoStr = $jatuhTempo->format('d/m/Y') . ' | ' . \Carbon\Carbon::parse($endTime)->format('H:i');
@@ -90,7 +104,7 @@ class Laporan extends Component
                         break;
                     
                     case 'handed_over':
-                        $statusUi = $today->gt($jatuhTempo) ? 'Terlambat' : 'Sedang Dipinjam';
+                        $statusUi = $now->gt($jatuhTempo) ? 'Terlambat' : 'Sedang Dipinjam';
                         break;
 
                     case 'approved':
@@ -106,7 +120,7 @@ class Laporan extends Component
                         break;
 
                     default:
-                        $statusUi = $today->gt($jatuhTempo) ? 'Terlambat' : 'Sedang Dipinjam';
+                        $statusUi = $now->gt($jatuhTempo) ? 'Terlambat' : 'Sedang Dipinjam';
                         break;
                 }
 
