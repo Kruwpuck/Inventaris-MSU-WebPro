@@ -104,7 +104,7 @@
               <i class="bi bi-upload me-2"></i> Pilih Foto
               <input type="file" class="d-none" accept="image/png, image/jpeg, image/jpg" wire:model="image">
             </label>
-            <small class="text-muted d-block mt-2 text-center">Format JPG/PNG, maksimal 5MB.</small>
+            <small class="text-muted d-block mt-2 text-center">Format JPG/PNG/JPEG, maksimal 5MB.</small>
 
             @error('image') 
                 <div class="text-danger small mt-1">
