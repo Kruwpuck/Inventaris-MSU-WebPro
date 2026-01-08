@@ -36,9 +36,7 @@ class FortifyServiceProvider extends ServiceProvider
             $user = User::where('email', $request->email)->first();
 
             if ($user &&
-                Hash::check($request->password, $user->password) &&
-                $request->has('role_context') &&
-                $user->role === $request->role_context) {
+                Hash::check($request->password, $user->password)) {
                 return $user;
             }
 
