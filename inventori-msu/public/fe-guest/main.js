@@ -642,7 +642,7 @@ window.addEventListener('load', () => {
             <div class="card-body py-3">
               <div class="d-flex justify-content-between align-items-start mb-2">
                  <div>
-                    <div class="fw-bold text-dark mb-1" style="font-size:1rem;">${b.description || 'Kegiatan'}</div>
+                    <div class="fw-bold text-dark mb-1" style="font-size:1rem;">${(b.description || 'Kegiatan').charAt(0) + '*'}</div>
                     <div class="text-muted small"><i class="bi bi-clock me-1"></i>${timeLabel}</div>
                  </div>
                  <span class="badge ${badgeClass} text-uppercase shadow-sm" style="font-size:0.7rem; letter-spacing:0.5px;">${b.status}</span>
@@ -654,10 +654,10 @@ window.addEventListener('load', () => {
 
               <div class="border-top pt-2 mt-2 d-flex justify-content-between align-items-center">
                  <div class="small text-muted">
-                    <i class="bi bi-person me-1"></i>${b.borrowerName || 'Peminjam'}
+                    <i class="bi bi-person me-1"></i>${(b.borrowerName || 'Peminjam').charAt(0) + '*'}
                  </div>
                  <div class="small fw-bold text-secondary text-uppercase" style="font-size:0.7rem">
-                    ${b.department || ''}
+                    ${(b.department || '').charAt(0) + '*'}
                  </div>
               </div>
             </div>
