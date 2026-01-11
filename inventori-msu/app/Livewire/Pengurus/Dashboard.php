@@ -21,13 +21,11 @@ class Dashboard extends Component
         if ($type === 'ambil') {
             $record->picked_up_at = $record->picked_up_at ? null : now();
         } elseif ($type === 'kembali') {
-            $record->returned_at = $record->returned_at ? null : now();
-            
-            // Auto-check 'ambil' if 'kembali' is checked (Logic from Step 70
-            // Auto-check 'ambil' if 'kembali' is check
-            if ($record->returned_at && !$record->picked_up_at) {
-                $record->picked_up_at = $record->returned_at;
+            // Ensure picked_up_at exists before allowing return
+            if (!$record->picked_up_at) {
+                return; // Guard clause: cannot return if not picked up
             }
+            $record->returned_at = $record->returned_at ? null : now();
         }
 
         $record->save();

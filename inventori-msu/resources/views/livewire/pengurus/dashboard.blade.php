@@ -279,7 +279,7 @@
                                     <div class="d-flex justify-content-center">
                                         <input class="form-check-input" type="checkbox" style="width: 1.2em; height: 1.2em;"
                                                onclick="confirmReturn(event, {{ $d->id }})"
-                                            {{ optional($d->loanRecord)->returned_at ? 'checked disabled' : '' }}>
+                                            {{ optional($d->loanRecord)->returned_at ? 'checked disabled' : (!optional($d->loanRecord)->picked_up_at ? 'disabled' : '') }}>
                                     </div>
                                 </td>
                             </tr>

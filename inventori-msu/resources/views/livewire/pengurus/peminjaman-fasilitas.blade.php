@@ -265,7 +265,7 @@
                                     <td class="text-center">
                                         <input class="form-check-input" type="checkbox" style="width: 1.2em; height: 1.2em; border-color: #dee2e6;"
                                             onclick="confirmReturn(event, {{ $d->id }})"
-                                            {{ optional($d->loanRecord)->returned_at ? 'checked disabled' : '' }}>
+                                            {{ optional($d->loanRecord)->returned_at ? 'checked disabled' : (!optional($d->loanRecord)->picked_up_at ? 'disabled' : '') }}>
                                     </td>
                                 </tr>
                             @endforeach

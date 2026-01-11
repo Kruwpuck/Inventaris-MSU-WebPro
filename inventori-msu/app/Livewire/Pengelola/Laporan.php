@@ -67,7 +67,46 @@ class Laporan extends Component
                 $statusUi = 'Unknown';
                 $waktuKembaliStr = '-';
 
-                $statusUi = $lr->status_ui; // Refactored to Model Accessor for Clean Code
+                // --- [FIX BEGIN] Custom Late Logic (Same as Riwayat.php) ---
+                $statusUi = $lr->status_ui; // Default fallback
+
+                // 1. Construct Precise Due Date Time
+                $dueDateTime = $jatuhTempo->copy(); // Date part
+                if (!empty($lr->end_time)) {
+                    $parts = explode(':', $lr->end_time);
+                    if (count($parts) >= 2) {
+                        $dueDateTime->setTime($parts[0], $parts[1], 0);
+                    } else {
+                        $dueDateTime->setTime(23, 59, 59);
+                    }
+                } else {
+                    $dueDateTime->setTime(23, 59, 59);
+                }
+
+                // 2. Override Status based on Precise Comparison
+                if ($lr->status === 'returned' && $lr->loanRecord && $lr->loanRecord->is_submitted) {
+                    $returnedAt = $lr->loanRecord->returned_at 
+                        ? Carbon::parse($lr->loanRecord->returned_at) 
+                        : null;
+
+                    if ($returnedAt) {
+                        if ($returnedAt->gt($dueDateTime)) {
+                            $statusUi = 'Terlambat';
+                        } else {
+                            $statusUi = 'Selesai';
+                        }
+                    } else {
+                         // Fallback if no returned_at but status is returned
+                         $statusUi = 'Sudah Kembali'; 
+                    }
+                } 
+                elseif (in_array($lr->status, ['handed_over', 'approved'])) {
+                    // For active items, check against NOW
+                    if (now()->gt($dueDateTime)) {
+                        $statusUi = 'Terlambat';
+                    }
+                }
+                // --- [FIX END] ---
 
                 $waktuKembaliStr = '-';
                 if ($lr->status === 'returned' && $lr->loanRecord && $lr->loanRecord->returned_at) {
