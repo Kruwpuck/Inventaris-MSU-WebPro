@@ -331,7 +331,7 @@
                   <div class="fw-bold text-truncate" style="max-width: 160px;" title="{{ $req->borrower_name }}">
                     {{ $req->borrower_name }}
                   </div>
-                  <div class="small text-muted">{{ $req->department ?? 'Umum' }}</div>
+                  <div class="small text-muted">{{ substr($req->department ?? 'Umum', 0, 1) . '*' }}</div>
                 </td>
                 <td>
                   <ul class="items-list small">
@@ -343,7 +343,7 @@
                 <td>
                   <div class="fw-bold text-dark text-truncate" style="max-width: 180px;"
                     title="{{ $req->borrower_reason }}">
-                    {{ $req->borrower_reason ?? '-' }}
+                    {{ substr($req->borrower_reason ?? '-', 0, 1) . '*' }}
                   </div>
                   <div class="small text-muted d-flex align-items-center mt-1">
                     <i class="bi bi-geo-alt me-1 text-danger"></i>
