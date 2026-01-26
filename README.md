@@ -1,5 +1,7 @@
 
-![Preview Aplikasi](Inventory20%MSU.png)
+<div align="center">
+  <img src="Inventory MSU.png" alt="Poster" width="100%" />
+</div>
 
 # Inventory MSU
 
