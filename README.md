@@ -1,5 +1,5 @@
 
-![Preview Aplikasi](Inventory MSU.png)
+![Preview Aplikasi](Inventory20%MSU.png)
 
 # Inventory MSU
 
