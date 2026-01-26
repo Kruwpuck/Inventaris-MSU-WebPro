@@ -1,8 +1,7 @@
-# Sistem Informasi Inventaris & Peminjaman MSU
 
-![Preview Aplikasi](inventory%20msu.png)
+![Preview Aplikasi](inventory%20MSU.png)
 
-## 📖 Deskripsi
+# Inventory MSU
 
 **Sistem Informasi Inventaris & Peminjaman MSU** adalah aplikasi berbasis web yang dikembangkan untuk mendigitalisasi proses manajemen aset dan fasilitas di lingkungan **Masjid Syamsul 'Ulum**. 
 
