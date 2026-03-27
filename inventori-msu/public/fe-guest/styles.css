@@ -237,6 +237,7 @@ body {
 }
 
 /* Button override */
+#btnShowCalendar,
 #btnSetDates,
 #btnCheckAvailability {
   min-height: 48px;
@@ -250,6 +251,7 @@ body {
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
+#btnShowCalendar:hover,
 #btnSetDates:hover,
 #btnCheckAvailability:hover {
   transform: translateY(-2px);
