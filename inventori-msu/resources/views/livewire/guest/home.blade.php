@@ -116,16 +116,14 @@
             <label class="form-label small fw-bold">Jam Kembali</label>
             <input id="timeEnd" type="time" class="form-control">
           </div>
-          <div class="col-12 d-flex flex-wrap align-items-center justify-content-end mt-3 gap-2">
-            <div class="text-muted small js-daterange me-auto w-100 w-lg-auto mb-2 mb-lg-0">Silakan tentukan waktu peminjaman dulu.</div>
-            <div class="d-flex flex-column flex-sm-row gap-2 w-100 w-lg-auto">
-              <button id="btnShowCalendar" class="btn btn-success" type="button" title="Lihat Jadwal Harian">
-                <i class="bi bi-calendar3 me-1"></i> Cek Jadwal
-              </button>
-              <button id="btnSetDates" class="btn btn-success">
-                <i class="bi bi-search me-1"></i> Cek Ketersediaan
-              </button>
-            </div>
+          <div class="col-12 d-flex align-items-end mt-3 gap-2">
+            <div class="text-muted small js-daterange me-auto">Silakan tentukan waktu peminjaman dulu.</div>
+            <button id="btnShowCalendar" class="btn btn-success" type="button" title="Lihat Jadwal Harian" style="width: 230px; white-space: nowrap;">
+              <i class="bi bi-calendar3 me-1"></i> Cek Jadwal
+            </button>
+            <button id="btnSetDates" class="btn btn-success" style="width: 230px; white-space: nowrap;">
+              <i class="bi bi-search me-1"></i> Cek Ketersediaan
+            </button>
           </div>
         </div>
       </div>
@@ -214,7 +212,8 @@
                 <div class="item-title fw-bold fs-5">{{ $item->name }}</div>
                 <div class="item-desc text-muted small mb-1" style="font-size: 0.75rem;">{{ $item->description }}</div>
                 <div class="item-capacity text-muted small mb-2" style="font-size: 0.85rem;">Kapasitas :
-                  {{ $item->capacity ?? '-' }}</div>
+                  {{ $item->capacity ?? '-' }}
+                </div>
                 <div class="item-meta fw-bold">Sisa : <span class="sisa">1</span></div>
               </div>
             </article>
