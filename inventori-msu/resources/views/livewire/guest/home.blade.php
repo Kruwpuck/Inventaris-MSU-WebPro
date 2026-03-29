@@ -116,12 +116,14 @@
             <label class="form-label small fw-bold">Jam Kembali</label>
             <input id="timeEnd" type="time" class="form-control">
           </div>
-          <div class="col-12 d-flex align-items-end mt-3 gap-2">
-            <div class="text-muted small js-daterange me-auto text-truncate" style="min-width: 0;">Silakan tentukan waktu peminjaman dulu.</div>
-            <button id="btnShowCalendar" class="btn btn-success" type="button" title="Lihat Jadwal Harian" style="flex: 0 0 240px; white-space: nowrap;">
+          <div class="col-12 mt-1 mb-2">
+            <div class="text-muted small js-daterange">Silakan tentukan waktu peminjaman dulu.</div>
+          </div>
+          <div class="col-12 d-flex flex-wrap justify-content-end mt-2 gap-2">
+            <button id="btnShowCalendar" class="btn btn-success flex-shrink-0" type="button" title="Lihat Jadwal Harian" style="width: auto; padding-left: 1.5rem; padding-right: 1.5rem; white-space: nowrap;">
               <i class="bi bi-calendar3 me-1"></i> Cek Jadwal
             </button>
-            <button id="btnSetDates" class="btn btn-success" style="flex: 0 0 240px; white-space: nowrap;">
+            <button id="btnSetDates" class="btn btn-success flex-shrink-0" style="width: auto; padding-left: 1.5rem; padding-right: 1.5rem; white-space: nowrap;">
               <i class="bi bi-search me-1"></i> Cek Ketersediaan
             </button>
           </div>
