@@ -445,9 +445,14 @@
 
                                                     $returnedAt = optional($d->loanRecord)->returned_at;
                                                     $isLate = $returnedAt ? $returnedAt->gt($dueAt) : false;
+                                                    $isAutocancelled = optional($d->loanRecord)->notes === 'Sistem (Autokirim): Waktu sudah habis tapi peminjam tidak pernah datang mengambil barang';
                                                 @endphp
 
-                                                @if($isLate)
+                                                @if($isAutocancelled)
+                                                    <span class="badge bg-secondary rounded-pill px-3">
+                                                        <i class="bi bi-slash-circle me-1"></i> Batal / Lewat Waktu
+                                                    </span>
+                                                @elseif($isLate)
                                                     <span class="badge bg-danger rounded-pill px-3">
                                                         <i class="bi bi-exclamation-circle me-1"></i> Terlambat
                                                     </span>

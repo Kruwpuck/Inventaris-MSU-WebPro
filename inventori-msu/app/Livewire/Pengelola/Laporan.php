@@ -136,7 +136,7 @@ class Laporan extends Component
 
         // 3. Filter Collection
         // Strict Allowed Statuses
-        $allowedStatuses = ['Sedang Dipinjam', 'Sudah Kembali', 'Terlambat', 'Siap Diambil', 'Selesai'];
+        $allowedStatuses = ['Sedang Dipinjam', 'Sudah Kembali', 'Terlambat', 'Siap Diambil', 'Selesai', 'Batal Pinjam'];
         $mappedCollection = $mappedCollection->filter(fn ($r) => in_array($r->status, $allowedStatuses, true));
 
         // Filter Category

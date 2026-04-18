@@ -66,6 +66,8 @@ class Dashboard extends Component
 
     public function render()
     {
+        \App\Models\LoanRequest::autoCompleteUnpicked();
+
         $data = \App\Models\LoanRequest::query()
             ->whereIn('status', ['approved', 'handed_over'])
             ->where(function ($query) {

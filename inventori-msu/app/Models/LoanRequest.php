@@ -53,6 +53,37 @@ class LoanRequest extends Model
         return $this->hasOne(LoanRecord::class);
     }
 
+    public static function autoCompleteUnpicked()
+    {
+        $expiredRequests = static::query()
+            ->where('status', 'approved')
+            ->whereDoesntHave('loanRecord', function($q) {
+                $q->whereNotNull('picked_up_at');
+            })
+            ->get();
+
+        foreach ($expiredRequests as $req) {
+            $endDateTime = $req->loan_date_end->copy();
+            if ($req->end_time) {
+                $timeParts = explode(':', $req->end_time);
+                $endDateTime->setTime($timeParts[0], $timeParts[1]);
+            } else {
+                $endDateTime->setTime(23, 59, 59);
+            }
+
+            if (now()->greaterThan($endDateTime)) {
+                $req->update(['status' => 'returned']);
+                $record = $req->loanRecord()->firstOrCreate([
+                    'loan_request_id' => $req->id
+                ]);
+                $record->update([
+                    'is_submitted' => true,
+                    'notes' => 'Sistem (Autokirim): Waktu sudah habis tapi peminjam tidak pernah datang mengambil barang'
+                ]);
+            }
+        }
+    }
+
     /**
      * Get the UI friendly status label.
      */
@@ -69,6 +100,9 @@ class LoanRequest extends Model
                 }
 
                 if ($this->loanRecord && $this->loanRecord->is_submitted) {
+                    if ($this->loanRecord->notes === 'Sistem (Autokirim): Waktu sudah habis tapi peminjam tidak pernah datang mengambil barang') {
+                        return 'Batal Pinjam';
+                    }
                     if ($actualReturn && $actualReturn->gt($jatuhTempo)) {
                         return 'Terlambat';
                     }

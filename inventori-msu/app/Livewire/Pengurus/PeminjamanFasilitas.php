@@ -51,6 +51,8 @@ class PeminjamanFasilitas extends Component
 
     public function render()
     {
+        \App\Models\LoanRequest::autoCompleteUnpicked();
+
         // Filter: Approved/HandedOver AND (No Record OR (Record exists but NOT BOTH timestamps are set))
         $data = \App\Models\LoanRequest::query()
             ->whereIn('status', ['approved', 'handed_over'])
