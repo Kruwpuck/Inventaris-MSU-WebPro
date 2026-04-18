@@ -147,9 +147,9 @@
     }
 
     /* =========================================
-                   CSS KHUSUS PREVIEW (LAYAR)
-                   Agar tidak terlalu nge-zoom/besar di modal
-                 ========================================= */
+                     CSS KHUSUS PREVIEW (LAYAR)
+                     Agar tidak terlalu nge-zoom/besar di modal
+                   ========================================= */
     @media screen {
       #areaCetak {
         padding: 20px !important;
@@ -178,8 +178,8 @@
     }
 
     /* =========================================
-                   CSS KHUSUS PRINT (LAYOUT SURAT RESMI A4)
-                   ========================================= */
+                     CSS KHUSUS PRINT (LAYOUT SURAT RESMI A4)
+                     ========================================= */
     @media print {
       @page {
         size: A4;
@@ -627,8 +627,8 @@
                     <h2 style="margin: 0; font-size: 20px; font-weight: bold; text-transform: uppercase;">Masjid Syamsul
                       Ulum</h2>
                     <p style="margin: 2px 0; font-size: 14px;">Telkom University, Bandung, Jawa Barat</p>
-                    <p style="margin: 0; font-size: 12px;">Email: msu@telkomuniversity.ac.id | Web:
-                      msu.telkomuniversity.ac.id</p>
+                    <p style="margin: 0; font-size: 12px;">Email: msu.telyu@gmail.com | Website:
+                      syamsululum.telkomuniversity.ac.id</p>
                   </td>
                   <td width="100"></td>
                 </tr>
