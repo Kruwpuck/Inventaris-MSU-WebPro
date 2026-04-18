@@ -31,6 +31,8 @@ class Riwayat extends Component
 
     public function render()
     {
+        \App\Models\LoanRequest::autoCompleteUnpicked();
+
         $baseQuery = LoanRequest::query()
             ->where(function($query) {
                 // Selesai (Returned/Completed) OR Sedang Dipinjam (Handed Over)
@@ -43,7 +45,8 @@ class Riwayat extends Component
             })
             ->whereHas('loanRecord', function ($q) {
                 $q->whereNotNull('picked_up_at')
-                  ->orWhereNotNull('returned_at');
+                  ->orWhereNotNull('returned_at')
+                  ->orWhere('is_submitted', true);
             })
             ->when($this->search, function ($q) {
                 $q->where(function ($sub) {

@@ -125,6 +125,11 @@
       color: #fff;
     }
 
+    .status-batal {
+      background: #6c757d;
+      color: #fff;
+    }
+
     .status-menunggu-submit {
       background: #e2e3e5;
       color: #383d41;
@@ -258,6 +263,8 @@
               wire:click.prevent="$set('vStatus', 'Terlambat')">Terlambat</a></li>
           <li><a class="dropdown-item {{ $vStatus == 'Siap Diambil' ? 'active' : '' }}" href="#"
               wire:click.prevent="$set('vStatus', 'Siap Diambil')">Siap Diambil</a></li>
+          <li><a class="dropdown-item {{ $vStatus == 'Batal Pinjam' ? 'active' : '' }}" href="#"
+              wire:click.prevent="$set('vStatus', 'Batal Pinjam')">Batal Pinjam</a></li>
         </ul>
       </div>
     </div>
@@ -310,6 +317,7 @@
                 'Siap Diambil' => 'status-approved',
                 'Menunggu Approve' => 'status-pending',
                 'Ditolak' => 'status-ditolak',
+                'Batal Pinjam' => 'status-batal',
                 default => 'status-sedang'
               };
             @endphp
