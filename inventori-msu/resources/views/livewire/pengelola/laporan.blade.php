@@ -263,8 +263,8 @@
               wire:click.prevent="$set('vStatus', 'Terlambat')">Terlambat</a></li>
           <li><a class="dropdown-item {{ $vStatus == 'Siap Diambil' ? 'active' : '' }}" href="#"
               wire:click.prevent="$set('vStatus', 'Siap Diambil')">Siap Diambil</a></li>
-          <li><a class="dropdown-item {{ $vStatus == 'Batal Pinjam' ? 'active' : '' }}" href="#"
-              wire:click.prevent="$set('vStatus', 'Batal Pinjam')">Batal Pinjam</a></li>
+          <li><a class="dropdown-item {{ $vStatus == 'Batal' ? 'active' : '' }}" href="#"
+              wire:click.prevent="$set('vStatus', 'Batal')">Batal</a></li>
         </ul>
       </div>
     </div>
@@ -317,7 +317,7 @@
                 'Siap Diambil' => 'status-approved',
                 'Menunggu Approve' => 'status-pending',
                 'Ditolak' => 'status-ditolak',
-                'Batal Pinjam' => 'status-batal',
+                'Batal' => 'status-batal',
                 default => 'status-sedang'
               };
             @endphp

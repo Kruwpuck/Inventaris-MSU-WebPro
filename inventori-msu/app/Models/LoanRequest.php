@@ -101,7 +101,7 @@ class LoanRequest extends Model
 
                 if ($this->loanRecord && $this->loanRecord->is_submitted) {
                     if ($this->loanRecord->notes === 'Sistem (Autokirim): Waktu sudah habis tapi peminjam tidak pernah datang mengambil barang') {
-                        return 'Batal Pinjam';
+                        return 'Batal';
                     }
                     if ($actualReturn && $actualReturn->gt($jatuhTempo)) {
                         return 'Terlambat';

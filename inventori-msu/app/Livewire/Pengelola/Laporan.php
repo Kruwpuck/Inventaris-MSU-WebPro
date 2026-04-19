@@ -96,8 +96,11 @@ class Laporan extends Component
                             $statusUi = 'Selesai';
                         }
                     } else {
-                         // Fallback if no returned_at but status is returned
-                         $statusUi = 'Sudah Kembali'; 
+                         if ($lr->loanRecord->notes === 'Sistem (Autokirim): Waktu sudah habis tapi peminjam tidak pernah datang mengambil barang') {
+                             $statusUi = 'Batal';
+                         } else {
+                             $statusUi = 'Sudah Kembali'; 
+                         }
                     }
                 } 
                 elseif (in_array($lr->status, ['handed_over', 'approved'])) {
@@ -112,7 +115,11 @@ class Laporan extends Component
                 if ($lr->status === 'returned' && $lr->loanRecord && $lr->loanRecord->returned_at) {
                      $waktuKembaliStr = \Carbon\Carbon::parse($lr->loanRecord->returned_at)->format('d/m/Y | H:i');
                 } elseif ($lr->status === 'returned') {
-                     $waktuKembaliStr = $jatuhTempo->format('d/m/Y | H:i');
+                     if ($lr->loanRecord && $lr->loanRecord->notes === 'Sistem (Autokirim): Waktu sudah habis tapi peminjam tidak pernah datang mengambil barang') {
+                         $waktuKembaliStr = '-';
+                     } else {
+                         $waktuKembaliStr = $jatuhTempo->format('d/m/Y | H:i');
+                     }
                 }
 
                 $kategoriUi = $inv->category === 'ruangan' ? 'Ruangan' : 'Barang';
@@ -136,7 +143,7 @@ class Laporan extends Component
 
         // 3. Filter Collection
         // Strict Allowed Statuses
-        $allowedStatuses = ['Sedang Dipinjam', 'Sudah Kembali', 'Terlambat', 'Siap Diambil', 'Selesai', 'Batal Pinjam'];
+        $allowedStatuses = ['Sedang Dipinjam', 'Sudah Kembali', 'Terlambat', 'Siap Diambil', 'Selesai', 'Batal'];
         $mappedCollection = $mappedCollection->filter(fn ($r) => in_array($r->status, $allowedStatuses, true));
 
         // Filter Category
