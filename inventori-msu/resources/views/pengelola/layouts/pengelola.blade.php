@@ -93,7 +93,7 @@
 
           <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('pengelola.tambah') ? 'active' : '' }}"
-              href="{{ route('pengelola.tambah') }}">Tambah Barang</a>
+              href="{{ route('pengelola.tambah') }}">Tambah Fasilitas</a>
           </li>
 
           <li class="nav-item">
