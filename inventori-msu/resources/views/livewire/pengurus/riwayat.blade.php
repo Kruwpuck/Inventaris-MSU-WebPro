@@ -450,7 +450,7 @@
 
                                                 @if($isAutocancelled)
                                                     <span class="badge bg-secondary rounded-pill px-3">
-                                                        <i class="bi bi-slash-circle me-1"></i> Batal / Lewat Waktu
+                                                        <i class="bi bi-slash-circle me-1"></i> Batal
                                                     </span>
                                                 @elseif($isLate)
                                                     <span class="badge bg-danger rounded-pill px-3">
