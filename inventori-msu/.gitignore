@@ -21,3 +21,8 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+.env.docker
+.env.local
+*.bak
+*.bak-migrasi
+*.template-bak
