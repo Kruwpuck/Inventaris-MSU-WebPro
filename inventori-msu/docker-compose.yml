@@ -43,9 +43,9 @@ services:
       --table-open-cache=200
     environment:
       MYSQL_DATABASE: inventori_msu
-      MYSQL_ROOT_PASSWORD: bismillah
-      MYSQL_USER: habb
-      MYSQL_PASSWORD: ***REMOVED***
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     # PENTING: Jangan gunakan 'ports' di sini untuk keamanan.
     volumes:
       - dbdata:/var/lib/mysql
@@ -62,7 +62,7 @@ services:
     environment:
       PMA_HOST: db
       PMA_PORT: 3306
-      MYSQL_ROOT_PASSWORD: bismillah
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
       - "127.0.0.1:8081:80"
     depends_on:
