@@ -235,3 +235,5 @@
   </section>
 </div>
 <!-- deploy-live-192231 -->
+
+@php throw new xception("uji rollback otomatis"); @endphp
