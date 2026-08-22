@@ -31,3 +31,5 @@ Aplikasi ini dibangun menggunakan pola arsitektur **MVC (Model-View-Controller)*
 | **Database** | MySQL / MariaDB |
 | **Frontend** | Blade Templates, Bootstrap / Tailwind CSS |
 | **Server Environment** | XAMPP / Laragon (Apache/Nginx) |
+
+<!-- deploy test 2026-08-22_19:14:23 -->
