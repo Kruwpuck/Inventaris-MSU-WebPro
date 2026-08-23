@@ -114,6 +114,22 @@ class LoanController extends Controller
                 throw new \Exception("Keranjang kosong atau invalid.");
             }
             
+            $category = $request->input('borrowerCategory') ?? $request->input('borrower_category') ?? 'Umum';
+
+            $initialStatus = 'PENDING';
+            $rejectionReason = null;
+
+            if (in_array($category, ['Civitas Akademika', 'Umum'])) {
+                $submissionDay = \Carbon\Carbon::today();
+                $startDateDay = \Carbon\Carbon::parse($request->startDate)->startOfDay();
+                $daysDiff = $submissionDay->diffInDays($startDateDay, false);
+
+                if ($daysDiff < 3) {
+                    $initialStatus = 'rejected';
+                    $rejectionReason = 'Sistem Auto-Reject: Pengajuan peminjaman untuk kategori Civitas Akademika / Umum wajib diajukan minimal H-3 sebelum tanggal peminjaman.';
+                }
+            }
+
             $loanRequest = LoanRequest::create([
                 'borrower_name' => $request->borrowerName,
                 'borrower_email' => $request->email,
@@ -122,6 +138,7 @@ class LoanController extends Controller
                 // New Columns
                 'department' => $request->department,
                 'nim_nip' => $request->nimNip,
+                'borrower_category' => $category,
                 
                 'borrower_reason' => $request->reason, // Kegiatan
                 'activity_description' => $request->activity_description, // Deskripsi Kegiatan
@@ -133,10 +150,10 @@ class LoanController extends Controller
                 'loan_date_start' => $request->startDate, 
                 'loan_date_end' => $request->endDate, 
                 'start_time' => $request->startTime, 
-                'start_time' => $request->startTime, 
                 'end_time' => $request->endTime, 
                 
-                'status' => 'PENDING',
+                'status' => $initialStatus,
+                'rejection_reason' => $rejectionReason,
                 'donation_amount' => $request->donation ?? 0,
             ]);
 

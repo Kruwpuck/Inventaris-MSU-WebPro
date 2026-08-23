@@ -26,11 +26,59 @@ class LoanRequest extends Model
         'activity_location',    // ✅ Baru
         'activity_description',
         'description', // ✅ Baru
+        'borrower_category',      // ✅ Baru (Wajihah / Civitas Akademika / Umum)
         'status',
         'rejection_reason',
         'donation_amount', // ✅ Baru
         'duration', // ✅ Added
     ];
+
+    public static function autoRejectExpiredPending()
+    {
+        $now = \Carbon\Carbon::now();
+
+        $pendingRequests = static::query()
+            ->whereIn('status', ['pending', 'PENDING'])
+            ->get();
+
+        foreach ($pendingRequests as $req) {
+            $shouldReject = false;
+            $reason = null;
+
+            // Parse loan start datetime
+            $startDate = \Carbon\Carbon::parse($req->loan_date_start);
+            if ($req->start_time) {
+                $timeParts = explode(':', $req->start_time);
+                $startDate->setTime((int)$timeParts[0], (int)$timeParts[1], isset($timeParts[2]) ? (int)$timeParts[2] : 0);
+            } else {
+                $startDate->setTime(0, 0, 0);
+            }
+
+            // Rule 2: Waktu peminjaman sudah tiba / terlewat tapi belum ada keputusan (auto-reject)
+            if ($now->greaterThanOrEqualTo($startDate)) {
+                $shouldReject = true;
+                $reason = 'Sistem Auto-Reject: Peminjaman belum mendapat keputusan pengelola hingga waktu peminjaman dimulai.';
+            } 
+            // Rule 1: Civitas Akademika & Umum yang mengajukan di bawah H-3 (H-2, H-1, Hari H)
+            elseif (in_array($req->borrower_category, ['Civitas Akademika', 'Umum'])) {
+                $createdDay = \Carbon\Carbon::parse($req->created_at)->startOfDay();
+                $loanStartDay = \Carbon\Carbon::parse($req->loan_date_start)->startOfDay();
+                $daysDiff = $createdDay->diffInDays($loanStartDay, false);
+
+                if ($daysDiff < 3) {
+                    $shouldReject = true;
+                    $reason = 'Sistem Auto-Reject: Pengajuan peminjaman untuk kategori Civitas Akademika / Umum wajib diajukan minimal H-3 sebelum tanggal peminjaman.';
+                }
+            }
+
+            if ($shouldReject) {
+                $req->update([
+                    'status' => 'rejected',
+                    'rejection_reason' => $reason
+                ]);
+            }
+        }
+    }
 
     protected $casts = [
         'loan_date_start' => 'datetime',

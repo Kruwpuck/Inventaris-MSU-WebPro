@@ -18,6 +18,7 @@ class Cart extends Component
     public $borrower_reason;
     public $borrower_nim;
     public $borrower_prodi;
+    public $borrower_category; // New: Wajihah / Civitas Akademika / Umum
     public $borrower_description;
     public $location; // New
 
@@ -54,11 +55,11 @@ class Cart extends Component
         'borrower_reason' => 'required',
         'borrower_nim' => 'required',
         'borrower_prodi' => 'required',
+        'borrower_category' => 'required|in:Wajihah,Civitas Akademika,Umum',
         'location' => 'required',
         'loan_date_start' => 'required|date',
         'loan_time_start' => 'required',
         'loan_date_end' => 'required|date|after_or_equal:loan_date_start',
-        'loan_time_end' => 'required',
         'loan_time_end' => 'required',
         'document_file' => 'nullable|file|mimes:pdf|max:10240', // 10MB, PDF only, Optional
         'ktp_file' => 'required|file|max:10240',
@@ -76,12 +77,13 @@ class Cart extends Component
             'borrower_reason.required' => 'Keperluan wajib diisi.',
             'borrower_nim.required' => 'NIM/NIP wajib diisi.',
             'borrower_prodi.required' => 'Program studi / Unit wajib diisi.',
+            'borrower_category.required' => 'Kategori peminjam wajib dipilih.',
+            'borrower_category.in' => 'Pilihan kategori peminjam tidak valid.',
             'location.required' => 'Lokasi kegiatan wajib diisi.',
             'loan_date_start.required' => 'Tanggal mulai wajib diisi.',
             'loan_time_start.required' => 'Jam mulai wajib diisi.',
             'loan_date_end.required' => 'Tanggal selesai wajib diisi.',
             'loan_time_end.required' => 'Jam selesai wajib diisi.',
-            // 'document_file.required' => 'Dokumen proposal wajib diunggah.', // Disabled
             'document_file.mimes' => 'Proposal harus berformat PDF.',
             'document_file.max' => 'Ukuran file maksimal 10MB.',
             'document_file.uploaded' => 'Gagal mengunggah. File mungkin terlalu besar (melebihi batas server) atau koneksi terputus.',
@@ -164,6 +166,21 @@ class Cart extends Component
             // Calculate duration in hours (approx) for record keeping, though start/end is more precise
             $duration = $startDateTime->diffInHours($endDateTime);
 
+            // Determine status (Auto-reject if Civitas Akademika / Umum submitted under H-3)
+            $initialStatus = 'PENDING';
+            $rejectionReason = null;
+
+            if (in_array($this->borrower_category, ['Civitas Akademika', 'Umum'])) {
+                $submissionDay = \Carbon\Carbon::today();
+                $startDateDay = \Carbon\Carbon::parse($this->loan_date_start)->startOfDay();
+                $daysDiff = $submissionDay->diffInDays($startDateDay, false);
+
+                if ($daysDiff < 3) {
+                    $initialStatus = 'rejected';
+                    $rejectionReason = 'Sistem Auto-Reject: Pengajuan peminjaman untuk kategori Civitas Akademika / Umum wajib diajukan minimal H-3 sebelum tanggal peminjaman.';
+                }
+            }
+
             $loan = \App\Models\LoanRequest::create([
                 'borrower_name' => $this->borrower_name,
                 'borrower_email' => $this->borrower_email,
@@ -172,6 +189,7 @@ class Cart extends Component
 
                 'nim_nip' => $this->borrower_nim,
                 'department' => $this->borrower_prodi,
+                'borrower_category' => $this->borrower_category,
                 'activity_description' => $this->borrower_description,
                 'activity_location' => $this->location,
                 'donation_amount' => $this->donation_amount ?: 0,
@@ -184,7 +202,8 @@ class Cart extends Component
                 'start_time' => $startDateTime->toTimeString(),
                 'end_time' => $endDateTime->toTimeString(),
                 'duration' => $duration ?: 1, // Fallback
-                'status' => 'PENDING',
+                'status' => $initialStatus,
+                'rejection_reason' => $rejectionReason,
             ]);
 
             foreach ($cart as $cartItem) {

@@ -27,12 +27,15 @@ class Approval extends Component
 
     public function render()
     {
-        $pendingRequests = \App\Models\LoanRequest::where('status', 'pending')
+        // Auto-reject any pending requests that are past start date/time or submitted < H-3 for Civitas/Umum
+        \App\Models\LoanRequest::autoRejectExpiredPending();
+
+        $pendingRequests = \App\Models\LoanRequest::whereIn('status', ['pending', 'PENDING'])
             ->with('items')
             ->latest()
             ->paginate(10, ['*'], 'pendingPage');
 
-        $historyRequests = \App\Models\LoanRequest::whereIn('status', ['approved', 'rejected'])
+        $historyRequests = \App\Models\LoanRequest::whereIn('status', ['approved', 'APPROVED', 'rejected', 'REJECTED'])
             ->with('items')
             ->latest()
             ->paginate(10, ['*'], 'historyPage');

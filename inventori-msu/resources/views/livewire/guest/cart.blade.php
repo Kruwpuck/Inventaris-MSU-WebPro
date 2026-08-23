@@ -113,6 +113,21 @@
               </div>
               @error('borrower_prodi') <div class="text-danger small">{{ $message }}</div> @enderror
             </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Kategori Peminjam <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-people"></i></span>
+                <select class="form-select" id="borrowerCategory" required wire:model="borrower_category">
+                  <option value="" disabled selected>Pilih Kategori</option>
+                  <option value="Wajihah">Wajihah</option>
+                  <option value="Civitas Akademika">Civitas Akademika</option>
+                  <option value="Umum">Umum</option>
+                </select>
+                <div class="invalid-feedback">Wajib diisi.</div>
+              </div>
+              @error('borrower_category') <div class="text-danger small">{{ $message }}</div> @enderror
+            </div>
             <div class="col-md-12">
               <label class="form-label">Kegiatan <span class="text-danger">*</span></label>
               <div class="input-group">

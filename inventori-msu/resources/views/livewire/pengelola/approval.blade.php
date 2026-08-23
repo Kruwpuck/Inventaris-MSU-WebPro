@@ -331,7 +331,10 @@
                   <div class="fw-bold text-truncate" style="max-width: 160px;" title="{{ $req->borrower_name }}">
                     {{ $req->borrower_name }}
                   </div>
-                  <div class="small text-muted">{{ $req->department ?? 'Umum' }}</div>
+                  <div class="small text-muted">
+                    <span class="badge bg-secondary text-white me-1" style="font-size: 0.68rem;">{{ $req->borrower_category ?? 'Umum' }}</span>
+                    {{ $req->department ?? '-' }}
+                  </div>
                 </td>
                 <td>
                   <ul class="items-list small">
@@ -459,6 +462,9 @@
                 <td>
                   <div class="fw-bold text-truncate" style="max-width: 160px;" title="{{ $hist->borrower_name }}">
                     {{ $hist->borrower_name }}
+                  </div>
+                  <div class="small text-muted">
+                    <span class="badge bg-secondary text-white me-1" style="font-size: 0.68rem;">{{ $hist->borrower_category ?? 'Umum' }}</span>
                   </div>
                 </td>
                 <td>
@@ -797,17 +803,21 @@
               </div>
 
               <div class="row g-2">
-                <div class="col-6">
+                <div class="col-4">
                   <div class="bg-light p-3 rounded border h-100">
-                    <label class="small text-muted text-uppercase fw-bold mb-1" style="font-size:0.7rem;">NIM /
-                      NIP</label>
+                    <label class="small text-muted text-uppercase fw-bold mb-1" style="font-size:0.7rem;">Kategori</label>
+                    <div class="fw-semibold text-dark">{{ $selectedBorrower->borrower_category ?? 'Umum' }}</div>
+                  </div>
+                </div>
+                <div class="col-4">
+                  <div class="bg-light p-3 rounded border h-100">
+                    <label class="small text-muted text-uppercase fw-bold mb-1" style="font-size:0.7rem;">NIM / NIP</label>
                     <div class="fw-semibold text-dark">{{ $selectedBorrower->nim_nip ?? '-' }}</div>
                   </div>
                 </div>
-                <div class="col-6">
+                <div class="col-4">
                   <div class="bg-light p-3 rounded border h-100">
-                    <label class="small text-muted text-uppercase fw-bold mb-1" style="font-size:0.7rem;">Unit /
-                      Departemen</label>
+                    <label class="small text-muted text-uppercase fw-bold mb-1" style="font-size:0.7rem;">Unit / Departemen</label>
                     <div class="fw-semibold text-dark">{{ $selectedBorrower->department ?? '-' }}</div>
                   </div>
                 </div>
