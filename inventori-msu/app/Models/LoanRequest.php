@@ -2,9 +2,12 @@
 
 namespace App\Models;
 
+use App\Observers\LoanRequestObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
+#[ObservedBy(LoanRequestObserver::class)]
 class LoanRequest extends Model
 {
     protected $fillable = [

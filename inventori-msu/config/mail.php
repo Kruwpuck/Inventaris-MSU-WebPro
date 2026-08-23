@@ -115,4 +115,17 @@ return [
         'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Alamat Notifikasi Pengelola
+    |--------------------------------------------------------------------------
+    |
+    | Tujuan email setiap ada pengajuan peminjaman baru. Diambil dari env
+    | supaya bisa diganti tanpa deploy ulang dan tidak masuk repo publik.
+    | Kosong berarti notifikasi dilewati (dicatat sebagai warning di log).
+    |
+    */
+
+    'admin_address' => env('MAIL_ADMIN_ADDRESS'),
+
 ];
