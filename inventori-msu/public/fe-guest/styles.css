@@ -261,6 +261,11 @@ body {
 }
 
 @media (min-width: 576px) {
+  .datebar-btn-group {
+    width: auto !important;
+    margin-left: auto !important;
+  }
+
   #btnShowCalendar,
   #btnSetDates,
   #btnCheckAvailability {
@@ -272,6 +277,7 @@ body {
 @media (max-width: 575.98px) {
   .datebar-btn-group {
     width: 100% !important;
+    margin-left: 0 !important;
   }
 
   #btnShowCalendar,

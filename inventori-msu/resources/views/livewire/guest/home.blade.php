@@ -118,7 +118,7 @@
           </div>
           <div class="col-12 d-flex flex-column flex-sm-row align-items-sm-center justify-content-between mt-2 gap-3">
             <div class="text-muted small js-daterange pt-1">Silakan tentukan waktu peminjaman dulu.</div>
-            <div class="datebar-btn-group d-flex flex-column flex-sm-row gap-2 w-100 w-sm-auto ms-sm-auto">
+            <div class="datebar-btn-group d-flex flex-column flex-sm-row gap-2 ms-sm-auto">
               <button id="btnShowCalendar" class="btn btn-success" type="button" title="Lihat Jadwal Harian">
                 <i class="bi bi-calendar3 me-1"></i> Cek Jadwal
               </button>
