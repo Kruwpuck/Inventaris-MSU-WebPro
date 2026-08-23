@@ -63,7 +63,7 @@
                  <div class="fw-bold text-dark">+62 882-7982-9071</div>
              </div>
              <div>
-                <a href="https://wa.me/6288279829071" target="_blank" class="btn btn-sm btn-success rounded-pill px-3 fw-bold">
+                <a href="https://wa.me/6288279829071" target="_blank" class="btn btn-sm btn-success rounded-pill px-3 fw-bold btn-whatsapp">
                     <i class="bi bi-chat-dots me-1"></i> Chat
                 </a>
              </div>
