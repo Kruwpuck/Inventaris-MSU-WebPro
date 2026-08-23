@@ -57,13 +57,13 @@
               <label class="form-label small fw-bold">Jam Kembali</label>
               <input type="time" class="form-control" id="filterTimeEnd">
             </div>
-            <div class="col-12 d-flex align-items-end mt-3 gap-2">
-              <div class="text-muted small me-auto" id="filterResultText">Silakan tentukan waktu peminjaman dulu.</div>
-              <div class="d-flex align-items-stretch gap-2">
+            <div class="col-12 d-flex flex-column flex-sm-row align-items-sm-center justify-content-between mt-3 gap-3">
+              <div class="text-muted small" id="filterResultText">Silakan tentukan waktu peminjaman dulu.</div>
+              <div class="datebar-btn-group d-flex flex-column flex-sm-row gap-2 w-100 w-sm-auto ms-sm-auto">
                 <button id="btnShowCalendar" class="btn btn-outline-secondary" type="button" title="Lihat Jadwal Harian">
-                  <i class="bi bi-calendar3"></i>
+                  <i class="bi bi-calendar3 me-1"></i> Cek Jadwal
                 </button>
-                <button class="btn btn-success" id="btnCheckAvailability">
+                <button class="btn btn-success" id="btnCheckAvailability" type="button">
                   <i class="bi bi-search me-1"></i> Cek Ketersediaan
                 </button>
               </div>

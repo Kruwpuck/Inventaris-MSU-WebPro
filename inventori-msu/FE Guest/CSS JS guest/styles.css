@@ -237,19 +237,53 @@ body {
 }
 
 /* Button override */
+#btnShowCalendar,
 #btnSetDates,
 #btnCheckAvailability {
-  min-height: 48px;
+  min-height: 46px;
   border-radius: 12px;
   font-weight: 700;
-  text-transform: uppercase;
+  font-size: 0.85rem;
   letter-spacing: 0.03em;
   background: linear-gradient(135deg, var(--teal), var(--green-3));
   border: none;
-  box-shadow: 0 8px 16px rgba(15, 111, 107, 0.2);
+  color: #fff;
+  box-shadow: 0 6px 14px rgba(15, 111, 107, 0.2);
   transition: transform 0.2s, box-shadow 0.2s;
+  padding: 0.5rem 1.2rem;
 }
 
+#btnShowCalendar.btn-outline-secondary {
+  background: transparent;
+  color: var(--teal);
+  border: 1px solid var(--teal);
+  box-shadow: none;
+}
+
+@media (min-width: 576px) {
+  #btnShowCalendar,
+  #btnSetDates,
+  #btnCheckAvailability {
+    width: auto;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .datebar-btn-group {
+    width: 100% !important;
+  }
+
+  #btnShowCalendar,
+  #btnSetDates,
+  #btnCheckAvailability {
+    width: 100% !important;
+    white-space: normal !important;
+    text-align: center;
+  }
+}
+
+#btnShowCalendar:hover,
 #btnSetDates:hover,
 #btnCheckAvailability:hover {
   transform: translateY(-2px);
