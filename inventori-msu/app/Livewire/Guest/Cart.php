@@ -18,7 +18,7 @@ class Cart extends Component
     public $borrower_reason;
     public $borrower_nim;
     public $borrower_prodi;
-    public $borrower_category; // New: Wajihah / Civitas Akademika / Umum
+    public $borrower_category = ''; // New: Wajihah / Civitas Akademika / Umum
     public $borrower_description;
     public $location; // New
 

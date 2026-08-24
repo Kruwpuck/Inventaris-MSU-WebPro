@@ -119,7 +119,7 @@
               <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-people"></i></span>
                 <select class="form-select" id="borrowerCategory" required wire:model="borrower_category">
-                  <option value="" disabled selected>Pilih Kategori</option>
+                  <option value="">Pilih Kategori</option>
                   <option value="Wajihah">Wajihah</option>
                   <option value="Civitas Akademika">Civitas Akademika</option>
                   <option value="Umum">Umum</option>
