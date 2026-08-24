@@ -629,6 +629,7 @@ window.addEventListener('load', () => {
     const waLink = e.target.closest('a[href*="wa.me"], a[href*="api.whatsapp.com"], #fabContact, .btn-whatsapp');
     if (!waLink) return;
 
+    let wibMinutes = 0;
     try {
       const options = { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit', hour12: false };
       const parts = new Intl.DateTimeFormat('en-GB', options).formatToParts(new Date());
@@ -638,24 +639,22 @@ window.addEventListener('load', () => {
         if (part.type === 'minute') minute = parseInt(part.value, 10);
       }
       if (hour === 24) hour = 0;
-
-      const totalMinutes = hour * 60 + minute;
-      const startMinutes = 6 * 60;  // 06:00 WIB (360)
-      const endMinutes = 17 * 60;  // 17:00 WIB (1020)
-
-      if (totalMinutes < startMinutes || totalMinutes > endMinutes) {
-        e.preventDefault();
-        e.stopPropagation();
-        alert("Mohon maaf, saat ini diluar Jam Operasional Admin\nJam Operasional Admin: 06.00-17.00 WIB");
-      }
+      wibMinutes = hour * 60 + minute;
     } catch (err) {
-      const now = new Date();
-      const totalMinutes = now.getHours() * 60 + now.getMinutes();
-      if (totalMinutes < 360 || totalMinutes > 1020) {
-        e.preventDefault();
-        e.stopPropagation();
-        alert("Mohon maaf, saat ini diluar Jam Operasional Admin\nJam Operasional Admin: 06.00-17.00 WIB");
-      }
+      const d = new Date();
+      const utcMinutes = d.getUTCHours() * 60 + d.getUTCMinutes();
+      wibMinutes = utcMinutes + (7 * 60); // UTC+7 for WIB
+      if (wibMinutes >= 1440) wibMinutes -= 1440;
+      if (wibMinutes < 0) wibMinutes += 1440;
+    }
+
+    const startMinutes = 6 * 60;  // 06:00 WIB (360)
+    const endMinutes = 17 * 60;   // 17:00 WIB (1020)
+
+    if (wibMinutes < startMinutes || wibMinutes > endMinutes) {
+      e.preventDefault();
+      e.stopPropagation();
+      alert("Mohon maaf, saat ini diluar Jam Operasional Admin\nJam Operasional Admin: 06.00-17.00 WIB");
     }
   }, true);
 })();
