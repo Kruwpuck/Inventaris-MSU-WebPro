@@ -291,7 +291,7 @@
           <div class="d-flex justify-content-center gap-2">
             <button type="button" class="btn btn-light px-4 fw-bold" data-bs-dismiss="modal"
               style="border-radius:12px" wire:loading.attr="disabled" wire:target="submit">Cek Lagi</button>
-            <button type="button" class="btn btn-primary px-4 fw-bold" id="btnRealSubmit" style="border-radius:12px" wire:click="submit" wire:loading.attr="disabled" wire:target="submit">
+            <button type="button" class="btn btn-primary px-4 fw-bold" id="btnRealSubmit" data-bs-dismiss="modal" style="border-radius:12px" wire:click="submit" wire:loading.attr="disabled" wire:target="submit">
               <span wire:loading.remove wire:target="submit">Ya, Kirim</span>
               <span wire:loading wire:target="submit">
                 <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
@@ -399,8 +399,9 @@
             btnAgree.addEventListener('click', () => {
                 chk.disabled = false;
                 chk.checked = true;
-                // Trigger Livewire update manually if needed, or dispatch event
                 chk.dispatchEvent(new Event('change'));
+                chk.dispatchEvent(new Event('input'));
+                @this.set('agree_terms', true);
                 // Trigger form validation check
                 validateBookingForm();
                 modal.hide();
