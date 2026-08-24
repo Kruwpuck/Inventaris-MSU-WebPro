@@ -708,9 +708,8 @@
                   {{-- TANGGAL KEMBALI --}}
                   <li>Tanggal Pengembalian: {{ optional($selectedRequest->loan_date_end)->format('d-m-Y') ?? '-' }}</li>
 
-                  {{-- JAM MULAI & DURASI & JAM PENGEMBALIAN --}}
+                  {{-- JAM MULAI & JAM PENGEMBALIAN --}}
                   <li>Jam Mulai: {{ $selectedRequest->start_time ?? '-' }} WIB</li>
-                  <li>Durasi Pinjam: {{ $selectedRequest->duration ?? 0 }} Jam</li>
                   <li>
                     Jam Pengembalian:
                     @if($selectedRequest->start_time && $selectedRequest->duration)
@@ -720,6 +719,9 @@
                       -
                     @endif
                   </li>
+                  <li>Jenis Kegiatan: {{ $selectedRequest->borrower_reason ?? $selectedRequest->purpose ?? '-' }}</li>
+                  <li>Lokasi Kegiatan: {{ $selectedRequest->activity_location ?? $selectedRequest->location ?? '-' }}</li>
+                  <li>Deskripsi Singkat Kegiatan: {{ $selectedRequest->activity_description ?? $selectedRequest->borrower_description ?? $selectedRequest->description ?? '-' }}</li>
 
                   {{-- ALASAN TOLAK (JIKA ADA) --}}
                   @if($selectedRequest->status == 'rejected')
