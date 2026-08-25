@@ -861,8 +861,12 @@ function buildMailtoURL({ to, subject, body, cc = '', bcc = '' }) {
 
         // Native validity check
         const requiredValid = [...form.querySelectorAll('[required]')].every(el => {
-            // For file inputs, Livewire wires them. If they have value/files, it's good.
-            if (el.type === 'file') return el.files.length > 0;
+            // Input file SENGAJA dilewati. Livewire mengosongkan input native
+            // setelah upload selesai (supaya file yang sama bisa dipilih ulang),
+            // jadi el.files.length kembali 0 justru saat file sudah aman di
+            // server. Memakainya sebagai syarat membuat tombol Kirim terkunci
+            // selamanya. Kelengkapan berkas ditegakkan validasi server.
+            if (el.type === 'file') return true;
             return el.value && el.checkValidity();
         });
 
@@ -911,17 +915,25 @@ function buildMailtoURL({ to, subject, body, cc = '', bcc = '' }) {
         }
     });
 
-    // File validation limit (Client side visual only)
+    // Batas ukuran file, dicegat SEBELUM Livewire.
+    // Versi lama memakai listener bubbling biasa lalu mengosongkan el.value,
+    // padahal listener wire:model milik Livewire menyala pada event yang sama
+    // dan sudah mulai mengunggah. Mengosongkan input di tengah upload membuat
+    // status Livewire tidak sinkron dan spinner tidak pernah berhenti.
+    // Fase capture + stopImmediatePropagation menghentikan event sebelum
+    // Livewire melihatnya, jadi upload tidak pernah dimulai.
     const max = 10 * 1024 * 1024;
     [reqInput, ktpInput].forEach(el => {
         if (!el) return;
-        el.addEventListener('change', () => {
+        el.addEventListener('change', (e) => {
             if (el.files[0] && el.files[0].size > max) {
+                e.stopImmediatePropagation();
+                e.preventDefault();
                 showValidationModal('Ukuran file maksimal 10MB.');
                 el.value = '';
                 validateForm();
             }
-        });
+        }, true);
     });
 
     // Cancel Button

@@ -48,6 +48,21 @@ class Cart extends Component
         $this->activeItemId = $id;
     }
 
+    /**
+     * Validasi berkas begitu dipilih, bukan menunggu tombol Kirim ditekan.
+     * Tanpa ini, file yang ditolak (format/ukuran salah) tidak memberi tanda
+     * apa pun sampai pengguna selesai mengisi seluruh form.
+     */
+    public function updatedKtpFile()
+    {
+        $this->validateOnly('ktp_file');
+    }
+
+    public function updatedDocumentFile()
+    {
+        $this->validateOnly('document_file');
+    }
+
     protected $rules = [
         'borrower_name' => 'required',
         'borrower_email' => 'required|email',
@@ -62,7 +77,10 @@ class Cart extends Component
         'loan_date_end' => 'required|date|after_or_equal:loan_date_start',
         'loan_time_end' => 'required',
         'document_file' => 'nullable|file|mimes:pdf|max:10240', // 10MB, PDF only, Optional
-        'ktp_file' => 'required|file|max:10240',
+        // Label kolomnya menjanjikan gambar, jadi mime-nya ditegakkan di sini.
+        // Sebelumnya aturannya cuma 'file', sehingga HEIC dari iPhone diterima
+        // diam-diam lalu tidak bisa dibuka pengelola di browser.
+        'ktp_file' => 'required|file|mimes:jpeg,jpg,png,webp|max:10240',
         'borrower_description' => 'required',
         'agree_terms' => 'accepted', // Must be checked
     ];
@@ -90,6 +108,7 @@ class Cart extends Component
             'ktp_file.required' => 'Dokumen identitas (KTM/KTP) wajib diunggah.',
             'ktp_file.uploaded' => 'Gagal mengunggah. File mungkin terlalu besar (melebihi batas server) atau koneksi terputus.',
             'ktp_file.max' => 'Ukuran file maksimal 10MB.',
+            'ktp_file.mimes' => 'Format harus JPG, PNG, atau WEBP. Foto iPhone berformat HEIC: ubah Settings > Camera > Formats > Most Compatible, lalu foto ulang.',
             'borrower_description.required' => 'Deskripsi kegiatan wajib diisi.',
             'agree_terms.accepted' => 'Anda wajib menyetujui Syarat & Ketentuan.',
         ];

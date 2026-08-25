@@ -191,14 +191,29 @@
                <div class="row g-3">
                    <div class="col-md-6">
                        <label class="form-label small fw-bold">Proposal Kegiatan</label>
-                       <input type="file" class="form-control" id="requirements" accept=".pdf" wire:model="document_file" />
+                       <input type="file" class="form-control" id="requirements" accept="application/pdf,.pdf" wire:model="document_file" />
                        <div class="form-text">Format PDF (max 10MB). Opsional.</div>
+                       <div wire:loading wire:target="document_file" class="text-primary small mt-1">
+                           <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>Mengunggah proposal...
+                       </div>
                        @error('document_file') <div class="text-danger small">{{ $message }}</div> @enderror
                    </div>
                    <div class="col-md-6">
                        <label class="form-label small fw-bold">Identitas Peminjam (KTM/KTP/SIM) <span class="text-danger">*</span></label>
-                       <input type="file" class="form-control" id="ktpUpload" accept="image/png, image/jpeg, image/jpg" required wire:model="ktp_file" />
-                       <div class="form-text">Wajib format gambar (JPG, PNG).</div>
+                       {{-- accept="image/*" disengaja: daftar mime sempit membuat HEIC/WEBP
+                            tersaring diam-diam di file picker tanpa pesan apa pun. Format yang
+                            benar-benar diterima ditegakkan di server (mimes:jpeg,jpg,png,webp)
+                            supaya penolakannya disertai penjelasan. --}}
+                       {{-- Tanpa atribut `required`: Livewire mengosongkan input native
+                            setelah upload selesai, sehingga form.checkValidity() menganggap
+                            kolom ini kosong justru ketika filenya sudah aman di server —
+                            mengunci tombol Kirim. Kewajibannya ditegakkan aturan server
+                            'ktp_file' => 'required|...'. --}}
+                       <input type="file" class="form-control" id="ktpUpload" accept="image/*" wire:model="ktp_file" />
+                       <div class="form-text">Wajib format gambar: JPG, PNG, atau WEBP (max 10MB).</div>
+                       <div wire:loading wire:target="ktp_file" class="text-primary small mt-1">
+                           <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>Mengunggah identitas...
+                       </div>
                        @error('ktp_file') <div class="text-danger small">{{ $message }}</div> @enderror
                    </div>
                </div>
