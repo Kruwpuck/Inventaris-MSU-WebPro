@@ -872,10 +872,9 @@ function buildMailtoURL({ to, subject, body, cc = '', bcc = '' }) {
 
         const cartHasQty = (window.MSUCart?.count() || 0) > 0;
 
-        // Update Submit Button State (Optional - Livewire handles this too via loading)
-        // But we want to prevent clicking if form invalid
+        // Keep btnSubmit clickable so users get missing field alerts on click
         if (btnSubmit) {
-            btnSubmit.disabled = !(requiredValid && cartHasQty);
+            btnSubmit.disabled = false;
         }
         return requiredValid && cartHasQty;
     }
@@ -885,35 +884,6 @@ function buildMailtoURL({ to, subject, body, cc = '', bcc = '' }) {
 
     // Initial validation check
     validateForm();
-
-    // Handle "Kirim Booking" button click (Opens Modal)
-    btnSubmit?.addEventListener('click', () => {
-        if (!form.checkValidity()) {
-            form.classList.add('was-validated');
-            validateForm(); // Re-check to update UI
-
-            // Scroll to first invalid
-            const firstInvalid = form.querySelector(':invalid');
-            if (firstInvalid) firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-            return;
-        }
-
-        // Check Logic Waktu Client Side (Optional double check)
-        // ... (Time validation logic can stay if needed, simplified here)
-
-        // Show Confirmation Modal
-        const confirmSubmitModalEl = document.getElementById('confirmSubmitModal');
-        const confirmSubmitModal = confirmSubmitModalEl ? new bootstrap.Modal(confirmSubmitModalEl) : null;
-        if (confirmSubmitModal) {
-            confirmSubmitModal.show();
-        } else {
-            // Fallback if modal broken: Trigger Livewire direct?
-            // Since button inside modal has wire:click, if modal fails, we strictly can't submit via that button.
-            // But we can try finding the real submit button if it existed. 
-            alert("Error: Modal konfirmasi tidak ditemukan.");
-        }
-    });
 
     // Batas ukuran file, dicegat SEBELUM Livewire.
     // Versi lama memakai listener bubbling biasa lalu mengosongkan el.value,

@@ -15,6 +15,32 @@
   .text-danger {
     color: #d93025 !important; 
   }
+  @keyframes fieldHighlightPulse {
+    0% {
+      box-shadow: 0 0 0 0.3rem rgba(220, 53, 69, 0.7);
+      border-color: #dc3545 !important;
+    }
+    50% {
+      box-shadow: 0 0 0 0.55rem rgba(220, 53, 69, 0.4);
+      border-color: #dc3545 !important;
+    }
+    100% {
+      box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.2);
+      border-color: #dc3545 !important;
+    }
+  }
+  .field-highlight-pulse {
+    animation: fieldHighlightPulse 1.2s ease-in-out 2 !important;
+    border-color: #dc3545 !important;
+  }
+  .form-check.field-highlight-pulse {
+    background-color: #ffebe9 !important;
+    border-color: #dc3545 !important;
+  }
+  .missing-field-item:hover {
+    background-color: #f8d7da !important;
+    transform: translateY(-1px);
+  }
 </style>
 @endpush
 
@@ -248,7 +274,7 @@
             <button class="btn btn-outline-danger" type="button" id="btnCancel">
               <i class="bi bi-x-circle me-1"></i>Batalkan
             </button>
-            <button class="btn btn-primary btn-book disabled" type="button" id="btnSubmit" disabled style="transition: all 0.3s;">
+            <button class="btn btn-secondary opacity-75 btn-book" type="button" id="btnSubmit" style="transition: all 0.3s; cursor: pointer;">
               <span wire:loading.remove wire:target="document_file, ktp_file, submit"><i class="bi bi-check2-circle me-1"></i>Kirim Booking</span>
               <span wire:loading wire:target="document_file"><span class="spinner-border spinner-border-sm me-1"></span>Upload Prp...</span>
               <span wire:loading wire:target="ktp_file"><span class="spinner-border spinner-border-sm me-1"></span>Upload KTP...</span>
@@ -318,6 +344,38 @@
       </div>
     </div>
   </div>
+
+  <!-- Modal Notifikasi Data Belum Lengkap -->
+  <div class="modal fade" id="missingFieldsModal" tabindex="-1" aria-hidden="true" style="z-index: 2060;" wire:ignore.self>
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4 border-0 shadow-lg">
+        <div class="modal-header bg-danger text-white border-0 py-3 rounded-top-4">
+          <h5 class="modal-title fw-bold d-flex align-items-center gap-2 m-0">
+            <i class="bi bi-exclamation-triangle-fill fs-4"></i> Data Belum Lengkap
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-4">
+          <p class="text-secondary mb-3 fw-semibold" style="font-size: 0.95rem;">
+            Mohon melengkapi data berikut sebelum mengirim booking:
+          </p>
+          <div id="missingFieldsList" class="d-flex flex-column gap-2 mb-3" style="max-height: 260px; overflow-y: auto;">
+            <!-- Diisi via JS -->
+          </div>
+          <div class="alert alert-warning py-2 px-3 small d-flex align-items-center gap-2 m-0 rounded-3 border-0 bg-warning-subtle text-warning-emphasis">
+            <i class="bi bi-info-circle-fill fs-5 flex-shrink-0"></i>
+            <span>Klik salah satu item di atas untuk langsung menuju ke lokasi data yang belum diisi.</span>
+          </div>
+        </div>
+        <div class="modal-footer border-0 pt-0">
+          <button type="button" class="btn btn-danger w-100 rounded-3 py-2 fw-bold" id="btnFocusFirstMissing">
+            <i class="bi bi-geo-alt-fill me-1"></i> Lengkapi Sekarang
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL SYARAT & KETENTUAN -->
   <div class="modal fade" id="termsModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" wire:ignore.self>
       <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
@@ -424,36 +482,218 @@
         }
     });
 
-    // Form Validation Logic to toggle Submit Button
-    function validateBookingForm() {
-        const form = document.getElementById('bookingForm');
-        const btn = document.getElementById('btnSubmit');
-        const chk = document.getElementById('agreeTerms');
-        
-        let isValid = form.checkValidity();
-        
-        // Explicitly check terms (though required attribute might handle it, logic implies manual check)
-        if (!chk.checked) isValid = false;
+    function getMissingBookingFields() {
+        const missing = [];
 
-        if (isValid) {
-            btn.disabled = false;
-            btn.classList.remove('disabled', 'btn-secondary');
+        // 1. Cart check
+        const cartCount = (window.MSUCart?.count() || 0);
+        if (cartCount === 0) {
+            missing.push({
+                id: 'cartList',
+                name: 'Keranjang Peminjaman (Belum ada barang/ruangan yang dipilih)',
+                icon: 'bi-bag-x'
+            });
+        }
+
+        // 2. Form fields check
+        const fields = [
+            { id: 'loanNumber', name: 'Nomor Telepon', icon: 'bi-telephone' },
+            { id: 'pjName', name: 'Penanggung Jawab', icon: 'bi-person-badge' },
+            { id: 'idNumber', name: 'NIM / NIP', icon: 'bi-hash' },
+            { id: 'email', name: 'Email', icon: 'bi-envelope' },
+            { id: 'studyProgram', name: 'Program Studi / Unit', icon: 'bi-mortarboard' },
+            { id: 'borrowerCategory', name: 'Kategori Peminjam', icon: 'bi-people' },
+            { id: 'purpose', name: 'Kegiatan', icon: 'bi-clipboard-check' },
+            { id: 'location', name: 'Lokasi Kegiatan', icon: 'bi-geo-alt' },
+            { id: 'loanDate', name: 'Tanggal Pakai', icon: 'bi-calendar-event' },
+            { id: 'loanTimeStart', name: 'Jam Pakai', icon: 'bi-clock' },
+            { id: 'loanDateEnd', name: 'Tanggal Kembali', icon: 'bi-calendar-event' },
+            { id: 'loanTimeEnd', name: 'Jam Kembali', icon: 'bi-clock' },
+            { id: 'ktpUpload', name: 'Identitas Peminjam (KTM/KTP/SIM)', icon: 'bi-card-image' },
+            { id: 'longPurpose', name: 'Deskripsi Kegiatan', icon: 'bi-file-text' }
+        ];
+
+        fields.forEach(f => {
+            const el = document.getElementById(f.id);
+            if (!el) return;
+
+            let isMissing = false;
+            if (el.type === 'file') {
+                const hasNativeFile = el.files && el.files.length > 0;
+                if (!hasNativeFile) {
+                    if (typeof @this !== 'undefined' && @this.get && @this.get('ktp_file')) {
+                        isMissing = false;
+                    } else {
+                        isMissing = true;
+                    }
+                }
+            } else if (el.tagName === 'SELECT') {
+                if (!el.value || el.value.trim() === '') isMissing = true;
+            } else {
+                if (!el.value || el.value.trim() === '' || !el.checkValidity()) {
+                    isMissing = true;
+                }
+            }
+
+            if (isMissing) {
+                missing.push({
+                    id: f.id,
+                    name: f.name,
+                    icon: f.icon
+                });
+            }
+        });
+
+        // 3. T&C Checkbox
+        const chk = document.getElementById('agreeTerms');
+        if (chk && !chk.checked) {
+            missing.push({
+                id: 'agreeTerms',
+                name: 'Persetujuan Syarat & Ketentuan',
+                icon: 'bi-check-square'
+            });
+        }
+
+        return missing;
+    }
+
+    function scrollToAndHighlightField(targetId) {
+        let el = document.getElementById(targetId);
+        if (!el) return;
+
+        if (targetId === 'agreeTerms') {
+            const container = el.closest('.form-check');
+            if (container) el = container;
+        }
+
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        const focusable = document.getElementById(targetId);
+        if (focusable && typeof focusable.focus === 'function' && !focusable.disabled) {
+            setTimeout(() => focusable.focus(), 450);
+        } else if (targetId === 'agreeTerms') {
+            const link = document.getElementById('linkTerms');
+            if (link) setTimeout(() => link.focus(), 450);
+        }
+
+        el.classList.remove('field-highlight-pulse');
+        void el.offsetWidth;
+        el.classList.add('field-highlight-pulse');
+        setTimeout(() => {
+            el.classList.remove('field-highlight-pulse');
+        }, 2600);
+    }
+
+    function showMissingFieldsAlert(missing) {
+        const form = document.getElementById('bookingForm');
+        if (form) form.classList.add('was-validated');
+
+        missing.forEach(m => {
+            const el = document.getElementById(m.id);
+            if (el) el.classList.add('is-invalid');
+        });
+
+        const listContainer = document.getElementById('missingFieldsList');
+        if (listContainer) {
+            listContainer.innerHTML = missing.map(item => `
+                <button type="button" 
+                        class="btn btn-outline-danger text-start d-flex align-items-center justify-content-between p-2.5 rounded-3 missing-field-item" 
+                        data-target-id="${item.id}"
+                        style="transition: all 0.2s;">
+                    <span class="d-flex align-items-center gap-2 fw-medium text-dark small">
+                        <i class="bi ${item.icon} text-danger fs-5"></i>
+                        <span>${item.name}</span>
+                    </span>
+                    <span class="badge text-bg-danger rounded-pill px-2 py-1 small">
+                        Ke Lokasi <i class="bi bi-arrow-right ms-1"></i>
+                    </span>
+                </button>
+            `).join('');
+
+            listContainer.querySelectorAll('.missing-field-item').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const targetId = btn.getAttribute('data-target-id');
+                    const modalEl = document.getElementById('missingFieldsModal');
+                    const modalInst = bootstrap.Modal.getInstance(modalEl);
+                    if (modalInst) modalInst.hide();
+
+                    setTimeout(() => {
+                        scrollToAndHighlightField(targetId);
+                    }, 300);
+                });
+            });
+        }
+
+        const btnFocusFirst = document.getElementById('btnFocusFirstMissing');
+        if (btnFocusFirst) {
+            btnFocusFirst.onclick = () => {
+                const modalEl = document.getElementById('missingFieldsModal');
+                const modalInst = bootstrap.Modal.getInstance(modalEl);
+                if (modalInst) modalInst.hide();
+
+                setTimeout(() => {
+                    scrollToAndHighlightField(missing[0].id);
+                }, 300);
+            };
+        }
+
+        const missingModalEl = document.getElementById('missingFieldsModal');
+        if (missingModalEl) {
+            const modalInst = bootstrap.Modal.getOrCreateInstance(missingModalEl);
+            modalInst.show();
+        }
+    }
+
+    function validateBookingForm() {
+        const missing = getMissingBookingFields();
+        const btn = document.getElementById('btnSubmit');
+        if (!btn) return;
+
+        btn.disabled = false; // Keep clickable!
+
+        if (missing.length === 0) {
+            btn.classList.remove('btn-secondary', 'disabled');
             btn.classList.add('btn-primary');
+            btn.style.opacity = '1';
+            btn.style.filter = 'none';
         } else {
-            btn.disabled = true;
-            btn.classList.add('disabled', 'btn-secondary');
             btn.classList.remove('btn-primary');
+            btn.classList.add('btn-secondary', 'disabled');
+            btn.style.opacity = '0.75';
+            btn.style.filter = 'blur(0.3px)';
         }
     }
 
     // Initialize listeners
     document.addEventListener('DOMContentLoaded', () => {
         const form = document.getElementById('bookingForm');
-        if(form) {
+        const btnSubmit = document.getElementById('btnSubmit');
+
+        if (form) {
             form.addEventListener('input', validateBookingForm);
             form.addEventListener('change', validateBookingForm);
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                btnSubmit?.click();
+            });
         }
-        // Initial check
+
+        if (btnSubmit) {
+            btnSubmit.addEventListener('click', (e) => {
+                e.preventDefault();
+                const missing = getMissingBookingFields();
+                if (missing.length > 0) {
+                    showMissingFieldsAlert(missing);
+                } else {
+                    const confirmModalEl = document.getElementById('confirmSubmitModal');
+                    if (confirmModalEl) {
+                        const confirmModal = bootstrap.Modal.getOrCreateInstance(confirmModalEl);
+                        confirmModal.show();
+                    }
+                }
+            });
+        }
+
         validateBookingForm();
     });
 </script>

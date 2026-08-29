@@ -53,6 +53,11 @@ class Cart extends Component
      * Tanpa ini, file yang ditolak (format/ukuran salah) tidak memberi tanda
      * apa pun sampai pengguna selesai mengisi seluruh form.
      */
+    public function updated($propertyName)
+    {
+        $this->validateOnly($propertyName);
+    }
+
     public function updatedKtpFile()
     {
         $this->validateOnly('ktp_file');
@@ -101,6 +106,7 @@ class Cart extends Component
             'loan_date_start.required' => 'Tanggal mulai wajib diisi.',
             'loan_time_start.required' => 'Jam mulai wajib diisi.',
             'loan_date_end.required' => 'Tanggal selesai wajib diisi.',
+            'loan_date_end.after_or_equal' => 'Tanggal selesai harus sama atau setelah tanggal mulai.',
             'loan_time_end.required' => 'Jam selesai wajib diisi.',
             'document_file.mimes' => 'Proposal harus berformat PDF.',
             'document_file.max' => 'Ukuran file maksimal 10MB.',
