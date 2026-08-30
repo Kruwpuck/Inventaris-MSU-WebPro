@@ -667,9 +667,11 @@
     }
 
     function validateBookingForm() {
-        const missing = getMissingBookingFields();
         const btn = document.getElementById('btnSubmit');
         if (!btn) return;
+
+        const missing = getMissingBookingFields();
+        const isComplete = missing.length === 0;
 
         btn.disabled = false; // Always clickable so clicking pops up missing fields alert
 
@@ -678,7 +680,7 @@
         btn.style.opacity = '1';
         btn.classList.remove('opacity-75', 'disabled');
 
-        if (missing.length === 0) {
+        if (isComplete) {
             // Data complete -> Crisp Vibrant Blue
             btn.classList.remove('btn-secondary');
             btn.classList.add('btn-primary');
@@ -695,7 +697,7 @@
         }
     }
 
-    // Initialize listeners & observers
+    // Initialize listeners
     document.addEventListener('DOMContentLoaded', () => {
         const form = document.getElementById('bookingForm');
         const btnSubmit = document.getElementById('btnSubmit');
@@ -709,12 +711,6 @@
                 e.preventDefault();
                 btnSubmit?.click();
             });
-
-            // Observe DOM updates on form (e.g., Livewire re-renders)
-            const observer = new MutationObserver(() => {
-                validateBookingForm();
-            });
-            observer.observe(form, { childList: true, subtree: true, attributes: true });
         }
 
         if (btnSubmit) {
@@ -742,7 +738,7 @@
         }
 
         // Lightweight periodic check to ensure button state stays accurate
-        setInterval(validateBookingForm, 400);
+        setInterval(validateBookingForm, 500);
 
         validateBookingForm();
     });
