@@ -274,7 +274,7 @@
             <button class="btn btn-outline-danger" type="button" id="btnCancel">
               <i class="bi bi-x-circle me-1"></i>Batalkan
             </button>
-            <button class="btn btn-secondary opacity-75 btn-book" type="button" id="btnSubmit" style="transition: all 0.3s; cursor: pointer;">
+            <button class="btn btn-secondary btn-book fw-bold text-white shadow-sm" type="button" id="btnSubmit" style="transition: all 0.25s ease-in-out; cursor: pointer; filter: none !important; opacity: 1 !important;">
               <span wire:loading.remove wire:target="document_file, ktp_file, submit"><i class="bi bi-check2-circle me-1"></i>Kirim Booking</span>
               <span wire:loading wire:target="document_file"><span class="spinner-border spinner-border-sm me-1"></span>Upload Prp...</span>
               <span wire:loading wire:target="ktp_file"><span class="spinner-border spinner-border-sm me-1"></span>Upload KTP...</span>
@@ -487,7 +487,10 @@
 
         // 1. Cart check
         const cartCount = (window.MSUCart?.count() || 0);
-        if (cartCount === 0) {
+        const cartListEl = document.getElementById('cartList');
+        const hasCartItems = cartCount > 0 || (cartListEl && cartListEl.querySelectorAll('.cart-item-row, .cart-item, li, div.d-flex').length > 0);
+
+        if (!hasCartItems) {
             missing.push({
                 id: 'cartList',
                 name: 'Keranjang Peminjaman (Belum ada barang/ruangan yang dipilih)',
@@ -520,17 +523,25 @@
             let isMissing = false;
             if (el.type === 'file') {
                 const hasNativeFile = el.files && el.files.length > 0;
-                if (!hasNativeFile) {
-                    if (typeof @this !== 'undefined' && @this.get && @this.get('ktp_file')) {
-                        isMissing = false;
-                    } else {
-                        isMissing = true;
+                let hasLivewireFile = false;
+                try {
+                    if (typeof @this !== 'undefined') {
+                        const lwVal = @this.ktp_file;
+                        if (lwVal && lwVal !== '' && lwVal !== null) {
+                            hasLivewireFile = true;
+                        }
                     }
+                } catch (e) {}
+
+                if (!hasNativeFile && !hasLivewireFile) {
+                    isMissing = true;
                 }
             } else if (el.tagName === 'SELECT') {
                 if (!el.value || el.value.trim() === '') isMissing = true;
             } else {
-                if (!el.value || el.value.trim() === '' || !el.checkValidity()) {
+                if (!el.value || el.value.trim() === '') {
+                    isMissing = true;
+                } else if (el.type === 'email' && !el.checkValidity()) {
                     isMissing = true;
                 }
             }
@@ -546,7 +557,18 @@
 
         // 3. T&C Checkbox
         const chk = document.getElementById('agreeTerms');
-        if (chk && !chk.checked) {
+        let isAgreed = false;
+        if (chk && chk.checked) {
+            isAgreed = true;
+        } else {
+            try {
+                if (typeof @this !== 'undefined' && @this.agree_terms) {
+                    isAgreed = true;
+                }
+            } catch (e) {}
+        }
+
+        if (!isAgreed) {
             missing.push({
                 id: 'agreeTerms',
                 name: 'Persetujuan Syarat & Ketentuan',
@@ -649,33 +671,50 @@
         const btn = document.getElementById('btnSubmit');
         if (!btn) return;
 
-        btn.disabled = false; // Keep clickable!
+        btn.disabled = false; // Always clickable so clicking pops up missing fields alert
+
+        // Remove any blur or opacity restriction to keep text 100% crisp and clear
+        btn.style.filter = 'none';
+        btn.style.opacity = '1';
+        btn.classList.remove('opacity-75', 'disabled');
 
         if (missing.length === 0) {
-            btn.classList.remove('btn-secondary', 'disabled');
+            // Data complete -> Crisp Vibrant Blue
+            btn.classList.remove('btn-secondary');
             btn.classList.add('btn-primary');
-            btn.style.opacity = '1';
-            btn.style.filter = 'none';
+            btn.style.backgroundColor = '#0d6efd';
+            btn.style.borderColor = '#0d6efd';
+            btn.style.color = '#ffffff';
         } else {
+            // Data incomplete -> Solid Crisp Grey (clearly distinct from blue, non-blurry)
             btn.classList.remove('btn-primary');
-            btn.classList.add('btn-secondary', 'disabled');
-            btn.style.opacity = '0.75';
-            btn.style.filter = 'blur(0.3px)';
+            btn.classList.add('btn-secondary');
+            btn.style.backgroundColor = '#6c757d';
+            btn.style.borderColor = '#6c757d';
+            btn.style.color = '#ffffff';
         }
     }
 
-    // Initialize listeners
+    // Initialize listeners & observers
     document.addEventListener('DOMContentLoaded', () => {
         const form = document.getElementById('bookingForm');
         const btnSubmit = document.getElementById('btnSubmit');
 
         if (form) {
-            form.addEventListener('input', validateBookingForm);
-            form.addEventListener('change', validateBookingForm);
+            ['input', 'change', 'keyup', 'paste', 'blur'].forEach(evt => {
+                form.addEventListener(evt, validateBookingForm);
+            });
+
             form.addEventListener('submit', (e) => {
                 e.preventDefault();
                 btnSubmit?.click();
             });
+
+            // Observe DOM updates on form (e.g., Livewire re-renders)
+            const observer = new MutationObserver(() => {
+                validateBookingForm();
+            });
+            observer.observe(form, { childList: true, subtree: true, attributes: true });
         }
 
         if (btnSubmit) {
@@ -693,6 +732,17 @@
                 }
             });
         }
+
+        // Livewire hook updates
+        if (typeof Livewire !== 'undefined') {
+            Livewire.hook('commit', ({ succeed }) => {
+                succeed(() => queueMicrotask(validateBookingForm));
+            });
+            Livewire.hook('morph.updated', () => queueMicrotask(validateBookingForm));
+        }
+
+        // Lightweight periodic check to ensure button state stays accurate
+        setInterval(validateBookingForm, 400);
 
         validateBookingForm();
     });
