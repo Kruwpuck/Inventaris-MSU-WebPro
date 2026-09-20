@@ -130,6 +130,36 @@ class LoanController extends Controller
                 }
             }
 
+            // Validasi ketersediaan terhadap peminjaman yang SUDAH APPROVED
+            $approvedOverlaps = LoanRequest::getOverlappingLoans(
+                $startDT, 
+                $endDT, 
+                ['approved', 'APPROVED', 'handed_over', 'HANDED_OVER', 'on_loan', 'ON_LOAN']
+            );
+
+            foreach ($items as $itm) {
+                $inv = Inventory::where('name', $itm['name'])->first();
+                if (!$inv) continue;
+
+                $usedInApproved = 0;
+                foreach ($approvedOverlaps as $appLoan) {
+                    foreach ($appLoan->loanItems as $li) {
+                        if ($li->inventory_id == $inv->id || ($li->inventory && $li->inventory->name == $inv->name)) {
+                            $usedInApproved += $li->quantity;
+                        }
+                    }
+                }
+
+                if ($inv->category == 'ruangan' && $usedInApproved > 0) {
+                    return response()->json(['message' => "Ruangan '{$inv->name}' sudah disetujui untuk peminjaman lain pada waktu tersebut."], 422);
+                } elseif ($inv->category == 'barang') {
+                    $avail = max(0, $inv->stock - $usedInApproved);
+                    if ($itm['quantity'] > $avail) {
+                        return response()->json(['message' => "Stok untuk '{$inv->name}' pada waktu tersebut tidak mencukupi (Tersedia: {$avail}, Diminta: {$itm['quantity']})."], 422);
+                    }
+                }
+            }
+
             $loanRequest = LoanRequest::create([
                 'borrower_name' => $request->borrowerName,
                 'borrower_email' => $request->email,
@@ -157,9 +187,6 @@ class LoanController extends Controller
                 'donation_amount' => $request->donation ?? 0,
             ]);
 
-            // Fallback: If for some reason start_time is missing from request but present in description (legacy)
-
-
             // Attach Items
             foreach ($items as $itm) {
                 $inventory = Inventory::where('name', $itm['name'])->first();
@@ -173,6 +200,15 @@ class LoanController extends Controller
             }
 
             DB::commit();
+
+            // Kirim email notifikasi jika auto-rejected
+            if ($loanRequest->status === 'rejected') {
+                try {
+                    \Illuminate\Support\Facades\Mail::to($request->email)->send(new \App\Mail\LoanRejected($loanRequest));
+                } catch (\Exception $e) {
+                    Log::error('Gagal kirim email auto-reject: ' . $e->getMessage());
+                }
+            }
             
             // CLEAR THE SESSION CART IMMEDIATELY
             session()->forget('cart');
@@ -190,7 +226,7 @@ class LoanController extends Controller
     }
 
     /**
-     * Check availability.
+     * Check availability against APPROVED bookings only.
      */
     public function check(Request $request)
     {
@@ -200,37 +236,19 @@ class LoanController extends Controller
         $endTime = $request->input('endTime');     // HH:mm:ss
 
         if (!$startDate) return response()->json([], 400);
-        // Fallback defaults if missing (though frontend should enforce)
         if (!$endDate) $endDate = $startDate;
         if (!$startTime) $startTime = '00:00:00';
         if (!$endTime) $endTime = '23:59:59';
 
-        // Construct Request DateTime objects for comparison
         $reqStart = \Carbon\Carbon::parse("$startDate $startTime");
         $reqEnd = \Carbon\Carbon::parse("$endDate $endTime");
 
-        // Check active bookings that overlap
-        // Overlap Logic: (StartA < EndB) and (EndA > StartB)
-        $bookings = LoanRequest::with(['loanItems.inventory'])
-            ->whereIn('status', ['PENDING', 'APPROVED', 'ON_LOAN'])
-            ->get()
-            ->filter(function ($booking) use ($reqStart, $reqEnd) {
-                // Parse Booking DateTimes
-                $bDateStart = $booking->loan_date_start ? $booking->loan_date_start->format('Y-m-d') : null;
-                $bDateEnd = $booking->loan_date_end ? $booking->loan_date_end->format('Y-m-d') : $bDateStart;
-                
-                $bTimeStart = $booking->start_time ?: '00:00:00';
-                $bTimeEnd = $booking->end_time ?: '23:59:59';
-
-                if (!$bDateStart) return false; // Invalid data
-
-                $bookStart = \Carbon\Carbon::parse("$bDateStart $bTimeStart");
-                $bookEnd = \Carbon\Carbon::parse("$bDateEnd $bTimeEnd");
-
-                // Check overlap
-                return $reqStart->lt($bookEnd) && $reqEnd->gt($bookStart);
-            });
-
+        // Hanya hitung peminjaman yang SUDAH APPROVED / ON LOAN
+        $bookings = LoanRequest::getOverlappingLoans(
+            $reqStart,
+            $reqEnd,
+            ['approved', 'APPROVED', 'handed_over', 'HANDED_OVER', 'on_loan', 'ON_LOAN']
+        );
 
         // Calculate Used Stock
         $usedStock = [];
@@ -249,7 +267,11 @@ class LoanController extends Controller
         
         $result = $inventory->map(function ($inv) use ($usedStock) {
             $used = $usedStock[$inv->id] ?? 0;
-            $available = max(0, $inv->stock - $used);
+            if ($inv->category == 'ruangan') {
+                $available = ($used > 0) ? 0 : 1;
+            } else {
+                $available = max(0, $inv->stock - $used);
+            }
             
             return [
                 'itemId' => $inv->id,

@@ -445,7 +445,8 @@
               <th style="width: 240px;">Item</th>
               <th style="width: 170px;">Jadwal</th>
               <th style="width: 100px;">Status</th>
-              <th style="width: 220px;">Catatan</th>
+              <th style="width: 200px;">Catatan</th>
+              <th style="width: 95px;" class="text-center">Aksi</th>
               <th style="width: 70px;" class="text-center">Cetak</th>
             </tr>
           </thead>
@@ -498,7 +499,7 @@
                   @endif
                 </td>
                 <td class="small text-muted"
-                  style="max-width: 220px; white-space: normal; word-wrap: break-word; word-break: break-all;">
+                  style="max-width: 200px; white-space: normal; word-wrap: break-word; word-break: break-all;">
                   @php
                     $reasonCheck = $hist->rejection_reason ?? '-';
                     // Limit characters to handle long single words
@@ -529,6 +530,14 @@
                   @endif
                 </td>
                 <td class="text-center">
+                  <button class="btn btn-outline-warning btn-sm btn-box px-2 shadow-sm text-dark fw-bold" 
+                    wire:click="undoDecision({{ $hist->id }})"
+                    wire:confirm="Yakin ingin membatalkan keputusan ini dan mengembalikan pengajuan P{{ str_pad($hist->id, 3, '0', STR_PAD_LEFT) }} ke status Pending?"
+                    title="Batalkan Keputusan & Kembalikan ke Pending">
+                    <i class="bi bi-arrow-counterclockwise me-1 text-warning"></i>Undo
+                  </button>
+                </td>
+                <td class="text-center">
                   <button class="btn-icon shadow-sm" type="button" wire:click="showDetails({{ $hist->id }})"
                     title="Cetak Bukti">
                     <i class="bi bi-printer"></i>
@@ -537,7 +546,7 @@
               </tr>
             @empty
               <tr>
-                <td colspan="8" class="p-5 text-center text-muted">Belum ada riwayat.</td>
+                <td colspan="9" class="p-5 text-center text-muted">Belum ada riwayat.</td>
               </tr>
             @endforelse
           </tbody>
@@ -549,23 +558,128 @@
     </div>
   </div>
 
-  {{-- MODAL APPROVE --}}
+  {{-- MODAL APPROVE DENGAN WARNING BENTROK JADWAL --}}
   <div class="modal fade" id="approveModal" tabindex="-1" wire:ignore.self>
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Konfirmasi Persetujuan</h5>
+        <div class="modal-header bg-light">
+          <h5 class="modal-title fw-bold text-dark">
+            <i class="bi bi-shield-check text-success me-2"></i>Konfirmasi Persetujuan Peminjaman
+          </h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
-        <div class="modal-body">
-          <p class="mb-0">Yakin ingin menyetujui pengajuan ini?</p>
+        <div class="modal-body p-4">
+          @if($requestToApprove)
+            {{-- Ringkasan Pengajuan yang Hendak Diapprove --}}
+            <div class="card bg-light border-0 p-3 mb-3">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <div class="fw-bold text-dark fs-6">
+                    P{{ str_pad($requestToApprove->id, 3, '0', STR_PAD_LEFT) }} - {{ $requestToApprove->borrower_name }}
+                    <span class="badge bg-secondary ms-1" style="font-size: 0.7rem;">{{ $requestToApprove->borrower_category ?? 'Umum' }}</span>
+                  </div>
+                  <div class="text-muted small mt-1">
+                    <i class="bi bi-clipboard-check me-1 text-primary"></i>Kegiatan: <strong>{{ $requestToApprove->borrower_reason }}</strong>
+                  </div>
+                  <div class="text-muted small">
+                    <i class="bi bi-calendar-event me-1 text-primary"></i>Jadwal: {{ optional($requestToApprove->loan_date_start)->format('d M Y') }} s/d {{ optional($requestToApprove->loan_date_end)->format('d M Y') }}
+                    <span class="fw-bold text-dark">({{ $requestToApprove->start_time ? substr($requestToApprove->start_time, 0, 5) : '00:00' }} - {{ $requestToApprove->end_time ? substr($requestToApprove->end_time, 0, 5) : '23:59' }})</span>
+                  </div>
+                </div>
+                <span class="badge-box badge-pending">Pending</span>
+              </div>
+              <div class="mt-2 pt-2 border-top">
+                <span class="small fw-semibold text-secondary">Fasilitas / Barang yang diminta:</span>
+                <div class="d-flex flex-wrap gap-1 mt-1">
+                  @foreach($requestToApprove->items as $item)
+                    <span class="badge bg-white text-dark border shadow-sm">
+                      <i class="bi bi-box-seam me-1 text-secondary"></i>{{ $item->name }} (x{{ $item->pivot->quantity ?? 1 }})
+                    </span>
+                  @endforeach
+                </div>
+              </div>
+            </div>
+          @endif
+
+          {{-- 1. WARNING BENTROK DENGAN PEMINJAMAN YANG SUDAH APPROVED (KERAS) --}}
+          @if(!empty($approvalConflictsApproved))
+            <div class="alert alert-danger border-danger d-flex flex-column gap-2 mb-3">
+              <div class="d-flex align-items-center gap-2 fw-bold text-danger fs-6">
+                <i class="bi bi-exclamation-octagon-fill fs-5"></i>
+                <span>PERINGATAN: TERJADI BENTROK DENGAN PEMINJAMAN YANG SUDAH DISETUJUI!</span>
+              </div>
+              <p class="small mb-1 text-danger">
+                Peminjaman ini menggunakan ruangan atau stok barang yang sudah dialokasikan kepada peminjam lain yang sudah berstatus <strong>APPROVED</strong> pada waktu yang beririsan:
+              </p>
+              <div class="d-flex flex-column gap-2">
+                @foreach($approvalConflictsApproved as $conf)
+                  <div class="p-2 bg-white border border-danger rounded text-dark small">
+                    <div class="fw-bold text-danger mb-1"><i class="bi bi-x-circle me-1"></i>{{ $conf['message'] }}</div>
+                    <div>
+                      <span class="fw-semibold text-secondary">Peminjaman Approved yang bertabrakan:</span>
+                      <ul class="mb-0 ps-3 mt-1">
+                        @foreach($conf['loans'] as $cl)
+                          <li>
+                            <strong>P{{ str_pad($cl['id'], 3, '0', STR_PAD_LEFT) }} - {{ $cl['borrower_name'] }}</strong> &bull; Kegiatan: <em>"{{ $cl['reason'] }}"</em> &bull; Waktu: {{ $cl['date'] }} [{{ $cl['time'] }}] &bull; Qty: {{ $cl['quantity'] }}
+                          </li>
+                        @endforeach
+                      </ul>
+                    </div>
+                  </div>
+                @endforeach
+              </div>
+              <div class="small fw-bold text-danger mt-1">
+                <i class="bi bi-shield-exclamation me-1"></i>Harap pertimbangkan kembali sebelum menyetujui, karena fasilitas atau barang tersebut akan bertabrakan jadwal penggunaannya!
+              </div>
+            </div>
+          @endif
+
+          {{-- 2. WARNING BENTROK DENGAN PENGAJUAN PENDING LAIN (KOMPETISI JADWAL) --}}
+          @if(!empty($approvalConflictsPending))
+            <div class="alert alert-warning border-warning d-flex flex-column gap-2 mb-3">
+              <div class="d-flex align-items-center gap-2 fw-bold text-warning-emphasis">
+                <i class="bi bi-exclamation-triangle-fill fs-5 text-warning"></i>
+                <span>PERHATIAN: BENTROK DENGAN PENGAJUAN PENDING LAIN</span>
+              </div>
+              <p class="small mb-1 text-secondary">
+                Terdapat pengajuan lain yang masih berstatus <strong>PENDING</strong> memohon barang/ruangan yang sama di waktu yang beririsan. Menyetujui pengajuan ini akan mengunci alokasi kuota dan berpotensi membuat pengajuan pending lainnya kekurangan stok atau bentrok ruangan:
+              </p>
+              <div class="d-flex flex-column gap-2">
+                @foreach($approvalConflictsPending as $conf)
+                  <div class="p-2 bg-white border border-warning rounded text-dark small">
+                    <div class="fw-bold text-secondary mb-1"><i class="bi bi-clock-history me-1"></i>{{ $conf['message'] }}</div>
+                    <ul class="mb-0 ps-3 mt-1">
+                      @foreach($conf['loans'] as $cl)
+                        <li>
+                          <strong>P{{ str_pad($cl['id'], 3, '0', STR_PAD_LEFT) }} - {{ $cl['borrower_name'] }}</strong> &bull; Kegiatan: <em>"{{ $cl['reason'] }}"</em> &bull; Waktu: {{ $cl['date'] }} [{{ $cl['time'] }}] &bull; Qty: {{ $cl['quantity'] }}
+                        </li>
+                      @endforeach
+                    </ul>
+                  </div>
+                @endforeach
+              </div>
+            </div>
+          @endif
+
+          {{-- 3. JIKA AMAN (TIDAK ADA BENTROK) --}}
+          @if(empty($approvalConflictsApproved) && empty($approvalConflictsPending))
+            <div class="alert alert-success border-0 bg-success-subtle text-success-emphasis d-flex align-items-center gap-2 mb-3">
+              <i class="bi bi-check-circle-fill fs-5"></i>
+              <div>
+                <strong>Jadwal Aman!</strong> Tidak ditemukan bentrok jadwal atau kehabisan stok dengan peminjaman lain.
+              </div>
+            </div>
+            <p class="mb-0 text-muted">Apakah Anda yakin ingin menyetujui pengajuan peminjaman ini?</p>
+          @else
+            <p class="mb-0 text-dark fw-semibold">Apakah Anda tetap ingin menyetujui pengajuan ini?</p>
+          @endif
         </div>
-        <div class="modal-footer">
+        <div class="modal-footer bg-light">
           <button type="button" class="btn btn-secondary btn-box" data-bs-dismiss="modal">Batal</button>
           <button type="button" class="btn btn-approve btn-box" wire:click="approveConfirmed"
             wire:loading.attr="disabled">
             <span wire:loading.remove wire:target="approveConfirmed">
-              <i class="bi bi-check-lg me-1"></i>Ya, Setuju
+              <i class="bi bi-check-lg me-1"></i>Ya, Setujui
             </span>
             <span wire:loading wire:target="approveConfirmed">
               <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>

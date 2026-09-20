@@ -76,8 +76,68 @@ class LoanRequest extends Model
                     'status' => 'rejected',
                     'rejection_reason' => $reason
                 ]);
+
+                // Kirim notifikasi email penolakan otomatis ke peminjam
+                try {
+                    \Illuminate\Support\Facades\Mail::to($req->borrower_email)->send(new \App\Mail\LoanRejected($req));
+                    \Illuminate\Support\Facades\Log::info("Email auto-reject terkirim ke: {$req->borrower_email} untuk pengajuan #{$req->id}");
+                } catch (\Exception $e) {
+                    \Illuminate\Support\Facades\Log::error("Gagal kirim email auto-reject #{$req->id}: " . $e->getMessage());
+                }
             }
         }
+    }
+
+    /**
+     * Accessor untuk datetime mulai yang lengkap
+     */
+    public function getStartDateTimeAttribute()
+    {
+        $d = $this->loan_date_start ? \Carbon\Carbon::parse($this->loan_date_start) : null;
+        if (!$d) return null;
+        if ($this->start_time) {
+            $parts = explode(':', $this->start_time);
+            $d->setTime((int)$parts[0], (int)$parts[1], isset($parts[2]) ? (int)$parts[2] : 0);
+        } else {
+            $d->setTime(0, 0, 0);
+        }
+        return $d;
+    }
+
+    /**
+     * Accessor untuk datetime selesai yang lengkap
+     */
+    public function getEndDateTimeAttribute()
+    {
+        $d = $this->loan_date_end ? \Carbon\Carbon::parse($this->loan_date_end) : ($this->loan_date_start ? \Carbon\Carbon::parse($this->loan_date_start) : null);
+        if (!$d) return null;
+        if ($this->end_time) {
+            $parts = explode(':', $this->end_time);
+            $d->setTime((int)$parts[0], (int)$parts[1], isset($parts[2]) ? (int)$parts[2] : 0);
+        } else {
+            $d->setTime(23, 59, 59);
+        }
+        return $d;
+    }
+
+    /**
+     * Ambil peminjaman yang bertabrakan waktu dengan rentang tanggal dan jam yang diberikan.
+     * Logika overlap: (StartA < EndB) dan (EndA > StartB)
+     */
+    public static function getOverlappingLoans(\Carbon\Carbon $start, \Carbon\Carbon $end, array $statuses = ['approved', 'handed_over'], $excludeId = null)
+    {
+        return static::with(['items', 'loanItems.inventory'])
+            ->whereIn('status', $statuses)
+            ->when($excludeId, function($q) use ($excludeId) {
+                return $q->where('id', '!=', $excludeId);
+            })
+            ->get()
+            ->filter(function ($loan) use ($start, $end) {
+                $loanStart = $loan->start_date_time;
+                $loanEnd = $loan->end_date_time;
+                if (!$loanStart || !$loanEnd) return false;
+                return $start->lt($loanEnd) && $end->gt($loanStart);
+            });
     }
 
     protected $casts = [

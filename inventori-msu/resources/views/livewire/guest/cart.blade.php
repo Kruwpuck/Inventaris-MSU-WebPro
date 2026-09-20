@@ -576,6 +576,20 @@
             });
         }
 
+        // 4. Check if any item in cart is unavailable / out of stock in this timeslot
+        const tabsContent = document.getElementById('itemTabContent');
+        if (tabsContent) {
+            const outOfStockPanels = tabsContent.querySelectorAll('.tab-pane[data-dynamic-max="0"]');
+            outOfStockPanels.forEach(pane => {
+                const itemName = pane.dataset.itemName || 'Fasilitas/Barang';
+                missing.push({
+                    id: 'loanDate',
+                    name: `'${itemName}' sudah disetujui untuk peminjaman lain di jam tersebut (Stok Habis)`,
+                    icon: 'bi-x-octagon'
+                });
+            });
+        }
+
         return missing;
     }
 

@@ -148,8 +148,16 @@ class Cart extends Component
             return;
         }
 
-        // Validate Stock Availability
+        // Validate Stock & Room Availability against APPROVED bookings
         $hasErrors = false;
+
+        // Ambil semua peminjaman yang SUDAH APPROVED / ON LOAN pada rentang waktu yang beririsan
+        $approvedOverlaps = \App\Models\LoanRequest::getOverlappingLoans(
+            $startDateTime, 
+            $endDateTime, 
+            ['approved', 'APPROVED', 'handed_over', 'HANDED_OVER', 'on_loan', 'ON_LOAN']
+        );
+
         foreach ($cart as $cartItem) {
             // Find inventory by ID if present, otherwise by Name
             $inv = null;
@@ -167,10 +175,36 @@ class Cart extends Component
                 continue;
             }
 
-            // Check stock limit
-            if ($inv->category == 'barang' && $cartItem['quantity'] > $inv->stock) {
-                $this->addError('cart', "Stok untuk '{$inv->name}' tidak mencukupi (Tersedia: {$inv->stock}, Diminta: {$cartItem['quantity']}).");
-                $hasErrors = true;
+            // Hitung penggunaan pada peminjaman yang sudah approved
+            $usedInApproved = 0;
+            $conflictingLoanInfo = null;
+
+            foreach ($approvedOverlaps as $appLoan) {
+                foreach ($appLoan->loanItems as $li) {
+                    if ($li->inventory_id == $inv->id || ($li->inventory && $li->inventory->name == $inv->name)) {
+                        $usedInApproved += $li->quantity;
+                        if (!$conflictingLoanInfo) {
+                            $timeRange = ($appLoan->start_time ? substr($appLoan->start_time, 0, 5) : '00:00') . ' - ' . ($appLoan->end_time ? substr($appLoan->end_time, 0, 5) : '23:59');
+                            $conflictingLoanInfo = "Pukul {$timeRange} untuk kegiatan '{$appLoan->borrower_reason}'";
+                        }
+                    }
+                }
+            }
+
+            if ($inv->category == 'ruangan') {
+                // Untuk Ruangan: Jika sudah ada yang approved pada rentang jam tersebut, langsung tolak
+                if ($usedInApproved > 0) {
+                    $detailMsg = $conflictingLoanInfo ? " ({$conflictingLoanInfo})" : "";
+                    $this->addError('cart', "Ruangan '{$inv->name}' sudah disetujui untuk peminjaman lain pada jadwal tersebut{$detailMsg}. Peminjaman ruangan tidak dapat diajukan jika sudah ada jadwal yang disetujui.");
+                    $hasErrors = true;
+                }
+            } else {
+                // Untuk Barang: Stok berkurang sejumlah yang sudah approved
+                $availableStock = max(0, $inv->stock - $usedInApproved);
+                if ($cartItem['quantity'] > $availableStock) {
+                    $this->addError('cart', "Stok untuk '{$inv->name}' pada jadwal tersebut tidak mencukupi (Tersedia: {$availableStock}, Diminta: {$cartItem['quantity']}).");
+                    $hasErrors = true;
+                }
             }
         }
 
@@ -254,13 +288,22 @@ class Cart extends Component
         // Send Email
         try {
             \Illuminate\Support\Facades\Log::info('Proses kirim email dimulai untuk: ' . $this->borrower_email);
-            \Illuminate\Support\Facades\Mail::to($this->borrower_email)->send(new \App\Mail\LoanSubmitted($loan));
+            if ($loan->status === 'rejected') {
+                \Illuminate\Support\Facades\Mail::to($this->borrower_email)->send(new \App\Mail\LoanRejected($loan));
+            } else {
+                \Illuminate\Support\Facades\Mail::to($this->borrower_email)->send(new \App\Mail\LoanSubmitted($loan));
+            }
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('Email gagal dikirim: ' . $e->getMessage());
         }
 
         // Clear cart
         $this->clearCart(); // From HandlesCart trait
+
+        if ($loan->status === 'rejected') {
+            return redirect()->route('guest.success')
+                ->with('warning', 'Pengajuan peminjaman otomatis ditolak oleh sistem karena melanggar aturan H-3. Silakan cek email Anda untuk detail alasan penolakan.');
+        }
 
         return redirect()->route('guest.success')
             ->with('success', 'Peminjaman berhasil diajukan! Silahkan tunggu persetujuan pengelola.');
