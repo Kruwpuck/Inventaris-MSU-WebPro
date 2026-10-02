@@ -587,19 +587,8 @@ window.addEventListener('load', () => {
         return;
       }
 
-      // Categorize
-      const slots = { pagi: [], siang: [], malam: [] };
-      bookings.forEach(b => {
-        const timeStart = b.startTime || '00:00:00';
-        const h = parseInt(timeStart.split(':')[0], 10);
-        if (h >= 6 && h < 12) slots.pagi.push(b);
-        else if (h >= 12 && h < 18) slots.siang.push(b);
-        else if (h >= 18) slots.malam.push(b);
-        else {
-          // 00-06 -> Pagi default
-          if (h < 12) slots.pagi.push(b);
-        }
-      });
+      // Sort bookings chronologically by startTime
+      bookings.sort((a, b) => (a.startTime || '').localeCompare(b.startTime || ''));
 
       const renderCard = (b) => {
         const timeLabel = `${b.startTime?.slice(0, 5) || '??:??'} - ${b.endTime?.slice(0, 5) || '??:??'}`;
@@ -664,22 +653,7 @@ window.addEventListener('load', () => {
           </div>`;
       };
 
-      const renderSection = (title, items) => {
-        // Always render section title, but if empty show placeholder
-        const list = items.length > 0 ? items.map(renderCard).join('') : '<div class="text-muted fst-italic small ms-2">- Kosong -</div>';
-        return `
-           <div class="mb-4">
-             <h6 class="fw-bold text-secondary mb-3 border-bottom pb-2">${title}</h6>
-             ${list}
-           </div>
-         `;
-      };
-
-      contentBox.innerHTML = `
-        ${renderSection('Pagi (06.00 - 12.00)', slots.pagi)}
-        ${renderSection('Siang (12.00 - 18.00)', slots.siang)}
-        ${renderSection('Malam (18.00 - 20.00)', slots.malam)}
-      `;
+      contentBox.innerHTML = bookings.map(renderCard).join('');
 
     } catch (err) {
       console.error(err);

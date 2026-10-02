@@ -232,32 +232,8 @@ async function renderBookingList(container, itemName, y, m, day) {
             return b.items.some(it => it.toLowerCase().includes((itemName || '').toLowerCase()));
         });
 
-        // Buckets
-        const slots = {
-            pagi: [],   // 06:00 - 12:00
-            siang: [],  // 12:00 - 18:00
-            malam: []   // 18:00 - 20:00 (or later)
-        };
-
-        relevant.forEach(b => {
-            // Parse time
-            const sTime = b.startTime || '00:00:00';
-            const hour = parseInt(sTime.split(':')[0], 10);
-
-            if (hour >= 6 && hour < 12) {
-                slots.pagi.push(b);
-            } else if (hour >= 12 && hour < 18) {
-                slots.siang.push(b);
-            } else if (hour >= 18) {
-                slots.malam.push(b);
-            } else {
-                // Early morning? Default to Pagi checking logic or ignore. 
-                // Assuming 00-06 is rare, put in Pagi or separate?
-                // Let's put < 6 in Pagi for safety or check overlap. 
-                // Simple logic for now: < 12 is Pagi.
-                if (hour < 12) slots.pagi.push(b);
-            }
-        });
+        // Sort bookings chronologically by startTime
+        relevant.sort((a, b) => (a.startTime || '').localeCompare(b.startTime || ''));
 
         const renderItem = (b) => {
             const timeStr = `${b.startTime?.slice(0, 5) || '??:??'} - ${b.endTime?.slice(0, 5) || '??:??'}`;
@@ -283,29 +259,10 @@ async function renderBookingList(container, itemName, y, m, day) {
              `;
         };
 
-        const renderSection = (title, items) => {
-            const content = items.length > 0
-                ? items.map(renderItem).join('')
-                : '<div class="text-muted small fst-italic py-1">- Kosong -</div>';
-
-            return `
-               <div class="mb-3">
-                 <h6 class="fw-bold text-secondary mb-2" style="font-size:0.9rem; border-bottom:1px solid #eee; padding-bottom:4px;">
-                    ${title}
-                 </h6>
-                 ${content}
-               </div>
-             `;
-        };
-
         if (relevant.length === 0) {
             box.innerHTML = `<div class="booking-list-empty">Belum ada peminjaman tercatat untuk item ini pada tanggal ini.</div>`;
         } else {
-            box.innerHTML = `
-               ${renderSection('Pagi (06.00 - 12.00)', slots.pagi)}
-               ${renderSection('Siang (12.00 - 18.00)', slots.siang)}
-               ${renderSection('Malam (18.00 - 20.00)', slots.malam)}
-            `;
+            box.innerHTML = relevant.map(renderItem).join('');
         }
 
     } catch (e) {

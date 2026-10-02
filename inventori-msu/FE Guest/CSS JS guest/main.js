@@ -523,63 +523,73 @@ window.addEventListener('load', () => {
         return;
       }
 
-      contentBox.innerHTML = bookings.map(b => {
-        // b: id, borrowerName, department, description, status, items (List<String>)
-        let timeLabel = "Waktu tidak spesifik";
-        // Check if description has Session info
-        if (b.description) {
-          const sessionMatch = b.description.match(/\[Sesi:\s*([^\]]+)\]/);
-          if (sessionMatch) timeLabel = sessionMatch[1];
+      // Sort bookings chronologically by startTime
+      bookings.sort((a, b) => (a.startTime || '').localeCompare(b.startTime || ''));
+
+      const renderCard = (b) => {
+        const timeLabel = `${b.startTime?.slice(0, 5) || '??:??'} - ${b.endTime?.slice(0, 5) || '??:??'}`;
+
+        // Define styles based on status
+        let statusColor, badgeClass;
+        const statusUpper = String(b.status || '').toUpperCase();
+        switch (statusUpper) {
+          case 'APPROVED':
+            statusColor = '#198754'; // success green
+            badgeClass = 'bg-success';
+            break;
+          case 'COMPLETED':
+            statusColor = '#0dcaf0'; // info cyan
+            badgeClass = 'bg-info text-dark';
+            break;
+          case 'REJECTED':
+            statusColor = '#dc3545'; // danger red
+            badgeClass = 'bg-danger';
+            break;
+          case 'RETURNED':
+            statusColor = '#6c757d'; // secondary gray
+            badgeClass = 'bg-secondary';
+            break;
+          case 'PENDING':
+          default:
+            statusColor = '#ffc107'; // warning yellow
+            badgeClass = 'bg-warning text-dark';
+            break;
         }
 
-        const statusColor = (b.status === 'APPROVED' || b.status === 'COMPLETED') ? '#198754' : '#ffc107';
-        const bgStatus = (b.status === 'APPROVED' || b.status === 'COMPLETED') ? '#e8f5e9' : '#fff3cd';
-        const textStatus = (b.status === 'APPROVED' || b.status === 'COMPLETED') ? '#198754' : '#856404';
-
-        // Items styling
         const itemsHTML = (b.items || []).map(it => `
-            <div class="d-flex align-items-center bg-white border px-3 py-2 rounded-3 shadow-sm" style="min-width: fit-content;">
-                <i class="bi bi-check-circle-fill me-2" style="color: ${statusColor}"></i>
-                <span class="fw-semibold text-dark">${it}</span>
-            </div>
-        `).join('');
+            <span class="badge bg-light text-dark border fw-normal me-1 mb-1">
+               <i class="bi bi-box-seam me-1 text-secondary"></i>${it}
+            </span>
+         `).join('');
 
         return `
-        <div class="card border-0 mb-3 shadow-sm" style="border-radius: 16px; overflow:hidden; transition: transform 0.2s;">
-          <div class="card-header border-0 d-flex justify-content-between align-items-center px-4 py-3" style="background-color: ${bgStatus};">
-             <div class="d-flex align-items-center gap-2">
-                <span class="badge rounded-pill border border-1" style="background-color: #fff; color: ${textStatus}; border-color: ${statusColor} !important;">
-                   ${b.status}
-                </span>
-                <span class="fw-bold fs-6" style="color: ${textStatus}">${b.department || 'Peminjam'}</span>
-             </div>
-             <div class="small" style="color: ${textStatus}; opacity: 0.8;">
-                <i class="bi bi-person-fill"></i> ${b.borrowerName}
-             </div>
-          </div>
-          
-          <div class="card-body px-4 py-4">
-               <!-- Time Section -->
-               <div class="d-flex align-items-center mb-4">
-                  <div class="d-flex align-items-center justify-content-center rounded-circle me-3" style="width:48px;height:48px; background-color: #f1f3f5;">
-                     <i class="bi bi-clock-history fs-4 text-secondary"></i>
-                  </div>
-                  <div>
-                     <div class="small text-muted text-uppercase fw-bold" style="letter-spacing:0.5px; font-size: 0.7rem;">Waktu Peminjaman</div>
-                     <div class="fw-bold text-dark fs-5">${timeLabel}</div>
-                  </div>
-               </div>
+          <div class="card mb-3 border-0 shadow-sm" style="border-left: 5px solid ${statusColor} !important;">
+            <div class="card-body py-3">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                 <div>
+                    <div class="fw-bold text-dark mb-1" style="font-size:1rem;">${(b.description || 'Kegiatan').charAt(0) + '*'}</div>
+                    <div class="text-muted small"><i class="bi bi-clock me-1"></i>${timeLabel}</div>
+                 </div>
+                 <span class="badge ${badgeClass} text-uppercase shadow-sm" style="font-size:0.7rem; letter-spacing:0.5px;">${b.status}</span>
+              </div>
+              
+              <div class="d-flex flex-wrap align-items-center gap-1 mb-2">
+                 ${itemsHTML || '<small class="text-muted fst-italic">Tanpa detail items</small>'}
+              </div>
 
-               <!-- Items Section -->
-               <div>
-                  <div class="small text-muted mb-2 fw-bold text-uppercase" style="font-size: 0.7rem; letter-spacing:0.5px;">Barang / Fasilitas Dipinjam</div>
-                  <div class="d-flex flex-wrap gap-2">
-                     ${itemsHTML || '<div class="text-muted small fst-italic px-2">Tidak ada detail barang</div>'}
-                  </div>
-               </div>
-          </div>
-        </div>`;
-      }).join('');
+              <div class="border-top pt-2 mt-2 d-flex justify-content-between align-items-center">
+                 <div class="small text-muted">
+                    <i class="bi bi-person me-1"></i>${(b.borrowerName || 'Peminjam').charAt(0) + '*'}
+                 </div>
+                 <div class="small fw-bold text-secondary text-uppercase" style="font-size:0.7rem">
+                    ${(b.department || '').charAt(0) + '*'}
+                 </div>
+              </div>
+            </div>
+          </div>`;
+      };
+
+      contentBox.innerHTML = bookings.map(renderCard).join('');
 
     } catch (err) {
       console.error(err);

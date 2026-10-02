@@ -192,11 +192,36 @@ async function renderBookingList(container, itemName, y, m, day) {
         // If itemName is strictly equal, we might miss if API returns "Proyektor BenQ". 
         // We'll use includes.
         const relevant = allBookings.filter(b => {
-            // Check if any item in booking contains our itemName
-            // Case insensitive
             if (!b.items) return false;
             return b.items.some(it => it.toLowerCase().includes((itemName || '').toLowerCase()));
         });
+
+        // Sort bookings chronologically by startTime
+        relevant.sort((a, b) => (a.startTime || '').localeCompare(b.startTime || ''));
+
+        const renderItem = (b) => {
+            const timeStr = `${b.startTime?.slice(0, 5) || '??:??'} - ${b.endTime?.slice(0, 5) || '??:??'}`;
+            // Find specific item string: e.g. "Karpet (2)"
+            const matchedItemStr = (b.items || []).find(it => it.toLowerCase().includes((itemName || '').toLowerCase())) || '';
+
+            return `
+               <div class="mb-2 p-2 border rounded bg-white shadow-sm" style="border-left: 4px solid #198754 !important;">
+                 <div class="d-flex justify-content-between align-items-start">
+                    <div class="fw-bold text-dark">${b.description || 'Kegiatan'}</div>
+                    <div class="fw-bold text-dark">${timeStr}</div>
+                 </div>
+                 <div class="d-flex justify-content-between mt-1 text-muted small" style="font-size:0.85rem">
+                    <div>
+                        ${b.borrowerName || 'Peminjam'} 
+                        <span class="text-success fw-bold ms-2" style="font-size:0.8rem">
+                           <i class="bi bi-box-seam me-1"></i>${matchedItemStr}
+                        </span>
+                    </div>
+                    <div class="text-uppercase" style="font-size:0.75rem">${b.status}</div>
+                 </div>
+               </div>
+             `;
+        };
 
         if (!relevant.length) {
             box.innerHTML = `<div class="booking-list-empty">
@@ -205,25 +230,7 @@ async function renderBookingList(container, itemName, y, m, day) {
             return;
         }
 
-        box.innerHTML = relevant.map(b => {
-            // Find slot/session info from description
-            let slotLabel = "Waktu ditentukan";
-            const sessionMatch = b.description.match(/\[Sesi:\s*([^\]]+)\]/);
-            if (sessionMatch) {
-                // Formatting session to be nicer
-                let sRaw = sessionMatch[1];
-                // Remove redundant time info if present in label
-                slotLabel = sRaw;
-            }
-
-            return `
-          <div class="booking-list-item">
-            <div class="bli-slot">${slotLabel}</div>
-            <div class="bli-main">${b.department || 'Peminjam'}</div>
-            <div class="bli-meta text-muted">Status: ${b.status}</div>
-          </div>
-        `;
-        }).join('');
+        box.innerHTML = relevant.map(renderItem).join('');
 
     } catch (e) {
         console.error(e);
