@@ -12,10 +12,11 @@ class Approval extends Component
 
     protected $paginationTheme = 'bootstrap';
 
-    // Search and Date Filters
+    // Search, Date & Sort Filters
     public $q = '';
     public $dateFrom = null;
     public $dateTo = null;
+    public $sortBy = 'created_desc';
 
     // Modal Reject
     public $rejectId;
@@ -37,6 +38,22 @@ class Approval extends Component
     {
         $this->resetPage('pendingPage');
         $this->resetPage('historyPage');
+    }
+
+    public function updatingSortBy()
+    {
+        $this->resetPage('pendingPage');
+        $this->resetPage('historyPage');
+    }
+
+    public function getSortLabelProperty()
+    {
+        return match ($this->sortBy) {
+            'created_asc' => 'Pengajuan Terlama',
+            'schedule_asc' => 'Jadwal Terdekat',
+            'schedule_desc' => 'Jadwal Terjauh',
+            default => 'Pengajuan Terbaru',
+        };
     }
 
     public function applyDateFilter()
@@ -65,6 +82,7 @@ class Approval extends Component
         $this->q = '';
         $this->dateFrom = null;
         $this->dateTo = null;
+        $this->sortBy = 'created_desc';
         $this->resetPage('pendingPage');
         $this->resetPage('historyPage');
     }
@@ -145,8 +163,29 @@ class Approval extends Component
             $historyQuery->where($dateCallback);
         }
 
-        $pendingRequests = $pendingQuery->latest()->paginate(10, ['*'], 'pendingPage');
-        $historyRequests = $historyQuery->latest()->paginate(10, ['*'], 'historyPage');
+        // Apply Sorting
+        switch ($this->sortBy) {
+            case 'created_asc':
+                $pendingQuery->orderBy('created_at', 'asc')->orderBy('id', 'asc');
+                $historyQuery->orderBy('created_at', 'asc')->orderBy('id', 'asc');
+                break;
+            case 'schedule_asc':
+                $pendingQuery->orderBy('loan_date_start', 'asc')->orderBy('start_time', 'asc')->orderBy('id', 'asc');
+                $historyQuery->orderBy('loan_date_start', 'asc')->orderBy('start_time', 'asc')->orderBy('id', 'asc');
+                break;
+            case 'schedule_desc':
+                $pendingQuery->orderBy('loan_date_start', 'desc')->orderBy('start_time', 'desc')->orderBy('id', 'desc');
+                $historyQuery->orderBy('loan_date_start', 'desc')->orderBy('start_time', 'desc')->orderBy('id', 'desc');
+                break;
+            case 'created_desc':
+            default:
+                $pendingQuery->orderBy('created_at', 'desc')->orderBy('id', 'desc');
+                $historyQuery->orderBy('created_at', 'desc')->orderBy('id', 'desc');
+                break;
+        }
+
+        $pendingRequests = $pendingQuery->paginate(10, ['*'], 'pendingPage');
+        $historyRequests = $historyQuery->paginate(10, ['*'], 'historyPage');
 
         return view('livewire.pengelola.approval', [
             'pendingRequests' => $pendingRequests,

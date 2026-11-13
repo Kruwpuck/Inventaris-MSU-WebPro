@@ -367,8 +367,45 @@
         </div>
       </div>
 
+      {{-- Sort / Urutkan Filter --}}
+      <div class="dropdown w-100 w-sm-auto">
+        <button class="btn btn-pill dropdown-toggle w-100 px-3 py-2 d-flex align-items-center justify-content-center" type="button" data-bs-toggle="dropdown" id="btnSort">
+          <i class="bi bi-arrow-down-up me-2"></i>
+          <span>{{ $this->sortLabel }}</span>
+        </button>
+        <ul class="dropdown-menu shadow" style="min-width: 250px;">
+          <li class="px-3 py-1 text-muted small fw-bold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.5px;">Tanggal Pengajuan</li>
+          <li>
+            <a class="dropdown-item d-flex align-items-center {{ $sortBy === 'created_desc' ? 'active' : '' }}" href="#"
+              wire:click.prevent="$set('sortBy', 'created_desc')">
+              <i class="bi bi-clock-history me-2 text-primary"></i>Pengajuan Terbaru (Default)
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item d-flex align-items-center {{ $sortBy === 'created_asc' ? 'active' : '' }}" href="#"
+              wire:click.prevent="$set('sortBy', 'created_asc')">
+              <i class="bi bi-clock me-2 text-secondary"></i>Pengajuan Terlama
+            </a>
+          </li>
+          <li><hr class="dropdown-divider my-1"></li>
+          <li class="px-3 py-1 text-muted small fw-bold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.5px;">Jadwal Peminjaman</li>
+          <li>
+            <a class="dropdown-item d-flex align-items-center {{ $sortBy === 'schedule_asc' ? 'active' : '' }}" href="#"
+              wire:click.prevent="$set('sortBy', 'schedule_asc')">
+              <i class="bi bi-calendar-event me-2 text-success"></i>Jadwal Terdekat (Lama ke Baru)
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item d-flex align-items-center {{ $sortBy === 'schedule_desc' ? 'active' : '' }}" href="#"
+              wire:click.prevent="$set('sortBy', 'schedule_desc')">
+              <i class="bi bi-calendar2-range me-2 text-warning"></i>Jadwal Terjauh (Baru ke Lama)
+            </a>
+          </li>
+        </ul>
+      </div>
+
       {{-- Clear all filters button if active --}}
-      @if($q || $dateFrom || $dateTo)
+      @if($q || $dateFrom || $dateTo || $sortBy !== 'created_desc')
         <button class="btn btn-sm btn-link text-danger text-decoration-none px-0" wire:click="resetAllFilters" title="Hapus semua filter">
           <i class="bi bi-x-circle me-1"></i>Hapus Filter
         </button>
@@ -520,9 +557,9 @@
             @empty
               <tr>
                 <td colspan="10" class="p-5 text-center text-muted">
-                  @if($q || $dateFrom || $dateTo)
+                  @if($q || $dateFrom || $dateTo || $sortBy !== 'created_desc')
                     <i class="bi bi-search fs-3 d-block mb-2 text-muted"></i>
-                    Tidak ada pengajuan pending yang sesuai dengan kriteria pencarian / filter tanggal.
+                    Tidak ada pengajuan pending yang sesuai dengan kriteria filter / pencarian.
                   @else
                     Tidak ada pengajuan pending.
                   @endif
@@ -660,9 +697,9 @@
             @empty
               <tr>
                 <td colspan="9" class="p-5 text-center text-muted">
-                  @if($q || $dateFrom || $dateTo)
+                  @if($q || $dateFrom || $dateTo || $sortBy !== 'created_desc')
                     <i class="bi bi-search fs-3 d-block mb-2 text-muted"></i>
-                    Tidak ada riwayat keputusan yang sesuai dengan kriteria pencarian / filter tanggal.
+                    Tidak ada riwayat keputusan yang sesuai dengan kriteria filter / pencarian.
                   @else
                     Belum ada riwayat.
                   @endif
