@@ -12,6 +12,11 @@ class Approval extends Component
 
     protected $paginationTheme = 'bootstrap';
 
+    // Search and Date Filters
+    public $q = '';
+    public $dateFrom = null;
+    public $dateTo = null;
+
     // Modal Reject
     public $rejectId;
     public $rejectReason;
@@ -28,20 +33,120 @@ class Approval extends Component
     // Modal Detail Peminjam
     public $selectedBorrower;
 
+    public function updatingQ()
+    {
+        $this->resetPage('pendingPage');
+        $this->resetPage('historyPage');
+    }
+
+    public function applyDateFilter()
+    {
+        $this->resetPage('pendingPage');
+        $this->resetPage('historyPage');
+    }
+
+    public function resetDateFilter()
+    {
+        $this->dateFrom = null;
+        $this->dateTo = null;
+        $this->resetPage('pendingPage');
+        $this->resetPage('historyPage');
+    }
+
+    public function resetSearch()
+    {
+        $this->q = '';
+        $this->resetPage('pendingPage');
+        $this->resetPage('historyPage');
+    }
+
+    public function resetAllFilters()
+    {
+        $this->q = '';
+        $this->dateFrom = null;
+        $this->dateTo = null;
+        $this->resetPage('pendingPage');
+        $this->resetPage('historyPage');
+    }
+
     public function render()
     {
         // Auto-reject any pending requests that are past start date/time or submitted < H-3 for Civitas/Umum
         \App\Models\LoanRequest::autoRejectExpiredPending();
 
-        $pendingRequests = \App\Models\LoanRequest::whereIn('status', ['pending', 'PENDING'])
-            ->with(['items', 'loanItems.inventory'])
-            ->latest()
-            ->paginate(10, ['*'], 'pendingPage');
+        $pendingQuery = \App\Models\LoanRequest::whereIn('status', ['pending', 'PENDING'])
+            ->with(['items', 'loanItems.inventory']);
 
-        $historyRequests = \App\Models\LoanRequest::whereIn('status', ['approved', 'APPROVED', 'rejected', 'REJECTED'])
-            ->with('items')
-            ->latest()
-            ->paginate(10, ['*'], 'historyPage');
+        $historyQuery = \App\Models\LoanRequest::whereIn('status', ['approved', 'APPROVED', 'rejected', 'REJECTED'])
+            ->with('items');
+
+        // Apply Search Filter (q)
+        if (!empty(trim($this->q))) {
+            $term = trim($this->q);
+            $cleanId = preg_replace('/[^0-9]/', '', $term);
+
+            $searchCallback = function ($query) use ($term, $cleanId) {
+                $query->where(function ($sub) use ($term, $cleanId) {
+                    $sub->where('borrower_name', 'like', "%{$term}%")
+                        ->orWhere('borrower_reason', 'like', "%{$term}%")
+                        ->orWhere('department', 'like', "%{$term}%")
+                        ->orWhere('borrower_category', 'like', "%{$term}%")
+                        ->orWhere('activity_location', 'like', "%{$term}%")
+                        ->orWhere('activity_description', 'like', "%{$term}%")
+                        ->orWhere('description', 'like', "%{$term}%")
+                        ->orWhere('rejection_reason', 'like', "%{$term}%")
+                        ->orWhereHas('items', function ($itemSub) use ($term) {
+                            $itemSub->where('name', 'like', "%{$term}%");
+                        });
+
+                    if ($cleanId !== '') {
+                        $sub->orWhere('id', $cleanId);
+                    }
+                });
+            };
+
+            $pendingQuery->where($searchCallback);
+            $historyQuery->where($searchCallback);
+        }
+
+        // Apply Date Range Filter for Jadwal (loan_date_start / loan_date_end)
+        if ($this->dateFrom && $this->dateTo) {
+            $dateCallback = function ($query) {
+                $query->where(function ($sub) {
+                    $sub->whereDate('loan_date_start', '<=', $this->dateTo)
+                        ->where(function ($inner) {
+                            $inner->whereDate('loan_date_end', '>=', $this->dateFrom)
+                                  ->orWhere(function ($fallback) {
+                                      $fallback->whereNull('loan_date_end')
+                                               ->whereDate('loan_date_start', '>=', $this->dateFrom);
+                                  });
+                        });
+                });
+            };
+            $pendingQuery->where($dateCallback);
+            $historyQuery->where($dateCallback);
+        } elseif ($this->dateFrom) {
+            $dateCallback = function ($query) {
+                $query->where(function ($sub) {
+                    $sub->whereDate('loan_date_end', '>=', $this->dateFrom)
+                        ->orWhere(function ($fallback) {
+                            $fallback->whereNull('loan_date_end')
+                                     ->whereDate('loan_date_start', '>=', $this->dateFrom);
+                        });
+                });
+            };
+            $pendingQuery->where($dateCallback);
+            $historyQuery->where($dateCallback);
+        } elseif ($this->dateTo) {
+            $dateCallback = function ($query) {
+                $query->whereDate('loan_date_start', '<=', $this->dateTo);
+            };
+            $pendingQuery->where($dateCallback);
+            $historyQuery->where($dateCallback);
+        }
+
+        $pendingRequests = $pendingQuery->latest()->paginate(10, ['*'], 'pendingPage');
+        $historyRequests = $historyQuery->latest()->paginate(10, ['*'], 'historyPage');
 
         return view('livewire.pengelola.approval', [
             'pendingRequests' => $pendingRequests,

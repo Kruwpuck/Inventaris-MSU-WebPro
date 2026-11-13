@@ -23,6 +23,47 @@
       margin-top: .5rem;
     }
 
+    /* TOOLBAR & FILTERS (Seperti di Halaman Laporan) */
+    .toolbar .btn,
+    .toolbar .form-select,
+    .toolbar .form-control,
+    .toolbar .input-group-text {
+      border-radius: 9999px;
+    }
+
+    .toolbar .btn-pill {
+      border-radius: 9999px;
+      border: 1px solid #0b492c;
+      color: #0b492c;
+      background: #fff;
+    }
+
+    .toolbar .btn-pill:hover,
+    .toolbar .btn-pill:focus {
+      color: #0b492c;
+      background: #f5fbf7;
+      border-color: #0b492c;
+    }
+
+    .toolbar .dropdown-menu {
+      border-radius: 14px;
+      border: 1px solid #0b492c;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, .1);
+      padding: 6px 0;
+      min-width: 100%;
+    }
+
+    .toolbar .dropdown-item {
+      padding: .5rem 1rem;
+      border-radius: 10px;
+    }
+
+    .toolbar .dropdown-item.active,
+    .toolbar .dropdown-item:hover {
+      background: #e9f6ef;
+      color: #0b492c;
+    }
+
     .card-soft {
       background: #fff;
       border-radius: 16px;
@@ -282,6 +323,71 @@
     </div>
   @endif
 
+  {{-- Top Filters (Toolbar seperti di Halaman Laporan) --}}
+  <div class="toolbar d-flex flex-column flex-lg-row gap-3 mb-4 justify-content-between align-items-lg-center">
+    <div class="d-flex flex-column flex-sm-row gap-3 w-100 w-lg-auto align-items-center">
+      {{-- Date Range (Jadwal) --}}
+      <div class="dropdown w-100 w-sm-auto">
+        <button class="btn btn-pill dropdown-toggle w-100 px-4 py-2 d-flex align-items-center justify-content-center" type="button" data-bs-toggle="dropdown" id="btnPeriodeJadwal">
+          <i class="bi bi-calendar-event me-2"></i>
+          @if($dateFrom && $dateTo)
+            {{ \Carbon\Carbon::parse($dateFrom)->format('d/m/Y') }} -
+            {{ \Carbon\Carbon::parse($dateTo)->format('d/m/Y') }}
+          @elseif($dateFrom)
+            Dari {{ \Carbon\Carbon::parse($dateFrom)->format('d/m/Y') }}
+          @elseif($dateTo)
+            Sampai {{ \Carbon\Carbon::parse($dateTo)->format('d/m/Y') }}
+          @else
+            Pilih Tanggal
+          @endif
+        </button>
+        <div class="dropdown-menu p-3" style="min-width: 320px;">
+          <div class="mb-2 fw-semibold" style="color:#0b492c">Rentang Tanggal Jadwal</div>
+          <div class="row g-2">
+            <div class="col-6">
+              <label class="form-label small mb-1">Dari</label>
+              <input type="date" class="form-control" wire:model="dateFrom">
+            </div>
+            <div class="col-6">
+              <label class="form-label small mb-1">Sampai</label>
+              <input type="date" class="form-control" wire:model="dateTo">
+            </div>
+          </div>
+          <div class="d-flex gap-2 mt-3">
+            <button class="btn btn-success flex-grow-1 btn-sm" wire:click="applyDateFilter"
+              style="background-color:#0b492c;border-color:#0b492c">
+              Terapkan
+            </button>
+            @if($dateFrom || $dateTo)
+              <button class="btn btn-outline-secondary btn-sm" wire:click="resetDateFilter" type="button">
+                Reset
+              </button>
+            @endif
+          </div>
+        </div>
+      </div>
+
+      {{-- Clear all filters button if active --}}
+      @if($q || $dateFrom || $dateTo)
+        <button class="btn btn-sm btn-link text-danger text-decoration-none px-0" wire:click="resetAllFilters" title="Hapus semua filter">
+          <i class="bi bi-x-circle me-1"></i>Hapus Filter
+        </button>
+      @endif
+    </div>
+
+    {{-- Search Bar --}}
+    <div class="input-group w-100 w-lg-auto" style="min-width: 280px; max-width: 480px;">
+      <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+      <input type="text" class="form-control py-2" placeholder="Cari nama peminjam, barang, atau fasilitas..."
+        wire:model.live.debounce.300ms="q">
+      @if($q)
+        <button class="btn btn-outline-secondary bg-white border-start-0" type="button" wire:click="resetSearch" title="Hapus pencarian">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      @endif
+    </div>
+  </div>
+
   {{-- =========================
   PENDING SECTION
   ========================= --}}
@@ -413,7 +519,14 @@
               </tr>
             @empty
               <tr>
-                <td colspan="8" class="p-5 text-center text-muted">Tidak ada pengajuan pending.</td>
+                <td colspan="10" class="p-5 text-center text-muted">
+                  @if($q || $dateFrom || $dateTo)
+                    <i class="bi bi-search fs-3 d-block mb-2 text-muted"></i>
+                    Tidak ada pengajuan pending yang sesuai dengan kriteria pencarian / filter tanggal.
+                  @else
+                    Tidak ada pengajuan pending.
+                  @endif
+                </td>
               </tr>
             @endforelse
           </tbody>
@@ -546,7 +659,14 @@
               </tr>
             @empty
               <tr>
-                <td colspan="9" class="p-5 text-center text-muted">Belum ada riwayat.</td>
+                <td colspan="9" class="p-5 text-center text-muted">
+                  @if($q || $dateFrom || $dateTo)
+                    <i class="bi bi-search fs-3 d-block mb-2 text-muted"></i>
+                    Tidak ada riwayat keputusan yang sesuai dengan kriteria pencarian / filter tanggal.
+                  @else
+                    Belum ada riwayat.
+                  @endif
+                </td>
               </tr>
             @endforelse
           </tbody>
